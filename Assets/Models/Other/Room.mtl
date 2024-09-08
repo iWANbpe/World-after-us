@@ -1,0 +1,24 @@
+# Blender 4.0.1 MTL File: 'Eternity down.blend'
+# www.blender.org
+
+newmtl Light_mat
+Ns 360.000000
+Ka 1.000000 1.000000 1.000000
+Kd 0.800000 0.800000 0.800000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl Room
+Ka 1.000000 1.000000 1.000000
+Ks 0.500000 0.500000 0.500000
+Ke 0.000000 0.000000 0.000000
+Ni 1.450000
+d 1.000000
+illum 2
+map_Kd E:/Blender/Eternity down/Textures/Room Color.png
+map_Ns E:/Blender/Eternity down/Textures/Room Roughness.png
+map_refl E:/Blender/Eternity down/Textures/Room Metalic.png
+map_Bump -bm 0.999999 E:/Blender/Eternity down/Textures/Room Normal.png
