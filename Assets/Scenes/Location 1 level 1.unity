@@ -470,11 +470,18 @@ MonoBehaviour:
   speed: 1
   speedUpKoef: 3
   speedAcceleration: 20
+  crouchSpeedKoef: 0.5
   gravityKoef: 1
   mouseSensitivity: 0.05
   jumpForce: 5
   minRotationAngle: -45
   maxRotationAngle: 90
+  characterNormalHeight: 2
+  characterCrouchHeight: 1.25
+  characterNormalCenterY: 0
+  characterCrouchCenterY: -0.4
+  camNormalY: 0.68
+  camCrouchY: 0.131
   cam: {fileID: 963194225}
 --- !u!1 &963194225
 GameObject:

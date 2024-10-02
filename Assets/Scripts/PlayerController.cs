@@ -9,11 +9,18 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float speed = 1f;
     [SerializeField] private float speedUpKoef = 1f;
     [SerializeField] private float speedAcceleration = 20f;
+    [SerializeField] private float crouchSpeedKoef = 0.5f;
     [SerializeField] private float gravityKoef = 3f;
     [SerializeField] private float mouseSensitivity = 0.5f;
     [SerializeField] private float jumpForce = 1f;
     [SerializeField] private float minRotationAngle = 0f;
     [SerializeField] private float maxRotationAngle = 90f;
+    [SerializeField] private float characterNormalHeight = 2f;
+    [SerializeField] private float characterCrouchHeight = 1.25f;
+    [SerializeField] private float characterNormalCenterY = 0f;
+    [SerializeField] private float characterCrouchCenterY = -0.4f;
+    [SerializeField] private float camNormalY = 0.68f;
+    [SerializeField] private float camCrouchY = 0.131f;
     [Header("Objects")]
     [SerializeField] private GameObject cam;
 
@@ -28,6 +35,7 @@ public class PlayerController : MonoBehaviour
     private float gravity = -9.81f;
     private float grav_Velocity;
     private bool isSprinting;
+    private bool isCrouch;
 
     void Awake()
     {
@@ -50,6 +58,10 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Sprint.started += Sprint;
         inputActions.Player.Sprint.performed += Sprint;
         inputActions.Player.Sprint.canceled += Sprint;
+
+        inputActions.Player.Crouch.started += Crouch;
+        inputActions.Player.Crouch.performed += Crouch;
+        inputActions.Player.Crouch.canceled += Crouch;
     }
 
     private void OnEnable()
@@ -77,7 +89,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump(InputAction.CallbackContext context)
     {
-        if (characterController.isGrounded)
+        if (characterController.isGrounded && !isCrouch)
         {
             grav_Velocity += jumpForce;
         }
@@ -88,11 +100,21 @@ public class PlayerController : MonoBehaviour
         isSprinting = context.started || context.performed;
     }
 
+    private void Crouch(InputAction.CallbackContext context)
+    {
+        isCrouch = context.started || context.performed;
+        Crouching();
+    }
+
     private void Move()
     {
-        float targetSpeed = isSprinting ? speed * speedUpKoef : speed;
-        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedAcceleration * Time.fixedDeltaTime);
+        float targetSpeed;
 
+        if (isCrouch) targetSpeed = speed * crouchSpeedKoef;
+        else if (isSprinting) targetSpeed = speed * speedUpKoef;
+        else targetSpeed = speed;
+        
+        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedAcceleration * Time.fixedDeltaTime);
         characterController.Move( new Vector3(curPosition.x * currentSpeed, curPosition.y, curPosition.z * currentSpeed) * Time.fixedDeltaTime);
     }
 
@@ -117,6 +139,23 @@ public class PlayerController : MonoBehaviour
         curPosition.y = grav_Velocity;
     }
 
+    private void Crouching()
+    {
+        if (isCrouch)
+        {
+            characterController.height = characterCrouchHeight;
+            characterController.center = new Vector3(0f, characterCrouchCenterY, 0f);
+            cam.transform.localPosition = new Vector3(0f, camCrouchY, 0f);
+        }
+
+        else
+        {
+            characterController.height = characterNormalHeight;
+            characterController.center = new Vector3(0f, characterNormalCenterY, 0f);
+            cam.transform.localPosition = new Vector3(0f, camNormalY, 0f);
+        }
+    }
+    
     void FixedUpdate()
     {
         Move();
