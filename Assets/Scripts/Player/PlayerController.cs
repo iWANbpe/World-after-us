@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -32,19 +30,26 @@ public class PlayerController : MonoBehaviour
     private Vector2 mouseRotation;
 
     private float currentSpeed;
-    private float gravity = -9.81f;
+    private const float gravity = -9.81f;
     private float grav_Velocity;
     private bool isSprinting;
     private bool isCrouch;
 
+    private GameObject UIController;
+    private bool isInventoryOpen;
+    
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
         inputActions = new InputActionsPlayer();
+        UIController = GameObject.Find("UI Controller");
+        
+        isInventoryOpen = false;
+        
+        HideCursor();
+        InventoryChangeStatement(isInventoryOpen);
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-
+        //input actions Player
         inputActions.Player.Moving.started += HorizontalMoving;
         inputActions.Player.Moving.performed += HorizontalMoving;
         inputActions.Player.Moving.canceled += HorizontalMoving;
@@ -54,7 +59,7 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.MouseRotation.canceled += InputMouseRotation;
 
         inputActions.Player.Jump.started += Jump;
-
+        
         inputActions.Player.Sprint.started += Sprint;
         inputActions.Player.Sprint.performed += Sprint;
         inputActions.Player.Sprint.canceled += Sprint;
@@ -62,6 +67,11 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Crouch.started += Crouch;
         inputActions.Player.Crouch.performed += Crouch;
         inputActions.Player.Crouch.canceled += Crouch;
+
+        inputActions.Player.InventoryOpen.started += InventoryInteraction;
+
+        //input actions UI
+        inputActions.UI.InventoryClose.started += InventoryInteraction;
     }
 
     private void OnEnable()
@@ -72,6 +82,18 @@ public class PlayerController : MonoBehaviour
     private void OnDisable()
     {
         inputActions.Player.Disable();
+    }
+
+    private void HideCursor() 
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    private void ShowCursor() 
+    {
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
     }
 
     private void HorizontalMoving(InputAction.CallbackContext context)
@@ -109,7 +131,6 @@ public class PlayerController : MonoBehaviour
     private void Move()
     {
         float targetSpeed;
-
         if (isCrouch) targetSpeed = speed * crouchSpeedKoef;
         else if (isSprinting) targetSpeed = speed * speedUpKoef;
         else targetSpeed = speed;
@@ -156,6 +177,31 @@ public class PlayerController : MonoBehaviour
         }
     }
     
+    private void InventoryInteraction(InputAction.CallbackContext context) 
+    {
+        isInventoryOpen = !isInventoryOpen;
+        InventoryChangeStatement(isInventoryOpen);
+    }
+
+    private void InventoryChangeStatement(bool inventoryStatement) 
+    {
+        switch (inventoryStatement) 
+        {
+            case true:
+                UIController.GetComponent<Layouts>().OpenLayout(LayoutType.Inventory);
+                ShowCursor();
+                inputActions.Player.Disable();
+                inputActions.UI.Enable();
+                break;
+            case false:
+                UIController.GetComponent<Layouts>().CloseAllLayouts();
+                HideCursor();
+                inputActions.Player.Enable();
+                inputActions.UI.Disable();
+                break;
+        }
+    }
+
     void FixedUpdate()
     {
         Move();

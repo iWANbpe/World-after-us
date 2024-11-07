@@ -71,6 +71,15 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": true
+                },
+                {
+                    ""name"": ""InventoryOpen"",
+                    ""type"": ""Button"",
+                    ""id"": ""abd0940e-4d8a-42cb-943d-077988ce3281"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -172,6 +181,45 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""action"": ""MouseRotation"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""85a54ca1-32c0-427a-97c6-e261146ddf52"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryOpen"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                }
+            ]
+        },
+        {
+            ""name"": ""UI"",
+            ""id"": ""a4f4135c-3d3d-4551-b86e-d6f2881b03da"",
+            ""actions"": [
+                {
+                    ""name"": ""InventoryClose"",
+                    ""type"": ""Button"",
+                    ""id"": ""5cce8d18-2992-4398-9880-18a472718a9d"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                }
+            ],
+            ""bindings"": [
+                {
+                    ""name"": """",
+                    ""id"": ""46e8086a-3526-4f8a-8442-c009f24936ac"",
+                    ""path"": ""<Keyboard>/tab"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""InventoryClose"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -185,6 +233,10 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         m_Player_Sprint = m_Player.FindAction("Sprint", throwIfNotFound: true);
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_MouseRotation = m_Player.FindAction("MouseRotation", throwIfNotFound: true);
+        m_Player_InventoryOpen = m_Player.FindAction("InventoryOpen", throwIfNotFound: true);
+        // UI
+        m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
+        m_UI_InventoryClose = m_UI.FindAction("InventoryClose", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -251,6 +303,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Sprint;
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_MouseRotation;
+    private readonly InputAction m_Player_InventoryOpen;
     public struct PlayerActions
     {
         private @InputActionsPlayer m_Wrapper;
@@ -260,6 +313,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         public InputAction @Sprint => m_Wrapper.m_Player_Sprint;
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
         public InputAction @MouseRotation => m_Wrapper.m_Player_MouseRotation;
+        public InputAction @InventoryOpen => m_Wrapper.m_Player_InventoryOpen;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -284,6 +338,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @MouseRotation.started += instance.OnMouseRotation;
             @MouseRotation.performed += instance.OnMouseRotation;
             @MouseRotation.canceled += instance.OnMouseRotation;
+            @InventoryOpen.started += instance.OnInventoryOpen;
+            @InventoryOpen.performed += instance.OnInventoryOpen;
+            @InventoryOpen.canceled += instance.OnInventoryOpen;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -303,6 +360,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @MouseRotation.started -= instance.OnMouseRotation;
             @MouseRotation.performed -= instance.OnMouseRotation;
             @MouseRotation.canceled -= instance.OnMouseRotation;
+            @InventoryOpen.started -= instance.OnInventoryOpen;
+            @InventoryOpen.performed -= instance.OnInventoryOpen;
+            @InventoryOpen.canceled -= instance.OnInventoryOpen;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -320,6 +380,52 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         }
     }
     public PlayerActions @Player => new PlayerActions(this);
+
+    // UI
+    private readonly InputActionMap m_UI;
+    private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
+    private readonly InputAction m_UI_InventoryClose;
+    public struct UIActions
+    {
+        private @InputActionsPlayer m_Wrapper;
+        public UIActions(@InputActionsPlayer wrapper) { m_Wrapper = wrapper; }
+        public InputAction @InventoryClose => m_Wrapper.m_UI_InventoryClose;
+        public InputActionMap Get() { return m_Wrapper.m_UI; }
+        public void Enable() { Get().Enable(); }
+        public void Disable() { Get().Disable(); }
+        public bool enabled => Get().enabled;
+        public static implicit operator InputActionMap(UIActions set) { return set.Get(); }
+        public void AddCallbacks(IUIActions instance)
+        {
+            if (instance == null || m_Wrapper.m_UIActionsCallbackInterfaces.Contains(instance)) return;
+            m_Wrapper.m_UIActionsCallbackInterfaces.Add(instance);
+            @InventoryClose.started += instance.OnInventoryClose;
+            @InventoryClose.performed += instance.OnInventoryClose;
+            @InventoryClose.canceled += instance.OnInventoryClose;
+        }
+
+        private void UnregisterCallbacks(IUIActions instance)
+        {
+            @InventoryClose.started -= instance.OnInventoryClose;
+            @InventoryClose.performed -= instance.OnInventoryClose;
+            @InventoryClose.canceled -= instance.OnInventoryClose;
+        }
+
+        public void RemoveCallbacks(IUIActions instance)
+        {
+            if (m_Wrapper.m_UIActionsCallbackInterfaces.Remove(instance))
+                UnregisterCallbacks(instance);
+        }
+
+        public void SetCallbacks(IUIActions instance)
+        {
+            foreach (var item in m_Wrapper.m_UIActionsCallbackInterfaces)
+                UnregisterCallbacks(item);
+            m_Wrapper.m_UIActionsCallbackInterfaces.Clear();
+            AddCallbacks(instance);
+        }
+    }
+    public UIActions @UI => new UIActions(this);
     public interface IPlayerActions
     {
         void OnMoving(InputAction.CallbackContext context);
@@ -327,5 +433,10 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         void OnSprint(InputAction.CallbackContext context);
         void OnCrouch(InputAction.CallbackContext context);
         void OnMouseRotation(InputAction.CallbackContext context);
+        void OnInventoryOpen(InputAction.CallbackContext context);
+    }
+    public interface IUIActions
+    {
+        void OnInventoryClose(InputAction.CallbackContext context);
     }
 }
