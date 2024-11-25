@@ -47,5 +47,6 @@ public class Layout
 
 public enum LayoutType 
 {
-    Inventory
+    Inventory,
+    PlayerPanel
 }

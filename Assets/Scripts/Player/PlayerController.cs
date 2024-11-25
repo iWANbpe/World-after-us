@@ -36,6 +36,7 @@ public class PlayerController : MonoBehaviour
     private bool isCrouch;
 
     private GameObject UIController;
+    private PlayerUI playerUI;
     private bool isInventoryOpen;
     
     void Awake()
@@ -43,10 +44,13 @@ public class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         inputActions = new InputActionsPlayer();
         UIController = GameObject.Find("UI Controller");
+        playerUI = GetComponent<PlayerUI>();
         
         isInventoryOpen = false;
-        
+
         HideCursor();
+        UIController.GetComponent<Layouts>().OpenLayout(LayoutType.PlayerPanel);
+        playerUI.DisableInfoItemText();
         InventoryChangeStatement(isInventoryOpen);
 
         //input actions Player
@@ -194,7 +198,7 @@ public class PlayerController : MonoBehaviour
                 inputActions.UI.Enable();
                 break;
             case false:
-                UIController.GetComponent<Layouts>().CloseAllLayouts();
+                UIController.GetComponent<Layouts>().OpenLayout(LayoutType.PlayerPanel);
                 HideCursor();
                 inputActions.Player.Enable();
                 inputActions.UI.Disable();
