@@ -6,6 +6,7 @@ public class PlayerUI : MonoBehaviour
 {
     [SerializeField] private GameObject playerPanel;
     [SerializeField] private GameObject infoItemText;
+    public bool infoItemTextIsActive { get{ return infoItemText.activeSelf; } }
     
     public void EnableInfoItemText(string itemName) 
     {

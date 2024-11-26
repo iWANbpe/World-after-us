@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float characterCrouchCenterY = -0.4f;
     [SerializeField] private float camNormalY = 0.68f;
     [SerializeField] private float camCrouchY = 0.131f;
+    [SerializeField] private float distanceOfInteraction = 1f;
     [Header("Objects")]
     [SerializeField] private GameObject cam;
 
@@ -38,6 +39,9 @@ public class PlayerController : MonoBehaviour
     private GameObject UIController;
     private PlayerUI playerUI;
     private bool isInventoryOpen;
+
+    private RaycastHit hit;
+    private GameObject lookObject;
     
     void Awake()
     {
@@ -164,6 +168,27 @@ public class PlayerController : MonoBehaviour
         curPosition.y = grav_Velocity;
     }
 
+    private void Look() 
+    {
+        if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out hit, distanceOfInteraction))
+        {
+            //Debug.DrawRay(cam.transform.position, cam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
+            //print(hit.collider.gameObject.name);
+
+            if (hit.collider.gameObject.GetComponent<ItemInfoHolder>())
+            {
+                lookObject = hit.collider.gameObject;
+                playerUI.EnableInfoItemText(lookObject.GetComponent<ItemInfoHolder>().itemInfo.name);
+            }
+            else
+            {
+                lookObject = null;
+                playerUI.DisableInfoItemText();
+            }
+        }
+        else if (playerUI.infoItemTextIsActive) playerUI.DisableInfoItemText();
+    }
+
     private void Crouching()
     {
         if (isCrouch)
@@ -209,6 +234,7 @@ public class PlayerController : MonoBehaviour
     void FixedUpdate()
     {
         Move();
+        Look();
         Rotation();
         ApplyGravity();
     }
