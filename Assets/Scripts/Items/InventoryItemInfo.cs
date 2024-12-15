@@ -4,4 +4,5 @@ using UnityEngine;
 public class InventoryItemInfo : ScriptableObject
 {
     public ItemInfo itemInfo;
+    [SerializeField] private GameObject inventoryItem;
 }

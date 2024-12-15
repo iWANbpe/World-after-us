@@ -3,7 +3,7 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Player Settings")]
+    [Header("Physics")]
     [SerializeField] private float speed = 1f;
     [SerializeField] private float speedUpKoef = 1f;
     [SerializeField] private float speedAcceleration = 20f;
@@ -11,15 +11,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float gravityKoef = 3f;
     [SerializeField] private float mouseSensitivity = 0.5f;
     [SerializeField] private float jumpForce = 1f;
+    [Header("Rotation")]
     [SerializeField] private float minRotationAngle = 0f;
     [SerializeField] private float maxRotationAngle = 90f;
+    [Header("Crouch")]
     [SerializeField] private float characterNormalHeight = 2f;
     [SerializeField] private float characterCrouchHeight = 1.25f;
     [SerializeField] private float characterNormalCenterY = 0f;
     [SerializeField] private float characterCrouchCenterY = -0.4f;
     [SerializeField] private float camNormalY = 0.68f;
     [SerializeField] private float camCrouchY = 0.131f;
+    [Header("Interaction")]
     [SerializeField] private float distanceOfInteraction = 1f;
+    [SerializeField] private LayerMask interectionMask;
     [Header("Objects")]
     [SerializeField] private GameObject cam;
 
@@ -170,7 +174,7 @@ public class PlayerController : MonoBehaviour
 
     private void Look() 
     {
-        if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out hit, distanceOfInteraction))
+        if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out hit, distanceOfInteraction, interectionMask))
         {
             //Debug.DrawRay(cam.transform.position, cam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
             //print(hit.collider.gameObject.name);
@@ -178,7 +182,7 @@ public class PlayerController : MonoBehaviour
             if (hit.collider.gameObject.GetComponent<ItemInfoHolder>())
             {
                 lookObject = hit.collider.gameObject;
-                playerUI.EnableInfoItemText(lookObject.GetComponent<ItemInfoHolder>().itemInfo.name);
+                playerUI.EnableInfoItemText(lookObject.GetComponent<ItemInfoHolder>().itemInfo.itemName);
             }
             else
             {

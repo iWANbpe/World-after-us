@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2292c6295423d5f459623370983f88c0, type: 3}
   m_Name: TestItem
   m_EditorClassIdentifier: 
-  itemName: TestItem
-  itemDescription: TestItem
-  type: 0
-  gameObject: {fileID: 5483536765231334172, guid: e37216a00b60a2744ba53501144f05ba, type: 3}
+  itemName: Test item
+  itemDescription: /filename
+  type: 3
+  gameObject: {fileID: 1651189897193929992, guid: ed59e11d8af109a4083da6f7de8d1096, type: 3}
   inventoryItemInfo: {fileID: 11400000, guid: 60861d60520f94a42afe0ef54401d15c, type: 2}
