@@ -13,9 +13,9 @@ GameObject:
   - component: {fileID: 5774587339249130263}
   - component: {fileID: 7043662952826732013}
   - component: {fileID: 4007263776832830955}
-  - component: {fileID: 1313094692409025685}
+  - component: {fileID: -1431227055253844116}
   m_Layer: 0
-  m_Name: TestItem
+  m_Name: TestItemInterectable
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -31,7 +31,7 @@ Transform:
   serializedVersion: 2
   m_LocalRotation: {x: -0.7071068, y: 0, z: -0, w: 0.7071067}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 36.2, y: 36.2, z: 36.2}
+  m_LocalScale: {x: 15, y: 15, z: 15}
   m_ConstrainProportionsScale: 1
   m_Children: []
   m_Father: {fileID: 0}
@@ -117,7 +117,7 @@ Rigidbody:
   serializedVersion: 4
   m_Mass: 1
   m_Drag: 0
-  m_AngularDrag: 0.05
+  m_AngularDrag: 7.82
   m_CenterOfMass: {x: 0, y: 0, z: 0}
   m_InertiaTensor: {x: 1, y: 1, z: 1}
   m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
@@ -134,7 +134,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &1313094692409025685
+--- !u!114 &-1431227055253844116
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,7 +143,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1651189897193929992}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: db19f5452f66c994e80ef5282a9b99c4, type: 3}
+  m_Script: {fileID: 11500000, guid: d1d54f485b12a8c43b08ad91c45dc316, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  itemRigidbody: {fileID: 0}
+  targetObj: {fileID: 0}
+  itemCollider: {fileID: 0}
   itemInfo: {fileID: 11400000, guid: 07a61466feaa55546b80a6b3fa44f60f, type: 2}

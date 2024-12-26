@@ -45,22 +45,25 @@ public class PlayerController : MonoBehaviour
     private bool isInventoryOpen;
 
     private RaycastHit hit;
-    private GameObject lookObject;
-    
+    private LookObject lookObject;
+    private bool isGrabbing;
+    private GameObject grabPoint;
     void Awake()
     {
         characterController = GetComponent<CharacterController>();
         inputActions = new InputActionsPlayer();
         UIController = GameObject.Find("UI Controller");
         playerUI = GetComponent<PlayerUI>();
-        
         isInventoryOpen = false;
+        isGrabbing = false;
 
-        HideCursor();
+        SetCursorActivity(false);
         UIController.GetComponent<Layouts>().OpenLayout(LayoutType.PlayerPanel);
         playerUI.DisableInfoItemText();
         InventoryChangeStatement(isInventoryOpen);
 
+        grabPoint = cam.transform.Find("GrabPoint").gameObject;
+        
         //input actions Player
         inputActions.Player.Moving.started += HorizontalMoving;
         inputActions.Player.Moving.performed += HorizontalMoving;
@@ -82,6 +85,10 @@ public class PlayerController : MonoBehaviour
 
         inputActions.Player.InventoryOpen.started += InventoryInteraction;
 
+        inputActions.Player.Grab.started += Grab;
+        inputActions.Player.Grab.performed += Grab;
+        inputActions.Player.Grab.canceled += Grab;
+
         //input actions UI
         inputActions.UI.InventoryClose.started += InventoryInteraction;
     }
@@ -96,16 +103,10 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Disable();
     }
 
-    private void HideCursor() 
+    private void SetCursorActivity(bool state) 
     {
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
-    }
-
-    private void ShowCursor() 
-    {
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
+        Cursor.visible = state;
     }
 
     private void HorizontalMoving(InputAction.CallbackContext context)
@@ -138,6 +139,33 @@ public class PlayerController : MonoBehaviour
     {
         isCrouch = context.started || context.performed;
         Crouching();
+    }
+
+    private void Grab(InputAction.CallbackContext context) 
+    {
+        if (lookObject != null) 
+        {
+            if (context.started) 
+            {
+                isGrabbing = true;
+                lookObject.rigidBody.useGravity = false;
+                lookObject.DisableCollisionLayer(LayerMask.GetMask("Player"));
+            }
+
+            else if (context.performed) 
+            {
+                lookObject.SetTarget(grabPoint);
+            }
+
+            else
+            {
+                isGrabbing = false;
+                lookObject.rigidBody.useGravity = true;
+                lookObject.SetTarget(null);
+                lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
+            }
+
+        }
     }
 
     private void Move()
@@ -174,23 +202,37 @@ public class PlayerController : MonoBehaviour
 
     private void Look() 
     {
-        if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out hit, distanceOfInteraction, interectionMask))
+        if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out hit, distanceOfInteraction, interectionMask) && !isGrabbing)
         {
             //Debug.DrawRay(cam.transform.position, cam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
             //print(hit.collider.gameObject.name);
 
-            if (hit.collider.gameObject.GetComponent<ItemInfoHolder>())
+            if (hit.collider.gameObject.GetComponent<InteractableItem>())
             {
-                lookObject = hit.collider.gameObject;
-                playerUI.EnableInfoItemText(lookObject.GetComponent<ItemInfoHolder>().itemInfo.itemName);
+                lookObject = new LookObject(hit.collider.gameObject.GetComponent<InteractableItem>());
+                playerUI.EnableInfoItemText(lookObject.name);
             }
-            else
+
+            else if (hit.collider.gameObject.GetComponent<NonInteractableItem>()) 
+            {
+                lookObject = new LookObject(hit.collider.gameObject.GetComponent<NonInteractableItem>());
+                if (playerUI.infoItemTextIsActive) playerUI.DisableInfoItemText();
+            }
+
+            else if (!isGrabbing)
             {
                 lookObject = null;
                 playerUI.DisableInfoItemText();
             }
         }
-        else if (playerUI.infoItemTextIsActive) playerUI.DisableInfoItemText();
+
+        else if (lookObject != null && !isGrabbing) 
+        {
+            lookObject = null;
+            isGrabbing = false;
+            playerUI.DisableInfoItemText();
+        } 
+
     }
 
     private void Crouching()
@@ -218,21 +260,21 @@ public class PlayerController : MonoBehaviour
 
     private void InventoryChangeStatement(bool inventoryStatement) 
     {
-        switch (inventoryStatement) 
+        if (inventoryStatement) 
         {
-            case true:
-                UIController.GetComponent<Layouts>().OpenLayout(LayoutType.Inventory);
-                ShowCursor();
-                inputActions.Player.Disable();
-                inputActions.UI.Enable();
-                break;
-            case false:
-                UIController.GetComponent<Layouts>().OpenLayout(LayoutType.PlayerPanel);
-                HideCursor();
-                inputActions.Player.Enable();
-                inputActions.UI.Disable();
-                break;
+            UIController.GetComponent<Layouts>().OpenLayout(LayoutType.Inventory);
+            inputActions.Player.Disable();
+            inputActions.UI.Enable();
         }
+
+        else 
+        {
+            UIController.GetComponent<Layouts>().OpenLayout(LayoutType.PlayerPanel);
+            inputActions.Player.Enable();
+            inputActions.UI.Disable();
+        }
+
+        SetCursorActivity(inventoryStatement);
     }
 
     void FixedUpdate()
@@ -241,5 +283,48 @@ public class PlayerController : MonoBehaviour
         Look();
         Rotation();
         ApplyGravity();
+    }
+
+    private class LookObject 
+    {
+        public GameObject gameObject;
+        public Rigidbody rigidBody;
+        public string name;
+        public LookObject(InteractableItem item) 
+        {
+            gameObject = item.gameObject;
+            rigidBody = item.itemRigidbody;
+            name = item.itemInfo.itemName;
+        }
+
+        public LookObject(NonInteractableItem item)
+        {
+            gameObject = item.gameObject;
+            rigidBody = item.itemRigidbody;
+        }
+
+        public void SetTarget(GameObject target) 
+        {
+            if (gameObject.GetComponent<InteractableItem>()) 
+            {
+                gameObject.GetComponent<InteractableItem>().targetObj = target; 
+            }
+            else if (gameObject.GetComponent<NonInteractableItem>()) 
+            {
+                gameObject.GetComponent<NonInteractableItem>().targetObj = target;
+            }
+        }
+
+        public void DisableCollisionLayer(LayerMask layerMask) 
+        {
+            if (gameObject.GetComponent<InteractableItem>())
+            {
+                gameObject.GetComponent<InteractableItem>().itemCollider.excludeLayers = layerMask;
+            }
+            else if (gameObject.GetComponent<NonInteractableItem>())
+            {
+                gameObject.GetComponent<NonInteractableItem>().itemCollider.excludeLayers = layerMask;
+            }
+        }
     }
 }
