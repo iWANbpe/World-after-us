@@ -247,6 +247,15 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""DropItem"",
+                    ""type"": ""Button"",
+                    ""id"": ""4b7b9753-4efe-48c5-aabd-8b5c35b7f383"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -258,6 +267,17 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""InventoryClose"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""bf5e0248-3376-4216-9efb-786969aa11fb"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""DropItem"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -279,6 +299,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_InventoryClose = m_UI.FindAction("InventoryClose", throwIfNotFound: true);
+        m_UI_DropItem = m_UI.FindAction("DropItem", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -443,11 +464,13 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     private readonly InputActionMap m_UI;
     private List<IUIActions> m_UIActionsCallbackInterfaces = new List<IUIActions>();
     private readonly InputAction m_UI_InventoryClose;
+    private readonly InputAction m_UI_DropItem;
     public struct UIActions
     {
         private @InputActionsPlayer m_Wrapper;
         public UIActions(@InputActionsPlayer wrapper) { m_Wrapper = wrapper; }
         public InputAction @InventoryClose => m_Wrapper.m_UI_InventoryClose;
+        public InputAction @DropItem => m_Wrapper.m_UI_DropItem;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -460,6 +483,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @InventoryClose.started += instance.OnInventoryClose;
             @InventoryClose.performed += instance.OnInventoryClose;
             @InventoryClose.canceled += instance.OnInventoryClose;
+            @DropItem.started += instance.OnDropItem;
+            @DropItem.performed += instance.OnDropItem;
+            @DropItem.canceled += instance.OnDropItem;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -467,6 +493,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @InventoryClose.started -= instance.OnInventoryClose;
             @InventoryClose.performed -= instance.OnInventoryClose;
             @InventoryClose.canceled -= instance.OnInventoryClose;
+            @DropItem.started -= instance.OnDropItem;
+            @DropItem.performed -= instance.OnDropItem;
+            @DropItem.canceled -= instance.OnDropItem;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -498,5 +527,6 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     public interface IUIActions
     {
         void OnInventoryClose(InputAction.CallbackContext context);
+        void OnDropItem(InputAction.CallbackContext context);
     }
 }

@@ -14,10 +14,9 @@ public class ItemInfo : ScriptableObject
     
     public InventoryItemInfo inventoryItemInfo;
 
-    public void InstaniateItem(Transform itemTransform) 
+    public void InstaniateItem(Vector3 position, Quaternion rotation) 
     {
-        GameObject item = Instantiate(gameObject, itemTransform);
-        item.GetComponent<ItemInfoHolder>().itemInfo = this;
+        Instantiate(gameObject, position, rotation);
     }
 
     public void AddInventoryItem() 
