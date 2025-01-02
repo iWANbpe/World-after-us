@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [HideInInspector] public bool hasePlace = true;
-    [HideInInspector] public InventoryItemInfo invItemInfo;
+    public InventoryItemInfo invItemInfo;
 
     public void OnBeginDrag(PointerEventData eventData) 
     {

@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2292c6295423d5f459623370983f88c0, type: 3}
   m_Name: TestItem
   m_EditorClassIdentifier: 
-  itemName: Test item
+  itemName: /filename
   itemDescription: /filename
   type: 3
   gameObject: {fileID: 1651189897193929992, guid: ed59e11d8af109a4083da6f7de8d1096, type: 3}

@@ -1,5 +1,8 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
+using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
@@ -40,6 +43,7 @@ public class PlayerController : MonoBehaviour
     private bool isSprinting;
     private bool isCrouch;
 
+    private GameObject canvas;
     private GameObject UIController;
     private PlayerUI playerUI;
     private bool isInventoryOpen;
@@ -48,19 +52,30 @@ public class PlayerController : MonoBehaviour
     private LookObject lookObject;
     private bool isGrabbing;
     private GameObject grabPoint;
+
+    public EventSystem eventSystem;
+    private GraphicRaycaster raycaster;
+    private PointerEventData pointerEventData;
+
     void Awake()
     {
-        characterController = GetComponent<CharacterController>();
         inputActions = new InputActionsPlayer();
+
+        canvas = GameObject.Find("Canvas");
         UIController = GameObject.Find("UI Controller");
+        eventSystem = GameObject.Find("/EventSystem").GetComponent<EventSystem>();
+
+        characterController = GetComponent<CharacterController>();
+        raycaster = canvas.GetComponent<GraphicRaycaster>();
         playerUI = GetComponent<PlayerUI>();
+        
         isInventoryOpen = false;
         isGrabbing = false;
 
         SetCursorActivity(false);
-        UIController.GetComponent<Layouts>().OpenLayout(LayoutType.PlayerPanel);
         playerUI.DisableInfoItemText();
         InventoryChangeStatement(isInventoryOpen);
+        UIController.GetComponent<Layouts>().OpenLayout(LayoutType.PlayerPanel);
 
         grabPoint = cam.transform.Find("GrabPoint").gameObject;
         
@@ -93,6 +108,8 @@ public class PlayerController : MonoBehaviour
 
         //input actions UI
         inputActions.UI.InventoryClose.started += InventoryInteraction;
+
+        inputActions.UI.DropItem.started += DropItem;
     }
 
     private void OnEnable()
@@ -179,6 +196,33 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void DropItem(InputAction.CallbackContext contex) 
+    {
+        GameObject invItem = SelectedInventoryItem();
+
+        if (invItem) 
+        {
+            ObjectPooler.Instance.SpawnItem(invItem.GetComponent<InventoryItem>().invItemInfo.itemInfo, grabPoint.transform.position, Quaternion.identity);
+            ObjectPooler.Instance.DeleteInventoryItem(invItem.GetComponent<InventoryItem>().invItemInfo, invItem);
+        }
+    }
+
+    private GameObject SelectedInventoryItem() 
+    {
+        List<RaycastResult> resultsList = new List<RaycastResult>();
+        pointerEventData = new PointerEventData(eventSystem);
+        pointerEventData.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+
+        raycaster.Raycast(pointerEventData, resultsList);
+        
+        foreach (RaycastResult result in resultsList)
+        {
+            if (result.gameObject.GetComponent<InventoryItem>())
+                return result.gameObject;
+        }
+
+        return null;
+    }
     private void Move()
     {
         float targetSpeed;

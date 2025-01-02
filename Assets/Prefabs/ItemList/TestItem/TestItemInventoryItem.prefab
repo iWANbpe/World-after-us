@@ -118,6 +118,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   hasePlace: 1
+  invItemInfo: {fileID: 11400000, guid: 60861d60520f94a42afe0ef54401d15c, type: 2}
 --- !u!1 &4428113570733589147
 GameObject:
   m_ObjectHideFlags: 0

@@ -59,4 +59,14 @@ public class ObjectPooler : MonoBehaviour
                 itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
         }
     }
+
+    public void DeleteInventoryItem(InventoryItemInfo invItemInfo, GameObject invItem) 
+    {
+        invItem.SetActive(false);
+
+        if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
+            itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
+
+        itemDictionary[invItemInfo.invItemName].Enqueue(invItem);
+    }
 }
