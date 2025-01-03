@@ -56,11 +56,10 @@ public class PlayerController : MonoBehaviour
     public EventSystem eventSystem;
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
+    private GameObject invItemLookObject;
 
     void Awake()
     {
-        inputActions = new InputActionsPlayer();
-
         canvas = GameObject.Find("Canvas");
         UIController = GameObject.Find("UI Controller");
         eventSystem = GameObject.Find("/EventSystem").GetComponent<EventSystem>();
@@ -68,7 +67,10 @@ public class PlayerController : MonoBehaviour
         characterController = GetComponent<CharacterController>();
         raycaster = canvas.GetComponent<GraphicRaycaster>();
         playerUI = GetComponent<PlayerUI>();
-        
+
+        inputActions = new InputActionsPlayer();
+        pointerEventData = new PointerEventData(eventSystem);
+
         isInventoryOpen = false;
         isGrabbing = false;
 
@@ -198,31 +200,32 @@ public class PlayerController : MonoBehaviour
 
     private void DropItem(InputAction.CallbackContext contex) 
     {
-        GameObject invItem = SelectedInventoryItem();
-
-        if (invItem) 
+        if (invItemLookObject) 
         {
-            ObjectPooler.Instance.SpawnItem(invItem.GetComponent<InventoryItem>().invItemInfo.itemInfo, grabPoint.transform.position, Quaternion.identity);
-            ObjectPooler.Instance.DeleteInventoryItem(invItem.GetComponent<InventoryItem>().invItemInfo, invItem);
+            ObjectPooler.Instance.SpawnItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo.itemInfo, grabPoint.transform.position, Quaternion.identity);
+            ObjectPooler.Instance.DeleteInventoryItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo, invItemLookObject);
         }
     }
 
     private GameObject SelectedInventoryItem() 
     {
         List<RaycastResult> resultsList = new List<RaycastResult>();
-        pointerEventData = new PointerEventData(eventSystem);
         pointerEventData.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-
         raycaster.Raycast(pointerEventData, resultsList);
         
         foreach (RaycastResult result in resultsList)
         {
-            if (result.gameObject.GetComponent<InventoryItem>())
+            if (result.gameObject.GetComponent<InventoryItem>()) 
+            {
+                playerUI.EnableInfoPanel(result.gameObject.GetComponent<InventoryItem>().invItemInfo);
                 return result.gameObject;
+            }  
         }
 
+        playerUI.DisableInfoPanel();
         return null;
     }
+    
     private void Move()
     {
         float targetSpeed;
@@ -338,6 +341,8 @@ public class PlayerController : MonoBehaviour
         Look();
         Rotation();
         ApplyGravity();
+
+        if (isInventoryOpen) { invItemLookObject = SelectedInventoryItem();}
     }
 
     private class LookObject 

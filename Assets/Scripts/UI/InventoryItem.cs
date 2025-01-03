@@ -4,12 +4,13 @@ using UnityEngine.UI;
 
 public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
-    [HideInInspector] public bool hasePlace = true;
+    [HideInInspector] public bool hasPlace = true;
+    [HideInInspector] public Image invItemImage { get { return GetComponent<Image>(); } }
     public InventoryItemInfo invItemInfo;
 
     public void OnBeginDrag(PointerEventData eventData) 
     {
-        hasePlace = false;
+        hasPlace = false;
         GetComponent<Image>().raycastTarget = false;
         SetChildrenRaycastTarget(false);
         ClearSlots();
@@ -25,7 +26,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         if (AvailableSpace())
         {
             transform.position = NewPosition();
-            hasePlace = true;
+            hasPlace = true;
         }
 
         GetComponent<Image>().raycastTarget = true;

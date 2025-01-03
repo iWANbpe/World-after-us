@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TestItem
   m_EditorClassIdentifier: 
   itemName: /filename
-  itemDescription: /filename
-  type: 3
+  itemDescription: Just a regular /filename
+  type: 4
   gameObject: {fileID: 1651189897193929992, guid: ed59e11d8af109a4083da6f7de8d1096, type: 3}
   inventoryItemInfo: {fileID: 11400000, guid: 60861d60520f94a42afe0ef54401d15c, type: 2}

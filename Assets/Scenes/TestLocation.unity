@@ -4264,6 +4264,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerPanel: {fileID: 1175130102}
   infoItemText: {fileID: 1648082394}
+  infoPanel: {fileID: 424054883}
 --- !u!1001 &904356067
 PrefabInstance:
   m_ObjectHideFlags: 0
