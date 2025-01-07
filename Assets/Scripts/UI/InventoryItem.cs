@@ -33,7 +33,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         SetChildrenRaycastTarget(true);
     }
 
-    private void ClearSlots() 
+    public void ClearSlots() 
     { 
         for(int i = 0; i < transform.childCount; i++) 
         {

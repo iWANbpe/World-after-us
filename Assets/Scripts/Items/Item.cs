@@ -4,17 +4,15 @@ using UnityEngine;
 
 public abstract class Item : MonoBehaviour
 {
+    [HideInInspector] public string itemName;
+    [HideInInspector] public bool isIntractable;
     [HideInInspector] public Rigidbody itemRigidbody;
-    [HideInInspector] public GameObject targetObj;
-    [HideInInspector] public Collider itemCollider;
-    private const float dragSpeed = 5f;
 
-    private void Awake()
-    {
-        targetObj = null;
-        itemRigidbody = GetComponent<Rigidbody>();
-        itemCollider = GetComponent<Collider>();
-    }
+    public ItemInfo itemInfo;
+
+    protected GameObject targetObj;
+    protected Collider itemCollider;
+    private const float dragSpeed = 5f;
 
     private void FixedUpdate()
     {
@@ -24,4 +22,14 @@ public abstract class Item : MonoBehaviour
         }
     }
 
+    
+    public void SetTarget(GameObject target) 
+    {
+        targetObj = target;
+    }
+
+    public void DisableCollisionLayer(LayerMask layerMask) 
+    {
+        itemCollider.excludeLayers = layerMask;
+    }
 }

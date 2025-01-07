@@ -4,5 +4,13 @@ using UnityEngine;
 
 public class InteractableItem : Item
 {
-    public ItemInfo itemInfo;
+    private void Awake()
+    {
+        targetObj = null;
+        isIntractable = true;
+        itemName = itemInfo.itemName;
+        
+        itemRigidbody = GetComponent<Rigidbody>();
+        itemCollider = GetComponent<Collider>();
+    }
 }

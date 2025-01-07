@@ -49,7 +49,7 @@ public class PlayerController : MonoBehaviour
     private bool isInventoryOpen;
 
     private RaycastHit hit;
-    private LookObject lookObject;
+    private Item lookObject;
     private bool isGrabbing;
     private GameObject grabPoint;
 
@@ -169,7 +169,7 @@ public class PlayerController : MonoBehaviour
             if (context.started) 
             {
                 isGrabbing = true;
-                lookObject.rigidBody.useGravity = false;
+                lookObject.itemRigidbody.useGravity = false;
                 lookObject.DisableCollisionLayer(LayerMask.GetMask("Player"));
             }
 
@@ -181,7 +181,7 @@ public class PlayerController : MonoBehaviour
             else
             {
                 isGrabbing = false;
-                lookObject.rigidBody.useGravity = true;
+                lookObject.itemRigidbody.useGravity = true;
                 lookObject.SetTarget(null);
                 lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
             }
@@ -193,7 +193,7 @@ public class PlayerController : MonoBehaviour
     { 
         if(lookObject != null && lookObject.isIntractable) 
         {
-            lookObject.DespawnItem();
+            ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
             ObjectPooler.Instance.AddInventoryItem(lookObject.itemInfo.inventoryItemInfo, new Vector3(90f, 90f, 0f));
         }
     }
@@ -265,16 +265,15 @@ public class PlayerController : MonoBehaviour
             //Debug.DrawRay(cam.transform.position, cam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
             //print(hit.collider.gameObject.name);
 
-            if (hit.collider.gameObject.GetComponent<InteractableItem>())
+            if (hit.collider.gameObject.GetComponent<Item>())
             {
-                lookObject = new LookObject(hit.collider.gameObject.GetComponent<InteractableItem>());
-                playerUI.EnableInfoItemText(lookObject.name);
-            }
-
-            else if (hit.collider.gameObject.GetComponent<NonInteractableItem>()) 
-            {
-                lookObject = new LookObject(hit.collider.gameObject.GetComponent<NonInteractableItem>());
-                if (playerUI.infoItemTextIsActive) playerUI.DisableInfoItemText();
+                lookObject = hit.collider.gameObject.GetComponent<Item>();
+                
+                if (lookObject.isIntractable) 
+                    playerUI.EnableInfoItemText(lookObject.itemName);
+                
+                else if (playerUI.isActiveAndEnabled) 
+                    playerUI.DisableInfoItemText();
             }
 
             else if (!isGrabbing)
@@ -344,69 +343,5 @@ public class PlayerController : MonoBehaviour
 
         if (isInventoryOpen) { invItemLookObject = SelectedInventoryItem();}
     }
-
-    private class LookObject 
-    {
-        public GameObject gameObject;
-        public ItemInfo itemInfo;
-        public Rigidbody rigidBody;
-        public string name;
-        public bool isIntractable;
-        
-        public LookObject(InteractableItem item) 
-        {
-            gameObject = item.gameObject;
-            itemInfo = item.itemInfo;
-            rigidBody = item.itemRigidbody;
-            name = item.itemInfo.itemName;
-            isIntractable = true;
-        }
-
-        public LookObject(NonInteractableItem item)
-        {
-            gameObject = item.gameObject;
-            rigidBody = item.itemRigidbody;
-            isIntractable = false;
-        }
-
-        public void SetTarget(GameObject target) 
-        {
-            if (isIntractable) 
-            {
-                gameObject.GetComponent<InteractableItem>().targetObj = target; 
-            }
-            else 
-            {
-                gameObject.GetComponent<NonInteractableItem>().targetObj = target;
-            }
-        }
-
-        public void DisableCollisionLayer(LayerMask layerMask) 
-        {
-            if (isIntractable)
-            {
-                gameObject.GetComponent<InteractableItem>().itemCollider.excludeLayers = layerMask;
-            }
-            else
-            {
-                gameObject.GetComponent<NonInteractableItem>().itemCollider.excludeLayers = layerMask;
-            }
-        }
-
-        public void SpawnItem(Vector3 position, Quaternion rotation) 
-        {
-            if (gameObject.GetComponent<InteractableItem>()) 
-            {
-                ObjectPooler.Instance.SpawnItem(itemInfo, position, rotation);
-            }
-        }
-
-        public void DespawnItem() 
-        {
-            if (gameObject.GetComponent<InteractableItem>())
-            {
-                ObjectPooler.Instance.DespawnItem(itemInfo, gameObject);
-            }
-        }
-    }
 }
+

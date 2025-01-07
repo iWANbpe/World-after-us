@@ -62,6 +62,7 @@ public class ObjectPooler : MonoBehaviour
 
     public void DeleteInventoryItem(InventoryItemInfo invItemInfo, GameObject invItem) 
     {
+        invItem.GetComponent<InventoryItem>().ClearSlots();
         invItem.SetActive(false);
 
         if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
