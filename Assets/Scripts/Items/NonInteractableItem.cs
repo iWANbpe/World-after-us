@@ -1,16 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class NonInteractableItem : Item
 {
-    private void Awake()
+    protected override void ItemInitialization()
     {
-        itemInfo = null;
-        targetObj = null;
         isIntractable = false;
-
-        itemRigidbody = GetComponent<Rigidbody>();
-        itemCollider = GetComponent<Collider>();
     }
 }

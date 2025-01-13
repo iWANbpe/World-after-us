@@ -42,7 +42,7 @@ public class ObjectPooler : MonoBehaviour
         itemDictionary[itemInfo.itemName].Enqueue(itemObj);
     }
 
-    public void AddInventoryItem(InventoryItemInfo invItemInfo, Vector3 position) 
+    public void AddInventoryItem(InventoryItemInfo invItemInfo, Vector2 position) 
     {
         if (itemDictionary.ContainsKey(invItemInfo.invItemName) && itemDictionary[invItemInfo.invItemName].Count > 0)
         {

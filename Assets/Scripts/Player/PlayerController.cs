@@ -185,7 +185,7 @@ public class PlayerController : MonoBehaviour
                 lookObject.SetTarget(null);
                 lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
             }
-
+           
         }
     }
 
@@ -194,7 +194,7 @@ public class PlayerController : MonoBehaviour
         if(lookObject != null && lookObject.isIntractable) 
         {
             ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
-            ObjectPooler.Instance.AddInventoryItem(lookObject.itemInfo.inventoryItemInfo, new Vector3(90f, 90f, 0f));
+            ObjectPooler.Instance.AddInventoryItem(lookObject.itemInfo.inventoryItemInfo, new Vector2(90f, 90f));
         }
     }
 
@@ -275,7 +275,7 @@ public class PlayerController : MonoBehaviour
                 else if (playerUI.isActiveAndEnabled) 
                     playerUI.DisableInfoItemText();
             }
-
+            
             else if (!isGrabbing)
             {
                 lookObject = null;

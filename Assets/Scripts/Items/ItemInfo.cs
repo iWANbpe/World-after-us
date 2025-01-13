@@ -18,11 +18,6 @@ public class ItemInfo : ScriptableObject
     {
         Instantiate(gameObject, position, rotation);
     }
-
-    public void AddInventoryItem() 
-    { 
-        
-    }
 }
 
 public enum ItemType 

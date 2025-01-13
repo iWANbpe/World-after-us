@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Item : MonoBehaviour
@@ -14,15 +12,18 @@ public abstract class Item : MonoBehaviour
     protected Collider itemCollider;
     private const float dragSpeed = 5f;
 
-    private void FixedUpdate()
+    private void Awake()
     {
-        if (targetObj) 
-        {
-            itemRigidbody.MovePosition(Vector3.Lerp(itemRigidbody.transform.position, targetObj.transform.position, dragSpeed * Time.fixedDeltaTime));
-        }
+        targetObj = null;
+        itemRigidbody = GetComponent<Rigidbody>();
+        itemCollider = GetComponent<Collider>();
+
+        ItemInitialization();
     }
 
-    
+
+    protected virtual void ItemInitialization() { }
+
     public void SetTarget(GameObject target) 
     {
         targetObj = target;
@@ -31,5 +32,13 @@ public abstract class Item : MonoBehaviour
     public void DisableCollisionLayer(LayerMask layerMask) 
     {
         itemCollider.excludeLayers = layerMask;
+    }
+
+    private void FixedUpdate()
+    {
+        if (targetObj)
+        {
+            itemRigidbody.MovePosition(Vector3.Lerp(itemRigidbody.transform.position, targetObj.transform.position, dragSpeed * Time.fixedDeltaTime));
+        }
     }
 }

@@ -9,7 +9,7 @@ public class InventoryItemInfo : ScriptableObject
     public string invItemName { get { return inventoryItem.name; } }
     public Image invItemImage { get { return inventoryItem.GetComponent<InventoryItem>().invItemImage; } } 
 
-    public void AddItemToInventory(Vector3 position) 
+    public void AddItemToInventory(Vector2 position) 
     {
         GameObject inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
         Instantiate(inventoryItem, position, Quaternion.identity, inventory.transform);
