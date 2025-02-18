@@ -187,8 +187,11 @@ public class PlayerController : MonoBehaviour
             else
             {
                 isGrabbing = false;
-                lookObject.itemRigidbody.useGravity = true;
                 lookObject.SetTarget(null);
+                lookObject.itemRigidbody.useGravity = true;
+
+                lookObject.itemRigidbody.velocity = Vector3.zero;
+                lookObject.itemRigidbody.angularVelocity = Vector3.zero;
                 lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
             }
            

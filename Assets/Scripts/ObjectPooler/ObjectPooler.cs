@@ -22,6 +22,9 @@ public class ObjectPooler : MonoBehaviour
             itemFromDictionary.SetActive(true);
             itemFromDictionary.transform.position = position;
             itemFromDictionary.transform.rotation = rotation;
+
+            itemFromDictionary.GetComponent<Rigidbody>().velocity = Vector3.zero;
+            itemFromDictionary.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
         }
         else 
         {
