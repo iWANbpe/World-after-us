@@ -4245,6 +4245,7 @@ MonoBehaviour:
   camNormalY: 0.68
   camCrouchY: 0.131
   distanceOfInteraction: 8
+  throwingStrength: 15
   interectionMask:
     serializedVersion: 2
     m_Bits: 115

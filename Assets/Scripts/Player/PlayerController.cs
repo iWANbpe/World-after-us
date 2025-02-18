@@ -26,6 +26,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float camCrouchY = 0.131f;
     [Header("Interaction")]
     [SerializeField] private float distanceOfInteraction = 1f;
+    [SerializeField] private float throwingStrength = 1f;
     [SerializeField] private LayerMask interectionMask;
     [Header("Objects")]
     [SerializeField] private GameObject cam;
@@ -34,6 +35,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController characterController;
     
     private Vector3 curPosition;
+    private Vector3 lookDirection;
     private Vector2 moveInputHorizontal;
     private Vector2 mouseRotation;
 
@@ -105,6 +107,10 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Grab.started += Grab;
         inputActions.Player.Grab.performed += Grab;
         inputActions.Player.Grab.canceled += Grab;
+
+        inputActions.Player.Throw.started += Throw;
+        inputActions.Player.Throw.performed += Throw;
+        inputActions.Player.Throw.canceled += Throw;
 
         inputActions.Player.Take.started += TakeItem;
 
@@ -186,6 +192,19 @@ public class PlayerController : MonoBehaviour
                 lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
             }
            
+        }
+    }
+
+    private void Throw(InputAction.CallbackContext contex) 
+    {
+        if (isGrabbing) 
+        {
+            isGrabbing = false;
+            lookObject.itemRigidbody.useGravity = true;
+            lookObject.SetTarget(null);
+            lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
+
+            lookObject.itemRigidbody.AddForce( (grabPoint.transform.position - cam.transform.position).normalized * 10f * throwingStrength);
         }
     }
 

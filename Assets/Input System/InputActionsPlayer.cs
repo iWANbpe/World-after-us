@@ -82,6 +82,15 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
+                    ""name"": ""Take"",
+                    ""type"": ""Button"",
+                    ""id"": ""344f3470-0199-4075-8b6d-297de306b2dd"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
                     ""name"": ""Grab"",
                     ""type"": ""Button"",
                     ""id"": ""83a8fccd-33a5-4718-915c-0231d3ff76d6"",
@@ -91,9 +100,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Take"",
+                    ""name"": ""Throw"",
                     ""type"": ""Button"",
-                    ""id"": ""344f3470-0199-4075-8b6d-297de306b2dd"",
+                    ""id"": ""308cf1cd-af84-4bca-8e80-86d1f2ed3f8a"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -213,23 +222,34 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                 },
                 {
                     ""name"": """",
-                    ""id"": ""3b3db0fa-03cc-4af3-b0c1-bbd161f12f16"",
-                    ""path"": ""<Mouse>/leftButton"",
-                    ""interactions"": """",
-                    ""processors"": """",
-                    ""groups"": """",
-                    ""action"": ""Grab"",
-                    ""isComposite"": false,
-                    ""isPartOfComposite"": false
-                },
-                {
-                    ""name"": """",
                     ""id"": ""6bd9a488-4bb2-4a62-9b2e-d557778fce54"",
                     ""path"": ""<Keyboard>/e"",
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Take"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""71be64b3-278d-4fc5-8011-c833eefd43fc"",
+                    ""path"": ""<Mouse>/rightButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Throw"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""3b3db0fa-03cc-4af3-b0c1-bbd161f12f16"",
+                    ""path"": ""<Mouse>/leftButton"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Grab"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -294,8 +314,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_MouseRotation = m_Player.FindAction("MouseRotation", throwIfNotFound: true);
         m_Player_InventoryOpen = m_Player.FindAction("InventoryOpen", throwIfNotFound: true);
-        m_Player_Grab = m_Player.FindAction("Grab", throwIfNotFound: true);
         m_Player_Take = m_Player.FindAction("Take", throwIfNotFound: true);
+        m_Player_Grab = m_Player.FindAction("Grab", throwIfNotFound: true);
+        m_Player_Throw = m_Player.FindAction("Throw", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_InventoryClose = m_UI.FindAction("InventoryClose", throwIfNotFound: true);
@@ -367,8 +388,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_MouseRotation;
     private readonly InputAction m_Player_InventoryOpen;
-    private readonly InputAction m_Player_Grab;
     private readonly InputAction m_Player_Take;
+    private readonly InputAction m_Player_Grab;
+    private readonly InputAction m_Player_Throw;
     public struct PlayerActions
     {
         private @InputActionsPlayer m_Wrapper;
@@ -379,8 +401,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
         public InputAction @MouseRotation => m_Wrapper.m_Player_MouseRotation;
         public InputAction @InventoryOpen => m_Wrapper.m_Player_InventoryOpen;
-        public InputAction @Grab => m_Wrapper.m_Player_Grab;
         public InputAction @Take => m_Wrapper.m_Player_Take;
+        public InputAction @Grab => m_Wrapper.m_Player_Grab;
+        public InputAction @Throw => m_Wrapper.m_Player_Throw;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -408,12 +431,15 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @InventoryOpen.started += instance.OnInventoryOpen;
             @InventoryOpen.performed += instance.OnInventoryOpen;
             @InventoryOpen.canceled += instance.OnInventoryOpen;
-            @Grab.started += instance.OnGrab;
-            @Grab.performed += instance.OnGrab;
-            @Grab.canceled += instance.OnGrab;
             @Take.started += instance.OnTake;
             @Take.performed += instance.OnTake;
             @Take.canceled += instance.OnTake;
+            @Grab.started += instance.OnGrab;
+            @Grab.performed += instance.OnGrab;
+            @Grab.canceled += instance.OnGrab;
+            @Throw.started += instance.OnThrow;
+            @Throw.performed += instance.OnThrow;
+            @Throw.canceled += instance.OnThrow;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -436,12 +462,15 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @InventoryOpen.started -= instance.OnInventoryOpen;
             @InventoryOpen.performed -= instance.OnInventoryOpen;
             @InventoryOpen.canceled -= instance.OnInventoryOpen;
-            @Grab.started -= instance.OnGrab;
-            @Grab.performed -= instance.OnGrab;
-            @Grab.canceled -= instance.OnGrab;
             @Take.started -= instance.OnTake;
             @Take.performed -= instance.OnTake;
             @Take.canceled -= instance.OnTake;
+            @Grab.started -= instance.OnGrab;
+            @Grab.performed -= instance.OnGrab;
+            @Grab.canceled -= instance.OnGrab;
+            @Throw.started -= instance.OnThrow;
+            @Throw.performed -= instance.OnThrow;
+            @Throw.canceled -= instance.OnThrow;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -521,8 +550,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         void OnCrouch(InputAction.CallbackContext context);
         void OnMouseRotation(InputAction.CallbackContext context);
         void OnInventoryOpen(InputAction.CallbackContext context);
-        void OnGrab(InputAction.CallbackContext context);
         void OnTake(InputAction.CallbackContext context);
+        void OnGrab(InputAction.CallbackContext context);
+        void OnThrow(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
