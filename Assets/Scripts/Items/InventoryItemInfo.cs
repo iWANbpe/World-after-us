@@ -12,6 +12,7 @@ public class InventoryItemInfo : ScriptableObject
     public void AddItemToInventory(Vector2 position) 
     {
         GameObject inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
+        
         Instantiate(inventoryItem, position, Quaternion.identity, inventory.transform);
     }
 }
