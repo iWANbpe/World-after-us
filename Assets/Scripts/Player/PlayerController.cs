@@ -35,7 +35,7 @@ public class PlayerController : MonoBehaviour
     private CharacterController characterController;
     
     private Vector3 curPosition;
-    private Vector3 lookDirection;
+    private Vector3 invItemPosition;
     private Vector2 moveInputHorizontal;
     private Vector2 mouseRotation;
 
@@ -55,7 +55,7 @@ public class PlayerController : MonoBehaviour
     private bool isGrabbing;
     private GameObject grabPoint;
 
-    public EventSystem eventSystem;
+    [HideInInspector] public EventSystem eventSystem;
     private GraphicRaycaster raycaster;
     private PointerEventData pointerEventData;
     private GameObject invItemLookObject;
@@ -216,7 +216,7 @@ public class PlayerController : MonoBehaviour
         if(lookObject != null && lookObject.isIntractable) 
         {
             ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
-            ObjectPooler.Instance.AddInventoryItem(lookObject.itemInfo.inventoryItemInfo, new Vector2(90f, 90f));
+            ObjectPooler.Instance.AddInventoryItem(lookObject.itemInfo.inventoryItemInfo, invItemPosition);
         }
     }
 
@@ -363,7 +363,7 @@ public class PlayerController : MonoBehaviour
         Rotation();
         ApplyGravity();
 
-        if (isInventoryOpen) { invItemLookObject = SelectedInventoryItem();}
+        if (isInventoryOpen) invItemLookObject = SelectedInventoryItem();
     }
 }
 

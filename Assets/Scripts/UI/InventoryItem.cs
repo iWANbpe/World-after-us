@@ -10,15 +10,6 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public string sizeCode;
     public InventoryItemInfo invItemInfo;
 
-    private void Awake()
-    {
-        StartCoroutine(SizeCodeCoroutine());
-    }
-
-    private void Update()
-    {
-        print(sizeCode);
-    }
     public void OnBeginDrag(PointerEventData eventData) 
     {
         hasPlace = false;
@@ -142,5 +133,6 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     {
         yield return new WaitForEndOfFrame();
         CreateSizeCode();
+        
     }
 }
