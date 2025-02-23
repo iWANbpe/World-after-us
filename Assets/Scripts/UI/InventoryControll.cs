@@ -19,7 +19,6 @@ public class InventoryControll : MonoBehaviour
         inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
         slotsPanel = inventory.transform.Find("SlotsPanel").gameObject;
         AddSlots();
-        FindFreeSlots();
     }
     
     private void AddSlots() 
@@ -34,7 +33,9 @@ public class InventoryControll : MonoBehaviour
         inventorySlots = invSlotsList.ToArray();
     }
     private void FindFreeSlots() 
-    { 
+    {
+        freeInventorySlots.Clear();
+
         foreach(GameObject slot in inventorySlots) 
         {
             if (!slot.GetComponent<InventorySlot>().isOccupied) freeInventorySlots.Add(slot);
@@ -44,11 +45,12 @@ public class InventoryControll : MonoBehaviour
     public bool IsFreeSpaceForItem(InventoryItemInfo invItemInfo, out Vector2 invItemPlace) 
     {
         invItemPlace = Vector2.zero;
-        string sizeCode = invItemInfo.inventoryItem.GetComponent<InventoryItem>().sizeCode;
-        
-        int rows = sizeCode.Length;
-        string[] columns = sizeCode.Split();
+        string sizeCode = invItemInfo.invItemSizeCode;
 
+        FindFreeSlots();
+
+        int rows = sizeCode.Length;
+        char[] columns = sizeCode.ToCharArray();
         List<GameObject> placeSlots = new List<GameObject>();
         
         for(int slotIndex = 0; slotIndex < freeInventorySlots.Count; slotIndex++) 
@@ -57,9 +59,9 @@ public class InventoryControll : MonoBehaviour
 
             placeSlots = TryPlace(GlobalSlotIndex, rows, columns);
             
-            if(placeSlots != null) 
+            if(placeSlots.Count > 0) 
             {
-                ClearOccupiedSlots(placeSlots);
+                OccupySlots(placeSlots);
                 invItemPlace = FindCenter(placeSlots);
                 return true;
             }
@@ -68,26 +70,27 @@ public class InventoryControll : MonoBehaviour
         return false;
     }
     
-    private List<GameObject> TryPlace(int GlobalSlotIndex, int rows, string[] columns) 
+    private List<GameObject> TryPlace(int GlobalSlotIndex, int rows, char[] columns) 
     {
         List<GameObject> slotList = new List<GameObject>();
 
         for (int row = 0; row < rows; row++)
         {
-            for (int column = 0; column < int.Parse(columns[row]); column++)
+            for (int column = 0; column < int.Parse(columns[row].ToString()); column++)
             {
                 if (inventorySlots[GlobalSlotIndex + column + (row * slotsPanelWidth)].GetComponent<InventorySlot>().isOccupied)
                 {
                     return null;
                 }
-                slotList.Add(inventorySlots[GlobalSlotIndex + column]);
+
+                slotList.Add(inventorySlots[GlobalSlotIndex + column + (row * slotsPanelWidth)]);
             }
         }
 
         return slotList;
     }
 
-    private void ClearOccupiedSlots(List<GameObject> slotList) 
+    private void OccupySlots(List<GameObject> slotList) 
     { 
         for(int i = 0; i < slotList.Count; i++) 
         {

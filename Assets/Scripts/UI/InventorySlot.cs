@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class InventorySlot : MonoBehaviour
 {
-    [HideInInspector] public bool isOccupied = false;
+    public bool isOccupied = false;
 }

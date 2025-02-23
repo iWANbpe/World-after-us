@@ -35,9 +35,9 @@ public class PlayerController : MonoBehaviour
     private CharacterController characterController;
     
     private Vector3 curPosition;
-    private Vector3 invItemPosition;
     private Vector2 moveInputHorizontal;
     private Vector2 mouseRotation;
+    private Vector2 invItemPosition;
 
     private float currentSpeed;
     private const float gravity = -9.81f;
@@ -213,7 +213,7 @@ public class PlayerController : MonoBehaviour
 
     private void TakeItem(InputAction.CallbackContext contex) 
     { 
-        if(lookObject != null && lookObject.isIntractable) 
+        if(lookObject != null && lookObject.isIntractable && UIController.GetComponent<InventoryControll>().IsFreeSpaceForItem(lookObject.itemInfo.inventoryItemInfo, out invItemPosition)) 
         {
             ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
             ObjectPooler.Instance.AddInventoryItem(lookObject.itemInfo.inventoryItemInfo, invItemPosition);

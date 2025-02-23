@@ -11,7 +11,7 @@ public class InventoryItemCage : MonoBehaviour
     private GameObject occupiedSlot;
     public Vector3 avaliableInventorySlotPosition { get{ return occupiedSlot.transform.position; } }
 
-    private void Awake()
+    public void Initialization()
     {
         raycaster = GameObject.Find("Canvas").GetComponent<GraphicRaycaster>();
         eventSystem = GameObject.Find("/EventSystem").GetComponent<EventSystem>();

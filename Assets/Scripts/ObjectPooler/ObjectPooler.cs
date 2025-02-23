@@ -52,7 +52,7 @@ public class ObjectPooler : MonoBehaviour
             GameObject itemFromDictionary = itemDictionary[invItemInfo.invItemName].Dequeue();
 
             itemFromDictionary.SetActive(true);
-            itemFromDictionary.transform.position = position;
+            itemFromDictionary.GetComponent<InventoryItem>().SetPosition(position);
         }
         else
         {
