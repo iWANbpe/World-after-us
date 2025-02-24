@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 using UnityEngine.EventSystems;
@@ -213,13 +214,24 @@ public class PlayerController : MonoBehaviour
 
     private void TakeItem(InputAction.CallbackContext contex) 
     { 
-        if(lookObject != null && lookObject.isIntractable && UIController.GetComponent<InventoryControll>().IsFreeSpaceForItem(lookObject.itemInfo.inventoryItemInfo, out invItemPosition)) 
+        if(lookObject != null && lookObject.isIntractable) 
         {
-            ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
-            ObjectPooler.Instance.AddInventoryItem(lookObject.itemInfo.inventoryItemInfo, invItemPosition);
+            StartCoroutine(AddItemToInventory());
         }
     }
+    private IEnumerator AddItemToInventory()
+    {
+        GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(lookObject.itemInfo.inventoryItemInfo);
 
+        yield return new WaitForEndOfFrame();
+        
+        if(UIController.GetComponent<InventoryControll>().IsFreeSpaceForItem(invItem, out invItemPosition)) 
+        {
+            ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
+            ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition);
+        }
+
+    }
     private void DropItem(InputAction.CallbackContext contex) 
     {
         if (invItemLookObject) 

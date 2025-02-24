@@ -42,13 +42,16 @@ public class InventoryControll : MonoBehaviour
         }
     }
 
-    public bool IsFreeSpaceForItem(InventoryItemInfo invItemInfo, out Vector2 invItemPlace) 
+    public bool IsFreeSpaceForItem(GameObject invItem, out Vector2 invItemPlace) 
     {
-        invItemPlace = Vector2.zero;
-        string sizeCode = invItemInfo.invItemSizeCode;
-
         FindFreeSlots();
+        invItemPlace = Vector2.zero;
+        if (freeInventorySlots.Count == 0) return false;
 
+        if (invItem.GetComponent<InventoryItem>().sizeCode == "")
+            invItem.GetComponent<InventoryItem>().CreateSizeCode();
+
+        string sizeCode = invItem.GetComponent<InventoryItem>().sizeCode;
         int rows = sizeCode.Length;
         char[] columns = sizeCode.ToCharArray();
         List<GameObject> placeSlots = new List<GameObject>();
@@ -59,9 +62,11 @@ public class InventoryControll : MonoBehaviour
 
             placeSlots = TryPlace(GlobalSlotIndex, rows, columns);
             
-            if(placeSlots.Count > 0) 
+            if(placeSlots != null) 
             {
                 OccupySlots(placeSlots);
+                invItem.GetComponent<InventoryItem>().AddOccupationSlots(placeSlots);
+
                 invItemPlace = FindCenter(placeSlots);
                 return true;
             }

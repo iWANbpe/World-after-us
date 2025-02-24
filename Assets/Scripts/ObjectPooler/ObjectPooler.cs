@@ -44,6 +44,30 @@ public class ObjectPooler : MonoBehaviour
 
         itemDictionary[itemInfo.itemName].Enqueue(itemObj);
     }
+    public GameObject InitializeInventoryItem(InventoryItemInfo invItemInfo) 
+    {
+        GameObject invItem;
+
+        if (itemDictionary.ContainsKey(invItemInfo.invItemName) && itemDictionary[invItemInfo.invItemName].Count > 0)
+        {
+            invItem = itemDictionary[invItemInfo.invItemName].Dequeue();
+
+            invItem.SetActive(true);
+
+        }
+        else
+        {
+            GameObject canvas = GameObject.Find("Canvas");
+            invItem = Instantiate(invItemInfo.inventoryItem, Vector3.zero, Quaternion.identity, canvas.transform);
+            invItem.GetComponent<InventoryItem>().Initialization();
+
+            if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
+                itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
+        }
+
+        invItem.GetComponent<InventoryItem>().SetVisibility(false);
+        return invItem;
+    }
 
     public void AddInventoryItem(InventoryItemInfo invItemInfo, Vector2 position) 
     {
@@ -61,6 +85,15 @@ public class ObjectPooler : MonoBehaviour
             if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
                 itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
         }
+    }
+
+    public void AddInventoryItem(GameObject invItem, Vector2 position) 
+    {
+        GameObject inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
+
+        invItem.transform.SetParent(inventory.transform);
+        invItem.GetComponent<InventoryItem>().SetVisibility(true);
+        invItem.GetComponent<InventoryItem>().SetPosition(position);
     }
 
     public void DeleteInventoryItem(InventoryItemInfo invItemInfo, GameObject invItem) 

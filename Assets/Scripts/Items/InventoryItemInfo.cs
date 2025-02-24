@@ -8,7 +8,7 @@ public class InventoryItemInfo : ScriptableObject
     public GameObject inventoryItem;
     public string invItemName { get { return inventoryItem.name; } }
     public Image invItemImage { get { return inventoryItem.GetComponent<InventoryItem>().invItemImage; } }
-    public string invItemSizeCode { get { return "22"; } }
+    public string invItemSizeCode { get { return inventoryItem.GetComponent<InventoryItem>().sizeCode; } }
     
     public void AddItemToInventory(Vector2 position) 
     {

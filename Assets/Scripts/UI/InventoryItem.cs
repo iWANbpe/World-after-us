@@ -1,6 +1,6 @@
 using UnityEngine;
 using UnityEngine.EventSystems;
-using System.Collections;
+using System.Collections.Generic;
 using UnityEngine.UI;
 
 public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
@@ -17,6 +17,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             transform.GetChild(i).GetComponent<InventoryItemCage>().Initialization();
         }
     }
+
     public void OnBeginDrag(PointerEventData eventData) 
     {
         hasPlace = false;
@@ -36,6 +37,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         {
             transform.position = NewPosition();
             hasPlace = true;
+            OccupySlots();
         }
 
         GetComponent<Image>().raycastTarget = true;
@@ -51,6 +53,14 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
             {
                 child.GetComponent<InventoryItemCage>().ClearSlot();
             }
+        }
+    }
+
+    private void OccupySlots() 
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).GetComponent<InventoryItemCage>().OccupySlot();  
         }
     }
 
@@ -76,7 +86,6 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
                 return false;
             }
         }
-
         return true;
     }
 
@@ -106,9 +115,10 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         transform.position = invItemPos;
         GetComponent<Image>().raycastTarget = true;
         SetChildrenRaycastTarget(true);
+        OccupySlots();
     }
 
-    private void CreateSizeCode() 
+    public void CreateSizeCode() 
     {
         GameObject previousCage = null;
         Vector3 deltaBetweenCages;
@@ -117,7 +127,6 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         for (int i = 0; i < transform.childCount; i++)
         {
             GameObject child = transform.GetChild(i).gameObject;
-
             if(previousCage == null) 
             {
                 cageRowCount += 1;
@@ -143,10 +152,19 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
         sizeCode += cageRowCount;
     }
 
-    private IEnumerator SizeCodeCoroutine() 
+    public void SetVisibility(bool visibility) 
     {
-        yield return new WaitForEndOfFrame();
-        CreateSizeCode();
-        
+        float alpha = visibility ? 1f : 0f;
+        Color invItemColor = GetComponent<Image>().color;
+        invItemColor.a = alpha;
+        GetComponent<Image>().color = invItemColor;
+    }
+
+    public void AddOccupationSlots(List<GameObject> occupationSlots) 
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            transform.GetChild(i).GetComponent<InventoryItemCage>().OccupySlot(occupationSlots[i]);
+        }
     }
 }

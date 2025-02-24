@@ -22,6 +22,12 @@ public class InventoryItemCage : MonoBehaviour
         GetComponent<Image>().raycastTarget = statement;
     }
 
+    private void UpdatePointerEventData() 
+    {
+        pointerEventData = new PointerEventData(eventSystem);
+        pointerEventData.position = transform.position;
+    }
+
     public void ClearSlot() 
     {
         if (occupiedSlot) 
@@ -32,19 +38,45 @@ public class InventoryItemCage : MonoBehaviour
         
     }
 
+    public void OccupySlot()
+    {
+        if(occupiedSlot != null) 
+        {
+            occupiedSlot.GetComponent<InventorySlot>().isOccupied = true;
+            return;
+        }
+
+        UpdatePointerEventData();
+
+        List<RaycastResult> resultsList = new List<RaycastResult>();
+        raycaster.Raycast(pointerEventData, resultsList);
+
+        foreach (RaycastResult result in resultsList)
+        {
+            if (result.gameObject.GetComponent<InventorySlot>() && result.gameObject.GetComponent<InventorySlot>().isOccupied == false)
+            {
+                occupiedSlot = result.gameObject;
+                occupiedSlot.GetComponent<InventorySlot>().isOccupied = true;
+            }
+        }
+
+    }
+    public void OccupySlot(GameObject slot) 
+    {
+        occupiedSlot = slot;
+        occupiedSlot.GetComponent<InventorySlot>().isOccupied = true;
+    }
     public bool IsAboveFreeSlot() 
     {
-        List<RaycastResult> resultsList = new List<RaycastResult>();
-        pointerEventData = new PointerEventData(eventSystem);
-        pointerEventData.position = transform.position;
+        UpdatePointerEventData();
 
+        List<RaycastResult> resultsList = new List<RaycastResult>();
         raycaster.Raycast(pointerEventData, resultsList);
 
         foreach(RaycastResult result in resultsList) 
         {
             if (result.gameObject.GetComponent<InventorySlot>() && result.gameObject.GetComponent<InventorySlot>().isOccupied == false) 
             {
-                result.gameObject.GetComponent<InventorySlot>().isOccupied = true;
                 occupiedSlot = result.gameObject;
                 return true;
             }
