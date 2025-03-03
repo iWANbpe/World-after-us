@@ -6,11 +6,13 @@ public class ObjectPooler : MonoBehaviour
     [HideInInspector]public Dictionary<string, Queue<GameObject>> itemDictionary;
 
     public static ObjectPooler Instance;
-
+    public GameObject canvas;
     private void Awake()
     {
         Instance = this;
+        canvas = GameObject.Find("Canvas");
         itemDictionary = new Dictionary<string, Queue<GameObject>>();
+        
     }
 
     public void SpawnItem(ItemInfo itemInfo, Vector3 position, Quaternion rotation) 
@@ -51,15 +53,11 @@ public class ObjectPooler : MonoBehaviour
         if (itemDictionary.ContainsKey(invItemInfo.invItemName) && itemDictionary[invItemInfo.invItemName].Count > 0)
         {
             invItem = itemDictionary[invItemInfo.invItemName].Dequeue();
-
             invItem.SetActive(true);
-
         }
         else
         {
-            GameObject canvas = GameObject.Find("Canvas");
-            invItem = Instantiate(invItemInfo.inventoryItem, Vector3.zero, Quaternion.identity, canvas.transform);
-            invItem.GetComponent<InventoryItem>().Initialization();
+            invItem = invItemInfo.AddItemToInventory(Vector3.zero, canvas.transform);
 
             if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
                 itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
@@ -67,24 +65,6 @@ public class ObjectPooler : MonoBehaviour
 
         invItem.GetComponent<InventoryItem>().SetVisibility(false);
         return invItem;
-    }
-
-    public void AddInventoryItem(InventoryItemInfo invItemInfo, Vector2 position) 
-    {
-        if (itemDictionary.ContainsKey(invItemInfo.invItemName) && itemDictionary[invItemInfo.invItemName].Count > 0)
-        {
-            GameObject itemFromDictionary = itemDictionary[invItemInfo.invItemName].Dequeue();
-
-            itemFromDictionary.SetActive(true);
-            itemFromDictionary.GetComponent<InventoryItem>().SetPosition(position);
-        }
-        else
-        {
-            invItemInfo.AddItemToInventory(position);
-
-            if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
-                itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
-        }
     }
 
     public void AddInventoryItem(GameObject invItem, Vector2 position) 

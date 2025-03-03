@@ -83,7 +83,7 @@ public class InventoryControll : MonoBehaviour
         {
             for (int column = 0; column < int.Parse(columns[row].ToString()); column++)
             {
-                if (inventorySlots[GlobalSlotIndex + column + (row * slotsPanelWidth)].GetComponent<InventorySlot>().isOccupied)
+                if (GlobalSlotIndex + column + (row * slotsPanelWidth) >= inventorySlots.Length || inventorySlots[GlobalSlotIndex + column + (row * slotsPanelWidth)].GetComponent<InventorySlot>().isOccupied)
                 {
                     return null;
                 }
