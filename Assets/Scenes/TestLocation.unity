@@ -4266,6 +4266,12 @@ MonoBehaviour:
   playerPanel: {fileID: 1175130102}
   infoItemText: {fileID: 1648082394}
   infoPanel: {fileID: 424054883}
+  canvas: {fileID: 1419209291}
+  messagePanel: {fileID: 5728097083783107340, guid: 6ecd70aadc7f04944ae92009c388eb40, type: 3}
+  messageStartCoordinate: {x: 1571.37, y: 117.38}
+  maxMessagesCount: 3
+  messageSpeed: 0.11
+  messageOffScreenDistance: 552.2
 --- !u!1001 &904356067
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7369,6 +7375,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 92692fea13d1d084faeeec161d2390a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  canvas: {fileID: 0}
 --- !u!1001 &1593470779
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7811,8 +7818,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -0.00000023469, y: -417}
-  m_SizeDelta: {x: 1920, y: 132.3277}
+  m_AnchoredPosition: {x: 1.1999, y: -422.62}
+  m_SizeDelta: {x: 592.88, y: 132.3277}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1648082396
 MonoBehaviour:
