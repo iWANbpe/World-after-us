@@ -12,9 +12,11 @@ public class PlayerUI : MonoBehaviour
     [Header("MessagePanel settings")] 
     [SerializeField] private GameObject messagePanel;
     [SerializeField] private Vector2 messageStartCoordinate;
-    [SerializeField] private int maxMessagesCount;
-    [SerializeField] private float messageSpeed;
     [SerializeField] private float messageOffScreenDistance;
+    [SerializeField] private int maxMessagesCount;
+    [SerializeField] private float messageLifetime;
+    [SerializeField] private float messageMoveSpeed;
+    [SerializeField] private float messageMoveDuration;    
     public bool infoItemTextIsActive { get{ return infoItemText.activeSelf; } }
 
     private Image itemImage;
@@ -37,7 +39,7 @@ public class PlayerUI : MonoBehaviour
         infoPanel.SetActive(false);
         
         screenWidth = canvas.GetComponent<RectTransform>().rect.width;
-        messageSpawnStartCoordinate = new Vector2(messageStartCoordinate.x + screenWidth + messageOffScreenDistance, messageStartCoordinate.y);
+        messageSpawnStartCoordinate = new Vector2(screenWidth + messageOffScreenDistance, messageStartCoordinate.y);
     }
 
     public void EnableInfoItemText(string itemName) 
@@ -73,19 +75,20 @@ public class PlayerUI : MonoBehaviour
         }
         else if(messageList.Count >= maxMessagesCount) 
         {
-            GameObject oldMessage = messageList[0];
-            Vector2 oldMessageNewPos = new Vector2(oldMessage.transform.position.x + screenWidth + messageOffScreenDistance, oldMessage.transform.position.y);
+            MessagePanel oldMessage = messageList[0].GetComponent<MessagePanel>();
+            Vector2 oldMessageNewPos = new Vector2(screenWidth + messageOffScreenDistance, oldMessage.gameObject.transform.position.y);
             
-            messageList.Remove(oldMessage);
-            oldMessage.GetComponent<MessagePanel>().targetPos = oldMessageNewPos;
+            messageList.Remove(oldMessage.gameObject);
+            oldMessage.AddMoving(oldMessageNewPos, messageMoveSpeed, messageMoveDuration);
             MoveUpMessagesList();
         }
 
-        GameObject newMessage = Instantiate(messagePanel, messageSpawnStartCoordinate, Quaternion.identity, playerPanel.transform);
-        newMessage.GetComponent<MessagePanel>().SetTextMessage(messageText);
-        newMessage.GetComponent<MessagePanel>().moveSpeed = messageSpeed;
-        newMessage.GetComponent<MessagePanel>().targetPos = messageStartCoordinate;
-        messageList.Add(newMessage);
+        MessagePanel newMessage = Instantiate(messagePanel, messageSpawnStartCoordinate, Quaternion.identity, playerPanel.transform).GetComponent<MessagePanel>();
+        newMessage.SetMessageLifetime(messageLifetime);
+        newMessage.SetTextMessage(messageText);
+        newMessage.disappearancePos.x = screenWidth + messageOffScreenDistance;
+        newMessage.AddMoving(messageStartCoordinate, messageMoveSpeed, messageMoveDuration);
+        messageList.Add(newMessage.gameObject);
     }
 
     private void MoveUpMessagesList() 
@@ -93,9 +96,12 @@ public class PlayerUI : MonoBehaviour
         for (int i = 0; i < messageList.Count; i++) 
         {
             Vector2 newPos = new Vector2(messageStartCoordinate.x, messageStartCoordinate.y + (messagePanel.GetComponent<RectTransform>().rect.height * (messageList.Count - i)));
-            
-            messageList[i].GetComponent<MessagePanel>().moveSpeed = messageSpeed;
-            messageList[i].GetComponent<MessagePanel>().targetPos = newPos;
+            messageList[i].GetComponent<MessagePanel>().AddMoving(newPos, messageMoveSpeed, messageMoveDuration);
         }
+    }
+
+    public void RemoveMessageFromMessageList(GameObject messagePanel) 
+    {
+        messageList.Remove(messagePanel);
     }
 }

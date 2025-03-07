@@ -4269,9 +4269,11 @@ MonoBehaviour:
   canvas: {fileID: 1419209291}
   messagePanel: {fileID: 5728097083783107340, guid: 6ecd70aadc7f04944ae92009c388eb40, type: 3}
   messageStartCoordinate: {x: 1571.37, y: 117.38}
+  messageOffScreenDistance: 400
   maxMessagesCount: 3
-  messageSpeed: 0.11
-  messageOffScreenDistance: 552.2
+  messageLifetime: 3
+  messageMoveSpeed: 3
+  messageMoveDuration: 2
 --- !u!1001 &904356067
 PrefabInstance:
   m_ObjectHideFlags: 0
