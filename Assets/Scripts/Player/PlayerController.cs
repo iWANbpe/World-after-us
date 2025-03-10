@@ -229,7 +229,10 @@ public class PlayerController : MonoBehaviour
         {
             ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
             ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition);
-            playerUI.PlayerPanelMessage(transform.position.ToString());
+        }
+        else 
+        {
+            playerUI.PlayerPanelMessage("Not enought space in inventory!");
         }
 
     }

@@ -14,19 +14,31 @@ public class MessagePanel : MonoBehaviour
     private float moveDuration;
     private float moveSpeed;
     private float startTime;
-
-    private float messageLifeTime;
-
     private void Start()
     {
         playerUI = GameObject.Find("Player").GetComponent<PlayerUI>();
-        StartCoroutine(MessageLife());
     }
+
+    private void OnDisable()
+    {
+        StopAllCoroutines();
+        playerUI.RemoveMessageFromMessageList(this);
+        playerUI.AddMessageToPool(this);
+
+        disappearancePos.y = transform.position.y;
+        transform.position = disappearancePos;
+        gameObject.SetActive(false);
+    }
+
     private void FixedUpdate()
     {
         if(transform.position != targetPos) 
         {
             MoveTowardsTarget();
+        }
+        else if(transform.position == disappearancePos) 
+        {
+            gameObject.SetActive(false);
         }
     }
 
@@ -52,14 +64,19 @@ public class MessagePanel : MonoBehaviour
 
     public void SetMessageLifetime(float messageLifeTime) 
     {
-        this.messageLifeTime = messageLifeTime;
+        StartCoroutine(MessageLife(messageLifeTime));
     }
 
-    private IEnumerator MessageLife() 
+    private IEnumerator MessageLife(float messageLifeTime) 
     {
         yield return new WaitForSeconds(messageLifeTime);
+        HideMessage();
+    }
 
-        playerUI.RemoveMessageFromMessageList(gameObject);
+    public void HideMessage() 
+    {
+        StopAllCoroutines();
+        playerUI.RemoveMessageFromMessageList(this);
         startTime = Time.time;
         disappearancePos.y = transform.position.y;
         startPosition = transform.position;

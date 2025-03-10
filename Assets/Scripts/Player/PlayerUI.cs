@@ -25,7 +25,8 @@ public class PlayerUI : MonoBehaviour
     private TMP_Text itemEffectsText;
     private TMP_Text ItemDescriptionText;
 
-    private List<GameObject> messageList = new List<GameObject>();
+    private List<MessagePanel> messageList = new List<MessagePanel>();
+    private Queue<MessagePanel> messagePool = new Queue<MessagePanel>();
     private float screenWidth;
     private Vector2 messageSpawnStartCoordinate;
     private void Awake()
@@ -76,19 +77,14 @@ public class PlayerUI : MonoBehaviour
         else if(messageList.Count >= maxMessagesCount) 
         {
             MessagePanel oldMessage = messageList[0].GetComponent<MessagePanel>();
-            Vector2 oldMessageNewPos = new Vector2(screenWidth + messageOffScreenDistance, oldMessage.gameObject.transform.position.y);
-            
-            messageList.Remove(oldMessage.gameObject);
-            oldMessage.AddMoving(oldMessageNewPos, messageMoveSpeed, messageMoveDuration);
+            oldMessage.HideMessage();
             MoveUpMessagesList();
         }
 
-        MessagePanel newMessage = Instantiate(messagePanel, messageSpawnStartCoordinate, Quaternion.identity, playerPanel.transform).GetComponent<MessagePanel>();
-        newMessage.SetMessageLifetime(messageLifetime);
+        MessagePanel newMessage = SpawnMessagePanel();
         newMessage.SetTextMessage(messageText);
-        newMessage.disappearancePos.x = screenWidth + messageOffScreenDistance;
         newMessage.AddMoving(messageStartCoordinate, messageMoveSpeed, messageMoveDuration);
-        messageList.Add(newMessage.gameObject);
+        messageList.Add(newMessage);
     }
 
     private void MoveUpMessagesList() 
@@ -96,12 +92,39 @@ public class PlayerUI : MonoBehaviour
         for (int i = 0; i < messageList.Count; i++) 
         {
             Vector2 newPos = new Vector2(messageStartCoordinate.x, messageStartCoordinate.y + (messagePanel.GetComponent<RectTransform>().rect.height * (messageList.Count - i)));
-            messageList[i].GetComponent<MessagePanel>().AddMoving(newPos, messageMoveSpeed, messageMoveDuration);
+            messageList[i].AddMoving(newPos, messageMoveSpeed, messageMoveDuration);
         }
     }
 
-    public void RemoveMessageFromMessageList(GameObject messagePanel) 
+    public void RemoveMessageFromMessageList(MessagePanel messagePanel) 
     {
         messageList.Remove(messagePanel);
+    }
+
+    public MessagePanel SpawnMessagePanel() 
+    {
+        MessagePanel newMessage;
+
+        if (messagePool.Count > 0) 
+        {
+            newMessage = messagePool.Dequeue();
+            newMessage.gameObject.SetActive(true);
+            newMessage.gameObject.transform.position = messageSpawnStartCoordinate;
+        }
+
+        else 
+        {
+            newMessage = Instantiate(messagePanel, messageSpawnStartCoordinate, Quaternion.identity, playerPanel.transform).GetComponent<MessagePanel>();
+            newMessage.disappearancePos.x = screenWidth + messageOffScreenDistance;
+        }
+
+        
+        newMessage.SetMessageLifetime(messageLifetime);
+        return newMessage;
+    }
+
+    public void AddMessageToPool(MessagePanel messagePanel) 
+    {
+        messagePool.Enqueue(messagePanel);
     }
 }
