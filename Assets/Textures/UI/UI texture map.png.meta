@@ -131,7 +131,7 @@ TextureImporter:
         width: 937
         height: 164
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -147,12 +147,12 @@ TextureImporter:
       name: UI texture map_1
       rect:
         serializedVersion: 2
-        x: 1021
-        y: 591
-        width: 330
-        height: 463
+        x: 36
+        y: 437
+        width: 408
+        height: 409
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -168,12 +168,12 @@ TextureImporter:
       name: UI texture map_2
       rect:
         serializedVersion: 2
-        x: 1388
-        y: 596
-        width: 215
-        height: 458
+        x: 454
+        y: 437
+        width: 191
+        height: 267
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -186,36 +186,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI texture map_3
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 437
-        width: 408
-        height: 409
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 7732d567028b0d04881e33cb5beecae5
-      internalID: -1029477042
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: UI texture map_4
       rect:
         serializedVersion: 2
-        x: 504
-        y: 437
-        width: 400
-        height: 400
+        x: 668
+        y: 436
+        width: 278
+        height: 268
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -228,36 +207,15 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI texture map_5
-      rect:
-        serializedVersion: 2
-        x: 1400
-        y: 600
-        width: 4
-        height: 4
-      alignment: 0
-      pivot: {x: 0.5, y: 0.5}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: db60238c9d25af240bd79a1e8b8c78eb
-      internalID: 592286728
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
       name: UI texture map_6
       rect:
         serializedVersion: 2
-        x: 36
-        y: 43
-        width: 909
-        height: 350
+        x: 1018
+        y: 431
+        width: 123
+        height: 269
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
@@ -270,22 +228,22 @@ TextureImporter:
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI texture map_8
+      name: UI texture map_7
       rect:
         serializedVersion: 2
-        x: 987
-        y: 165
-        width: 416
-        height: 406
+        x: 36
+        y: 43
+        width: 909
+        height: 350
       alignment: 0
-      pivot: {x: 0.5, y: 0.5}
+      pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: c57ae783f8b37934d96147559d084ba4
-      internalID: 235417803
+      spriteID: 3f6ff0170a06ecc479ddcdb8283abb5c
+      internalID: -1406893524
       vertices: []
       indices: 
       edges: []
@@ -303,15 +261,12 @@ TextureImporter:
     nameFileIdTable:
       UI texture map_0: 172116011
       UI texture map_1: 643721892
-      UI texture map_10: 152767767
       UI texture map_2: 671139177
       UI texture map_3: -1029477042
       UI texture map_4: 1114491406
       UI texture map_5: 592286728
       UI texture map_6: 60923162
       UI texture map_7: -1406893524
-      UI texture map_8: 235417803
-      UI texture map_9: 1507250952
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

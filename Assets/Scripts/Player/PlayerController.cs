@@ -232,7 +232,7 @@ public class PlayerController : MonoBehaviour
         }
         else 
         {
-            playerUI.PlayerPanelMessage("Not enought space in inventory!");
+            playerUI.PlayerPanelMessage(UIController.GetComponent<Localization>().GetText("UI string table", "notEnoughInventorySpace"));
         }
 
     }
