@@ -18,7 +18,13 @@ MonoBehaviour:
   m_GUID: 4faeb5859de88f042bab17f12d204c96
   m_SerializeEntries:
   - m_GUID: 7298f46cf7cabaf45bd5a6bed0f2c514
-    m_Address: UI string table_uk
+    m_Address: UIStringTable_uk
+    m_ReadOnly: 1
+    m_SerializedLabels:
+    - Locale-uk
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b38fe381add8c0f4aa3535ceb6fe1003
+    m_Address: ItemStringTable_uk
     m_ReadOnly: 1
     m_SerializedLabels:
     - Locale-uk

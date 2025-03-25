@@ -47,7 +47,6 @@ public class PlayerController : MonoBehaviour
     private bool isCrouch;
 
     private GameObject canvas;
-    private GameObject UIController;
     private PlayerUI playerUI;
     private bool isInventoryOpen;
 
@@ -64,7 +63,6 @@ public class PlayerController : MonoBehaviour
     void Awake()
     {
         canvas = GameObject.Find("Canvas");
-        UIController = GameObject.Find("UI Controller");
         eventSystem = GameObject.Find("/EventSystem").GetComponent<EventSystem>();
 
         characterController = GetComponent<CharacterController>();
@@ -76,12 +74,6 @@ public class PlayerController : MonoBehaviour
 
         isInventoryOpen = false;
         isGrabbing = false;
-
-        SetCursorActivity(false);
-        playerUI.DisableInfoItemText();
-        InventoryChangeStatement(isInventoryOpen);
-        UIController.GetComponent<Layouts>().OpenLayout(LayoutType.PlayerPanel);
-
         grabPoint = cam.transform.Find("GrabPoint").gameObject;
         
         //input actions Player
@@ -121,14 +113,12 @@ public class PlayerController : MonoBehaviour
         inputActions.UI.DropItem.started += DropItem;
     }
 
-    private void OnEnable()
+    private void Start()
     {
-        inputActions.Player.Enable();
-    }
-
-    private void OnDisable()
-    {
-        inputActions.Player.Disable();
+        SetCursorActivity(false);
+        playerUI.DisableInfoItemText();
+        InventoryChangeStatement(isInventoryOpen);
+        Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
     }
 
     private void SetCursorActivity(bool state) 
@@ -225,14 +215,14 @@ public class PlayerController : MonoBehaviour
 
         yield return new WaitForEndOfFrame();
         
-        if(UIController.GetComponent<InventoryControll>().IsFreeSpaceForItem(invItem, out invItemPosition)) 
+        if(InventoryControll.Instance.IsFreeSpaceForItem(invItem, out invItemPosition)) 
         {
             ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
             ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition);
         }
         else 
         {
-            playerUI.PlayerPanelMessage(UIController.GetComponent<Localization>().GetText("UI string table", "notEnoughInventorySpace"));
+            playerUI.PlayerPanelMessage(Localization.Instance.GetText("UIStringTable", "notEnoughInventorySpace"));
         }
 
     }
@@ -308,7 +298,7 @@ public class PlayerController : MonoBehaviour
                 lookObject = hit.collider.gameObject.GetComponent<Item>();
                 
                 if (lookObject.isIntractable) 
-                    playerUI.EnableInfoItemText(lookObject.itemName);
+                    playerUI.EnableInfoItemText(lookObject.itemInfo.GetLocalizedItemName());
                 
                 else if (playerUI.isActiveAndEnabled) 
                     playerUI.DisableInfoItemText();
@@ -357,14 +347,14 @@ public class PlayerController : MonoBehaviour
     {
         if (inventoryStatement) 
         {
-            UIController.GetComponent<Layouts>().OpenLayout(LayoutType.Inventory);
+            Layouts.Instance.OpenLayout(LayoutType.Inventory);
             inputActions.Player.Disable();
             inputActions.UI.Enable();
         }
 
         else 
         {
-            UIController.GetComponent<Layouts>().OpenLayout(LayoutType.PlayerPanel);
+            Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
             inputActions.Player.Enable();
             inputActions.UI.Disable();
         }

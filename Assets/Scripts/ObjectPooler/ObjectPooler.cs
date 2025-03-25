@@ -6,13 +6,21 @@ public class ObjectPooler : MonoBehaviour
     [HideInInspector]public Dictionary<string, Queue<GameObject>> itemDictionary;
 
     public static ObjectPooler Instance;
-    public GameObject canvas;
+    [HideInInspector] public GameObject canvas;
     private void Awake()
     {
-        Instance = this;
+        if(Instance == null) 
+        { 
+            Instance = this;
+        }
+        else if(Instance == this) 
+        {
+            Destroy(gameObject);
+        }
+
         canvas = GameObject.Find("Canvas");
         itemDictionary = new Dictionary<string, Queue<GameObject>>();
-        
+        //DontDestroyOnLoad(gameObject);
     }
 
     public void SpawnItem(ItemInfo itemInfo, Vector3 position, Quaternion rotation) 

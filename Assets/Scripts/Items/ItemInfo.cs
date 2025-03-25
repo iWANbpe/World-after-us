@@ -6,7 +6,6 @@ public class ItemInfo : ScriptableObject
     [Header("Base info")]
 
     public string itemName;
-    [Multiline] public string itemDescription;
     public ItemType type;
     public GameObject gameObject;
 
@@ -18,6 +17,17 @@ public class ItemInfo : ScriptableObject
     {
         Instantiate(gameObject, position, rotation);
     }
+
+    public string GetLocalizedItemName() 
+    { 
+        return Localization.Instance.GetText("ItemStringTable", itemName + "Name");
+    }
+
+    public string GetLocalizedItemDescription() 
+    { 
+        return Localization.Instance.GetText("ItemStringTable", itemName + "Description");
+    }
+
 }
 
 public enum ItemType 

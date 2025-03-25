@@ -17,10 +17,8 @@ public abstract class Item : MonoBehaviour
         targetObj = null;
         itemRigidbody = GetComponent<Rigidbody>();
         itemCollider = GetComponent<Collider>();
-
         ItemInitialization();
     }
-
 
     protected virtual void ItemInitialization() { }
 

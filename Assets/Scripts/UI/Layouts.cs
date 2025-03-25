@@ -4,7 +4,19 @@ using UnityEngine.UI;
 public class Layouts : MonoBehaviour
 {
     [SerializeField] private Layout[] layouts;
+    public static Layouts Instance;
 
+    private void Awake()
+    {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance == this)
+        {
+            Destroy(gameObject);
+        }
+    }
     public void OpenLayout(LayoutType type) 
     { 
         for(int i = 0; i < layouts.Length; i++) 

@@ -58,9 +58,9 @@ public class PlayerUI : MonoBehaviour
     {
         infoPanel.SetActive(true);
         itemImage.sprite = invItemInfo.invItemImage.sprite;
-        itemNameText.text = invItemInfo.itemInfo.itemName;
+        itemNameText.text = invItemInfo.itemInfo.GetLocalizedItemName();
         itemTypeText.text = "Type: " + invItemInfo.itemInfo.type;
-        ItemDescriptionText.text = invItemInfo.itemInfo.itemDescription;
+        ItemDescriptionText.text = invItemInfo.itemInfo.GetLocalizedItemDescription();
     }
 
     public void DisableInfoPanel() 

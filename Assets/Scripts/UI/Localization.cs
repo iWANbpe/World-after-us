@@ -6,8 +6,19 @@ public class Localization : MonoBehaviour
 {
     [SerializeField] private int languageId;
 
+    public static Localization Instance;
+
     void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance == this)
+        {
+            Destroy(gameObject);
+        }
+
         SetLanguage(languageId);
     }
 

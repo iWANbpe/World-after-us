@@ -12,10 +12,21 @@ public class InventoryControll : MonoBehaviour
 
     private GameObject [] inventorySlots;
     private List<GameObject> freeInventorySlots = new List<GameObject>();
-
+    
+    public static InventoryControll Instance;
 
     void Awake()
     {
+        if (Instance == null)
+        {
+            Instance = this;
+        }
+        else if (Instance == this)
+        {
+            Destroy(gameObject);
+        }
+
+        //DontDestroyOnLoad(gameObject);
         inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
         slotsPanel = inventory.transform.Find("SlotsPanel").gameObject;
         AddSlots();
