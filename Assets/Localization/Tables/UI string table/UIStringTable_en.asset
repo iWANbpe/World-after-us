@@ -16,8 +16,7 @@ MonoBehaviour:
     m_Code: en
   m_SharedData: {fileID: 11400000, guid: e007548d893bb1e48a23ceb73c927f6c, type: 2}
   m_Metadata:
-    m_Items:
-    - rid: 7130645678786347034
+    m_Items: []
   m_TableData:
   - m_Id: 61671620608
     m_Localized: New Game
@@ -40,24 +39,17 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 422893469696
-    m_Localized: +{0}% to the food
+    m_Localized: +{value}% to the food
     m_Metadata:
-      m_Items:
-      - rid: 7130645678786347034
+      m_Items: []
   - m_Id: 598823550976
-    m_Localized: +{0}% to the water
+    m_Localized: +{value}% to the water
     m_Metadata:
-      m_Items:
-      - rid: 7130645678786347034
+      m_Items: []
   - m_Id: 647435534336
-    m_Localized: +{0}% to the filter
+    m_Localized: +{value}% to the filter
     m_Metadata:
-      m_Items:
-      - rid: 7130645678786347034
+      m_Items: []
   references:
     version: 2
-    RefIds:
-    - rid: 7130645678786347034
-      type: {class: SmartFormatTag, ns: UnityEngine.Localization.Metadata, asm: Unity.Localization}
-      data:
-        m_Entries: 00406a76620000000040aa6c8b00000000402abe96000000
+    RefIds: []
