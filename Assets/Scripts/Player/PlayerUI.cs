@@ -16,7 +16,12 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private int maxMessagesCount;
     [SerializeField] private float messageLifetime;
     [SerializeField] private float messageMoveSpeed;
-    [SerializeField] private float messageMoveDuration;    
+    [SerializeField] private float messageMoveDuration;
+
+    [Header("FWF bars")]
+    [SerializeField] private GameObject foodBar;
+    [SerializeField] private GameObject waterBar;
+    [SerializeField] private GameObject filterBar;
     public bool infoItemTextIsActive { get{ return infoItemText.activeSelf; } }
 
     private Image itemImage;
@@ -29,6 +34,8 @@ public class PlayerUI : MonoBehaviour
     private Queue<MessagePanel> messagePool = new Queue<MessagePanel>();
     private float screenWidth;
     private Vector2 messageSpawnStartCoordinate;
+
+    private Dictionary<UtilityType, GameObject> fwfBarDictionary = new Dictionary<UtilityType, GameObject>();
     private void Awake()
     {
         itemImage = infoPanel.transform.Find("ItemImage").gameObject.GetComponent<Image>();
@@ -41,6 +48,10 @@ public class PlayerUI : MonoBehaviour
         
         screenWidth = canvas.GetComponent<RectTransform>().rect.width;
         messageSpawnStartCoordinate = new Vector2(screenWidth + messageOffScreenDistance, messageStartCoordinate.y);
+
+        fwfBarDictionary.Add(UtilityType.Food, foodBar);
+        fwfBarDictionary.Add(UtilityType.Water, waterBar);
+        fwfBarDictionary.Add(UtilityType.Filter, filterBar);
     }
 
     public void EnableInfoItemText(string itemName) 
@@ -58,8 +69,10 @@ public class PlayerUI : MonoBehaviour
     {
         infoPanel.SetActive(true);
         itemImage.sprite = invItemInfo.invItemImage.sprite;
+        
         itemNameText.text = invItemInfo.itemInfo.GetLocalizedItemName();
-        itemTypeText.text = "Type: " + invItemInfo.itemInfo.type;
+        itemTypeText.text = Localization.Instance.GetText("UIStringTable", "typeText") + " " + invItemInfo.itemInfo.type;
+        itemEffectsText.text = invItemInfo.itemInfo.itemUtility.GetUtilityText();
         ItemDescriptionText.text = invItemInfo.itemInfo.GetLocalizedItemDescription();
     }
 
@@ -126,5 +139,17 @@ public class PlayerUI : MonoBehaviour
     public void AddMessageToPool(MessagePanel messagePanel) 
     {
         messagePool.Enqueue(messagePanel);
+    }
+
+    public void UpdateFWFBars(FWF fwfValue) 
+    { 
+        foreach(UtilityPoint uPoint in fwfValue.utilityPoints) 
+        {
+            if (fwfBarDictionary.ContainsKey(uPoint.utilityType)) 
+            {
+                GameObject bar = fwfBarDictionary[uPoint.utilityType];
+                bar.GetComponentInChildren<Slider>().value = uPoint.utilityValue / 100f;
+            }
+        }
     }
 }

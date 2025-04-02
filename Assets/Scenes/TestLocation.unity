@@ -5637,6 +5637,13 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 115
   cam: {fileID: 963194225}
+  maxStartFood: 78
+  minStartFood: 36
+  maxStartWater: 88
+  minStartWater: 45
+  maxStartFilter: 70
+  minStartFilter: 55
+  maxFWFvalue: 100
   eventSystem: {fileID: 0}
 --- !u!114 &894059213
 MonoBehaviour:
@@ -5661,6 +5668,9 @@ MonoBehaviour:
   messageLifetime: 3
   messageMoveSpeed: 3
   messageMoveDuration: 2
+  foodBar: {fileID: 61343540}
+  waterBar: {fileID: 505496183}
+  filterBar: {fileID: 2015572194}
 --- !u!1001 &904356067
 PrefabInstance:
   m_ObjectHideFlags: 0

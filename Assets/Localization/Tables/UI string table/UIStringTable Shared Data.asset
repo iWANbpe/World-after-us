@@ -47,6 +47,10 @@ MonoBehaviour:
     m_Key: addFilterText
     m_Metadata:
       m_Items: []
+  - m_Id: 4000110093156352
+    m_Key: typeText
+    m_Metadata:
+      m_Items: []
   m_Metadata:
     m_Items: []
   m_KeyGenerator:

@@ -7,6 +7,7 @@ public class ItemInfo : ScriptableObject
 
     public string itemName;
     public ItemType type;
+    public FWF itemUtility;
     public GameObject gameObject;
 
     [Header("Inventory Settings")]
@@ -27,7 +28,6 @@ public class ItemInfo : ScriptableObject
     { 
         return Localization.Instance.GetText("ItemStringTable", itemName + "Description");
     }
-
 }
 
 public enum ItemType 

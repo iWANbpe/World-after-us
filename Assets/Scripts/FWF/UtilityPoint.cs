@@ -1,10 +1,10 @@
 [System.Serializable]
 public class UtilityPoint
 {
-    public float utilityValue;
+    public int utilityValue;
     public UtilityType utilityType;
 
-    public UtilityPoint(float utilityValue, UtilityType utilityType) 
+    public UtilityPoint(int utilityValue, UtilityType utilityType) 
     {
         this.utilityValue = utilityValue;
         this.utilityType = utilityType;
@@ -20,11 +20,11 @@ public class UtilityPoint
         { 
             if(text == "{value}") 
             {
-                utilityText += utilityValue.ToString();
+                utilityText += " " + utilityValue.ToString();
                 continue;
             }
 
-            utilityText += text;
+            utilityText += " " + text;
         }
         return utilityText;
     }

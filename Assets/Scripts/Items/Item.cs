@@ -8,7 +8,6 @@ public abstract class Item : MonoBehaviour
     [HideInInspector] public Rigidbody itemRigidbody;
 
     public ItemInfo itemInfo;
-    public List<UtilityPoint> utilityPoints;
     
     protected GameObject targetObj;
     protected Collider itemCollider;

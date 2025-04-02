@@ -39,15 +39,19 @@ MonoBehaviour:
     m_Metadata:
       m_Items: []
   - m_Id: 422893469696
-    m_Localized: +{value}% to the food
+    m_Localized: + {value} % to the food
     m_Metadata:
       m_Items: []
   - m_Id: 598823550976
-    m_Localized: +{value}% to the water
+    m_Localized: + {value} % to the water
     m_Metadata:
       m_Items: []
   - m_Id: 647435534336
-    m_Localized: +{value}% to the filter
+    m_Localized: + {value} % to the filter
+    m_Metadata:
+      m_Items: []
+  - m_Id: 4000110093156352
+    m_Localized: 'Type:'
     m_Metadata:
       m_Items: []
   references:

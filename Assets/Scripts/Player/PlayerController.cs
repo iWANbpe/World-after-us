@@ -31,10 +31,20 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask interectionMask;
     [Header("Objects")]
     [SerializeField] private GameObject cam;
+    [Header("FWF")]
+    [SerializeField] private int maxStartFood;
+    [SerializeField] private int minStartFood;
+    [SerializeField] private int maxStartWater;
+    [SerializeField] private int minStartWater;
+    [SerializeField] private int maxStartFilter;
+    [SerializeField] private int minStartFilter;
+    [SerializeField] private int maxFWFvalue;
 
     private InputActionsPlayer inputActions;
     private CharacterController characterController;
-    
+
+    private FWF fwfPlayer;
+
     private Vector3 curPosition;
     private Vector2 moveInputHorizontal;
     private Vector2 mouseRotation;
@@ -75,6 +85,8 @@ public class PlayerController : MonoBehaviour
         isInventoryOpen = false;
         isGrabbing = false;
         grabPoint = cam.transform.Find("GrabPoint").gameObject;
+
+        fwfPlayer = new FWF(Random.Range(minStartFood, maxStartFood), Random.Range(minStartWater, maxStartWater), Random.Range(minStartFilter, maxStartFilter), maxFWFvalue);
         
         //input actions Player
         inputActions.Player.Moving.started += HorizontalMoving;
@@ -117,6 +129,8 @@ public class PlayerController : MonoBehaviour
     {
         SetCursorActivity(false);
         playerUI.DisableInfoItemText();
+        playerUI.UpdateFWFBars(fwfPlayer);
+
         InventoryChangeStatement(isInventoryOpen);
         Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
     }
