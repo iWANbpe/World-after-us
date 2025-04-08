@@ -19,9 +19,9 @@ public class PlayerUI : MonoBehaviour
     [SerializeField] private float messageMoveDuration;
 
     [Header("FWF bars")]
-    [SerializeField] private GameObject foodBar;
-    [SerializeField] private GameObject waterBar;
-    [SerializeField] private GameObject filterBar;
+    [SerializeField] private List<GameObject> foodBarList = new List<GameObject>();
+    [SerializeField] private List<GameObject> waterBarList = new List<GameObject>();
+    [SerializeField] private List<GameObject> filterBarList = new List<GameObject>();
     public bool infoItemTextIsActive { get{ return infoItemText.activeSelf; } }
 
     private Image itemImage;
@@ -35,7 +35,7 @@ public class PlayerUI : MonoBehaviour
     private float screenWidth;
     private Vector2 messageSpawnStartCoordinate;
 
-    private Dictionary<UtilityType, GameObject> fwfBarDictionary = new Dictionary<UtilityType, GameObject>();
+    private Dictionary<UtilityType, List<GameObject>> fwfBarDictionary = new Dictionary<UtilityType, List<GameObject>>();
     private void Awake()
     {
         itemImage = infoPanel.transform.Find("ItemImage").gameObject.GetComponent<Image>();
@@ -49,9 +49,9 @@ public class PlayerUI : MonoBehaviour
         screenWidth = canvas.GetComponent<RectTransform>().rect.width;
         messageSpawnStartCoordinate = new Vector2(screenWidth + messageOffScreenDistance, messageStartCoordinate.y);
 
-        fwfBarDictionary.Add(UtilityType.Food, foodBar);
-        fwfBarDictionary.Add(UtilityType.Water, waterBar);
-        fwfBarDictionary.Add(UtilityType.Filter, filterBar);
+        fwfBarDictionary.Add(UtilityType.Food, foodBarList);
+        fwfBarDictionary.Add(UtilityType.Water, waterBarList);
+        fwfBarDictionary.Add(UtilityType.Filter, filterBarList);
     }
 
     public void EnableInfoItemText(string itemName) 
@@ -145,10 +145,14 @@ public class PlayerUI : MonoBehaviour
     { 
         foreach(UtilityPoint uPoint in fwfValue.utilityPoints) 
         {
-            if (fwfBarDictionary.ContainsKey(uPoint.utilityType)) 
+            if (fwfBarDictionary.ContainsKey(uPoint.utilityType))
             {
-                GameObject bar = fwfBarDictionary[uPoint.utilityType];
-                bar.GetComponentInChildren<Slider>().value = uPoint.utilityValue / 100f;
+                for (int i = 0; i < fwfBarDictionary[uPoint.utilityType].Count; i++) 
+                {
+                    GameObject bar = fwfBarDictionary[uPoint.utilityType][i];
+                    bar.GetComponentInChildren<Slider>().value = uPoint.utilityValue / 100f;
+                }
+                
             }
         }
     }

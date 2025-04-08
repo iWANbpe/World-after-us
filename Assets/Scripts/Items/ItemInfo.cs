@@ -4,37 +4,17 @@ using UnityEngine;
 public class ItemInfo : ScriptableObject
 {
     [Header("Base info")]
-
     public string itemName;
-    public ItemType type;
-    public FWF itemUtility;
     public GameObject gameObject;
 
-    [Header("Inventory Settings")]
-    
-    public InventoryItemInfo inventoryItemInfo;
-
-    public void InstaniateItem(Vector3 position, Quaternion rotation) 
+    public virtual GameObject InstantiateItem(Vector3 pos, Quaternion rotation) 
     {
-        Instantiate(gameObject, position, rotation);
+        GameObject item = Instantiate(gameObject, pos, rotation);
+        item.GetComponent<Item>().isIntractable = false;
+        return item;
     }
 
-    public string GetLocalizedItemName() 
-    { 
-        return Localization.Instance.GetText("ItemStringTable", itemName + "Name");
-    }
-
-    public string GetLocalizedItemDescription() 
-    { 
-        return Localization.Instance.GetText("ItemStringTable", itemName + "Description");
-    }
-}
-
-public enum ItemType 
-{ 
-    Food,
-    Water,
-    Filter,
-    Scrap,
-    Gun
+    public virtual InventoryItemInfo GetInventoryItemInfo() { return null; }
+    public virtual string GetLocalizedItemName() { return null; }
+    public virtual string GetLocalizedItemDescription() { return null; }
 }

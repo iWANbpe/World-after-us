@@ -7,6 +7,7 @@ public class ObjectPooler : MonoBehaviour
 
     public static ObjectPooler Instance;
     [HideInInspector] public GameObject canvas;
+ 
     private void Awake()
     {
         if(Instance == null) 
@@ -20,7 +21,7 @@ public class ObjectPooler : MonoBehaviour
 
         canvas = GameObject.Find("Canvas");
         itemDictionary = new Dictionary<string, Queue<GameObject>>();
-        //DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
     }
 
     public void SpawnItem(ItemInfo itemInfo, Vector3 position, Quaternion rotation) 
@@ -38,7 +39,7 @@ public class ObjectPooler : MonoBehaviour
         }
         else 
         {
-            itemInfo.InstaniateItem(position, rotation);
+            itemInfo.InstantiateItem(position, rotation);
             
             if (!itemDictionary.ContainsKey(itemInfo.itemName)) 
                 itemDictionary.Add(itemInfo.itemName, new Queue<GameObject>());

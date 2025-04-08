@@ -4,7 +4,7 @@ using UnityEngine.UI;
 [CreateAssetMenu(menuName = "ScriptableObjects/InventoryItemInfo")]
 public class InventoryItemInfo : ScriptableObject
 {
-    public ItemInfo itemInfo;
+    public ItemInfoIntractable itemInfo;
     public GameObject inventoryItem;
     public string invItemName { get { return inventoryItem.name; } }
     public Image invItemImage { get { return inventoryItem.GetComponent<InventoryItem>().invItemImage; } }

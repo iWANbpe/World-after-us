@@ -26,7 +26,7 @@ public class InventoryControll : MonoBehaviour
             Destroy(gameObject);
         }
 
-        //DontDestroyOnLoad(gameObject);
+        DontDestroyOnLoad(gameObject);
         inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
         slotsPanel = inventory.transform.Find("SlotsPanel").gameObject;
         AddSlots();

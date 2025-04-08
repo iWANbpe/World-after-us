@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 5774587339249130263}
   - component: {fileID: 7043662952826732013}
   - component: {fileID: 4007263776832830955}
-  - component: {fileID: -1431227055253844116}
+  - component: {fileID: -2702045973970536912}
   m_Layer: 0
   m_Name: TestItemInterectable
   m_TagString: Untagged
@@ -134,7 +134,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!114 &-1431227055253844116
+--- !u!114 &-2702045973970536912
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -143,10 +143,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 1651189897193929992}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d1d54f485b12a8c43b08ad91c45dc316, type: 3}
+  m_Script: {fileID: 11500000, guid: 53bad1d5b3375d942818eed893a50b93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isIntractable: 0
   itemRigidbody: {fileID: 0}
-  targetObj: {fileID: 0}
-  itemCollider: {fileID: 0}
   itemInfo: {fileID: 11400000, guid: 07a61466feaa55546b80a6b3fa44f60f, type: 2}

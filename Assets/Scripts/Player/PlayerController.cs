@@ -225,7 +225,7 @@ public class PlayerController : MonoBehaviour
     }
     private IEnumerator AddItemToInventory()
     {
-        GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(lookObject.itemInfo.inventoryItemInfo);
+        GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(lookObject.itemInfo.GetInventoryItemInfo());
 
         yield return new WaitForEndOfFrame();
         
@@ -310,7 +310,7 @@ public class PlayerController : MonoBehaviour
             if (hit.collider.gameObject.GetComponent<Item>())
             {
                 lookObject = hit.collider.gameObject.GetComponent<Item>();
-                
+
                 if (lookObject.isIntractable) 
                     playerUI.EnableInfoItemText(lookObject.itemInfo.GetLocalizedItemName());
                 

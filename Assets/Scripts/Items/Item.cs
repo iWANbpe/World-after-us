@@ -1,9 +1,8 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-public abstract class Item : MonoBehaviour
+public class Item : MonoBehaviour
 {
-    [HideInInspector] public string itemName;
     [HideInInspector] public bool isIntractable;
     [HideInInspector] public Rigidbody itemRigidbody;
 
@@ -18,10 +17,7 @@ public abstract class Item : MonoBehaviour
         targetObj = null;
         itemRigidbody = GetComponent<Rigidbody>();
         itemCollider = GetComponent<Collider>();
-        ItemInitialization();
     }
-
-    protected virtual void ItemInitialization() { }
 
     public void SetTarget(GameObject target) 
     {
