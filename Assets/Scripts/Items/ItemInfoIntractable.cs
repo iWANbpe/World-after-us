@@ -4,7 +4,7 @@ using UnityEngine;
 public class ItemInfoIntractable : ItemInfo
 {
     public ItemType type;
-    public FWF itemUtility;
+    [SerializeField] private FWF itemUtility;
 
     [Header("Inventory Settings")]
     
@@ -28,6 +28,11 @@ public class ItemInfoIntractable : ItemInfo
     public override string GetLocalizedItemDescription() 
     { 
         return Localization.Instance.GetText("ItemStringTable", itemName + "Description");
+    }
+
+    public override FWF GetItemFWF()
+    {
+        return itemUtility;
     }
 }
 

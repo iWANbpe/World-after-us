@@ -17,4 +17,5 @@ public class ItemInfo : ScriptableObject
     public virtual InventoryItemInfo GetInventoryItemInfo() { return null; }
     public virtual string GetLocalizedItemName() { return null; }
     public virtual string GetLocalizedItemDescription() { return null; }
+    public virtual FWF GetItemFWF() { return null; }
 }

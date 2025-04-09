@@ -5,6 +5,8 @@ using TMPro;
 
 public class PlayerUI : MonoBehaviour
 {
+    public float doubleClickCoolDown;
+    [Header("Objects")]
     [SerializeField] private GameObject playerPanel;
     [SerializeField] private GameObject infoItemText;
     [SerializeField] private GameObject infoPanel;
@@ -72,7 +74,7 @@ public class PlayerUI : MonoBehaviour
         
         itemNameText.text = invItemInfo.itemInfo.GetLocalizedItemName();
         itemTypeText.text = Localization.Instance.GetText("UIStringTable", "typeText") + " " + invItemInfo.itemInfo.type;
-        itemEffectsText.text = invItemInfo.itemInfo.itemUtility.GetUtilityText();
+        itemEffectsText.text = invItemInfo.itemInfo.GetItemFWF().GetUtilityText();
         ItemDescriptionText.text = invItemInfo.itemInfo.GetLocalizedItemDescription();
     }
 

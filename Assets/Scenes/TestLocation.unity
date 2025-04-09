@@ -5657,6 +5657,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3381205dc409e14b92e4cb15b24407e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  doubleClickCoolDown: 1
   playerPanel: {fileID: 1175130102}
   infoItemText: {fileID: 1648082394}
   infoPanel: {fileID: 424054883}
@@ -6300,7 +6301,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 810c86db84502f64b9af6e94b059b6cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  languageId: 1
+  languageId: 0
 --- !u!1001 &977076065
 PrefabInstance:
   m_ObjectHideFlags: 0

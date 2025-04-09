@@ -13,14 +13,14 @@ MonoBehaviour:
   m_Name: TestItem
   m_EditorClassIdentifier: 
   itemName: /filename
+  gameObject: {fileID: 1651189897193929992, guid: ed59e11d8af109a4083da6f7de8d1096, type: 3}
   type: 0
   itemUtility:
     utilityPoints:
-    - utilityValue: 34
+    - utilityValue: 20
       utilityType: 0
-    - utilityValue: 23.2
+    - utilityValue: 23
       utilityType: 1
-    - utilityValue: 14.9
+    - utilityValue: 14
       utilityType: 2
-  gameObject: {fileID: 1651189897193929992, guid: ed59e11d8af109a4083da6f7de8d1096, type: 3}
   inventoryItemInfo: {fileID: 11400000, guid: 60861d60520f94a42afe0ef54401d15c, type: 2}

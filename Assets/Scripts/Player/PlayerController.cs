@@ -59,6 +59,7 @@ public class PlayerController : MonoBehaviour
     private GameObject canvas;
     private PlayerUI playerUI;
     private bool isInventoryOpen;
+    private float lastClickTime;
 
     private RaycastHit hit;
     private Item lookObject;
@@ -123,6 +124,8 @@ public class PlayerController : MonoBehaviour
         inputActions.UI.InventoryClose.started += InventoryInteraction;
 
         inputActions.UI.DropItem.started += DropItem;
+
+        inputActions.UI.Click.started += UseItem;
     }
 
     private void Start()
@@ -266,6 +269,23 @@ public class PlayerController : MonoBehaviour
 
         playerUI.DisableInfoPanel();
         return null;
+    }
+
+    private void UseItem(InputAction.CallbackContext contex) 
+    {
+        if (invItemLookObject) 
+        {
+            if (Time.time - lastClickTime <= playerUI.doubleClickCoolDown)
+            {
+                fwfPlayer.Add(invItemLookObject.GetComponent<InventoryItem>().invItemInfo.itemInfo.GetItemFWF());
+                playerUI.UpdateFWFBars(fwfPlayer);
+                ObjectPooler.Instance.DeleteInventoryItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo, invItemLookObject);
+            }
+            else
+            {
+                lastClickTime = Time.time;
+            }
+        }
     }
     
     private void Move()
