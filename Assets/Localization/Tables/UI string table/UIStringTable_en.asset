@@ -54,6 +54,22 @@ MonoBehaviour:
     m_Localized: 'Type:'
     m_Metadata:
       m_Items: []
+  - m_Id: 7637037086294016
+    m_Localized: Are you sure?
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7637374857789440
+    m_Localized: Items that haven't been placed in inventory, will be thrown away
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7637948646965248
+    m_Localized: Yes
+    m_Metadata:
+      m_Items: []
+  - m_Id: 7638006213787648
+    m_Localized: No
+    m_Metadata:
+      m_Items: []
   references:
     version: 2
     RefIds: []

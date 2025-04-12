@@ -5,15 +5,12 @@ using System.Collections.Generic;
 public class FWF
 {
     public List<UtilityPoint> utilityPoints = new List<UtilityPoint>();
-    private int maxValue;
 
-    public FWF(int foodValue, int waterValue, int filterValue, int maxValue) 
+    public FWF(int foodValue, int waterValue, int filterValue) 
     {
         if (foodValue > 0) utilityPoints.Add(new UtilityPoint(foodValue, UtilityType.Food));
         if (waterValue > 0) utilityPoints.Add(new UtilityPoint(waterValue, UtilityType.Water));
         if (filterValue > 0) utilityPoints.Add(new UtilityPoint(filterValue, UtilityType.Filter));
-
-        this.maxValue = maxValue;
     }
 
     public void Add(FWF fwf) 
@@ -25,7 +22,22 @@ public class FWF
                 if(utilityPointMain.utilityType == utilityPointAdd.utilityType) 
                 {
                     utilityPointMain.utilityValue += utilityPointAdd.utilityValue;
-                    utilityPointMain.utilityValue = Mathf.Clamp(utilityPointMain.utilityValue, 0, maxValue);
+                    utilityPointMain.utilityValue = Mathf.Clamp(utilityPointMain.utilityValue, utilityPointMain.minValue, utilityPointMain.maxValue);
+                }
+            }
+        }
+    }
+
+    public void Decrease(FWF fwf) 
+    {
+        foreach (UtilityPoint utilityPointMain in utilityPoints)
+        {
+            foreach (UtilityPoint utilityPointAdd in fwf.utilityPoints)
+            {
+                if (utilityPointMain.utilityType == utilityPointAdd.utilityType)
+                {
+                    utilityPointMain.utilityValue -= utilityPointAdd.utilityValue;
+                    utilityPointMain.utilityValue = Mathf.Clamp(utilityPointMain.utilityValue, utilityPointMain.minValue, utilityPointMain.maxValue);
                 }
             }
         }

@@ -19,8 +19,14 @@ MonoBehaviour:
     utilityPoints:
     - utilityValue: 20
       utilityType: 0
+      minUtilityValue: 0
+      maxUtilityValue: 100
     - utilityValue: 23
       utilityType: 1
+      minUtilityValue: 0
+      maxUtilityValue: 100
     - utilityValue: 14
       utilityType: 2
+      minUtilityValue: 0
+      maxUtilityValue: 100
   inventoryItemInfo: {fileID: 11400000, guid: 60861d60520f94a42afe0ef54401d15c, type: 2}

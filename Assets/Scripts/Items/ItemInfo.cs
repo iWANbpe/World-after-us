@@ -9,9 +9,12 @@ public class ItemInfo : ScriptableObject
 
     public virtual GameObject InstantiateItem(Vector3 pos, Quaternion rotation) 
     {
-        GameObject item = Instantiate(gameObject, pos, rotation);
-        item.GetComponent<Item>().isIntractable = false;
-        return item;
+        return Instantiate(gameObject, pos, rotation);
+    }
+
+    public virtual void SetItemActivity() 
+    {
+        gameObject.GetComponent<Item>().isIntractable = false;
     }
 
     public virtual InventoryItemInfo GetInventoryItemInfo() { return null; }

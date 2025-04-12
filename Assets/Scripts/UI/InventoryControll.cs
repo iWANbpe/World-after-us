@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class InventoryControll : MonoBehaviour
 {
@@ -9,6 +9,10 @@ public class InventoryControll : MonoBehaviour
 
     private GameObject inventory;
     private GameObject slotsPanel;
+    private GameObject inventoryWarningPanel;
+    private GameObject player;
+
+    public List<GameObject> invItemList = new List<GameObject>();
 
     private GameObject [] inventorySlots;
     private List<GameObject> freeInventorySlots = new List<GameObject>();
@@ -27,11 +31,23 @@ public class InventoryControll : MonoBehaviour
         }
 
         DontDestroyOnLoad(gameObject);
+
+        inventoryWarningPanel = GameObject.Find("Canvas").transform.Find("Inventory").transform.Find("WarningPanel").gameObject;
+
         inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
         slotsPanel = inventory.transform.Find("SlotsPanel").gameObject;
+        player = GameObject.Find("Player").gameObject;
+
+        inventoryWarningPanel.transform.Find("WarningPanelYesButton").GetComponent<Button>().onClick.AddListener(AproveItemThrowing);
+        inventoryWarningPanel.transform.Find("WarningPanelNoButton").GetComponent<Button>().onClick.AddListener(CancelItemThrowing);
         AddSlots();
     }
-    
+
+    private void Start()
+    {
+        WarningPanelSetActivity(false);
+    }
+
     private void AddSlots() 
     {
         List<GameObject> invSlotsList = new List<GameObject>();
@@ -66,7 +82,6 @@ public class InventoryControll : MonoBehaviour
         int rows = sizeCode.Length;
         char[] columns = sizeCode.ToCharArray();
         List<GameObject> placeSlots = new List<GameObject>();
-        
         for(int slotIndex = 0; slotIndex < freeInventorySlots.Count; slotIndex++) 
         {
             int GlobalSlotIndex = System.Array.IndexOf(inventorySlots, freeInventorySlots[slotIndex]);
@@ -128,6 +143,51 @@ public class InventoryControll : MonoBehaviour
         medianX /= slotsCount;
         medianY /= slotsCount;
 
+
         return new Vector2(medianX, medianY);
+    }
+
+    public void WarningPanelSetActivity(bool activity) 
+    {
+        inventoryWarningPanel.SetActive(activity);
+    }
+
+    public bool WarningPanelActivity() 
+    {
+        return inventoryWarningPanel.activeSelf;
+    }
+    private void AproveItemThrowing() 
+    {
+        WarningPanelSetActivity(false);
+
+        List<GameObject> fullInvItemList = new List<GameObject>(invItemList);
+
+        foreach (GameObject invItem in fullInvItemList)
+        {
+            if (!invItem.GetComponent<InventoryItem>().hasPlace)
+            {
+                ObjectPooler.Instance.SpawnItem(invItem.GetComponent<InventoryItem>().invItemInfo.itemInfo, player.GetComponent<PlayerController>().playerGrabPoint.transform.position, Quaternion.identity);
+                ObjectPooler.Instance.DeleteInventoryItem(invItem.GetComponent<InventoryItem>().invItemInfo, invItem);
+            }
+        }
+
+        player.GetComponent<PlayerController>().InventoryChangeStatement(false);
+    }
+
+    private void CancelItemThrowing() 
+    {
+        WarningPanelSetActivity(false);
+    }
+
+    public bool AllItemsHavePlace() 
+    { 
+        foreach(GameObject invItem in invItemList) 
+        {
+            if (!invItem.GetComponent<InventoryItem>().hasPlace) 
+            {
+                return false;
+            }
+        }
+        return true;
     }
 }

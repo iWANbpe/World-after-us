@@ -83,12 +83,16 @@ public class ObjectPooler : MonoBehaviour
         invItem.transform.SetParent(inventory.transform);
         invItem.GetComponent<InventoryItem>().SetVisibility(true);
         invItem.GetComponent<InventoryItem>().SetPosition(position);
+
+        InventoryControll.Instance.invItemList.Add(invItem);
     }
 
     public void DeleteInventoryItem(InventoryItemInfo invItemInfo, GameObject invItem) 
     {
         invItem.GetComponent<InventoryItem>().ClearSlots();
         invItem.SetActive(false);
+
+        InventoryControll.Instance.invItemList.Remove(invItem);
 
         if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
             itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());

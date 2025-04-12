@@ -9,11 +9,10 @@ public class ItemInfoIntractable : ItemInfo
     [Header("Inventory Settings")]
     
     [SerializeField] private InventoryItemInfo inventoryItemInfo;
-    public override GameObject InstantiateItem(Vector3 pos, Quaternion rotation)
+
+    public override void SetItemActivity()
     {
-        GameObject item = Instantiate(gameObject, pos, rotation);
-        item.GetComponent<Item>().isIntractable = true;
-        return item;
+        gameObject.GetComponent<Item>().isIntractable = true;
     }
     public override InventoryItemInfo GetInventoryItemInfo()
     {

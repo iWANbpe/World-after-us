@@ -32,13 +32,14 @@ public class PlayerController : MonoBehaviour
     [Header("Objects")]
     [SerializeField] private GameObject cam;
     [Header("FWF")]
+    [SerializeField] private int maxFWFValue;
+    [SerializeField] private int minFWFValue;
     [SerializeField] private int maxStartFood;
     [SerializeField] private int minStartFood;
     [SerializeField] private int maxStartWater;
     [SerializeField] private int minStartWater;
     [SerializeField] private int maxStartFilter;
     [SerializeField] private int minStartFilter;
-    [SerializeField] private int maxFWFvalue;
 
     private InputActionsPlayer inputActions;
     private CharacterController characterController;
@@ -65,6 +66,7 @@ public class PlayerController : MonoBehaviour
     private Item lookObject;
     private bool isGrabbing;
     private GameObject grabPoint;
+    public GameObject playerGrabPoint { get { return grabPoint; } }
 
     [HideInInspector] public EventSystem eventSystem;
     private GraphicRaycaster raycaster;
@@ -87,7 +89,8 @@ public class PlayerController : MonoBehaviour
         isGrabbing = false;
         grabPoint = cam.transform.Find("GrabPoint").gameObject;
 
-        fwfPlayer = new FWF(Random.Range(minStartFood, maxStartFood), Random.Range(minStartWater, maxStartWater), Random.Range(minStartFilter, maxStartFilter), maxFWFvalue);
+        fwfPlayer = new FWF(Random.Range(minStartFood, maxStartFood), Random.Range(minStartWater, maxStartWater), Random.Range(minStartFilter, maxStartFilter));
+        ChangeMaxAndMinFWFValues(maxFWFValue, minFWFValue);
         
         //input actions Player
         inputActions.Player.Moving.started += HorizontalMoving;
@@ -142,6 +145,15 @@ public class PlayerController : MonoBehaviour
     {
         Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
         Cursor.visible = state;
+    }
+
+    private void ChangeMaxAndMinFWFValues(int maxValue, int minValue) 
+    { 
+        foreach(UtilityPoint uPoint in fwfPlayer.utilityPoints) 
+        {
+            uPoint.ChangeMaxValue(maxValue);
+            uPoint.ChangeMinValue(minValue);
+        }
     }
 
     private void HorizontalMoving(InputAction.CallbackContext context)
@@ -236,6 +248,8 @@ public class PlayerController : MonoBehaviour
         {
             ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
             ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition);
+
+            invItem.GetComponent<InventoryItem>().hasPlace = true;
         }
         else 
         {
@@ -245,7 +259,7 @@ public class PlayerController : MonoBehaviour
     }
     private void DropItem(InputAction.CallbackContext contex) 
     {
-        if (invItemLookObject) 
+        if (invItemLookObject)
         {
             ObjectPooler.Instance.SpawnItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo.itemInfo, grabPoint.transform.position, Quaternion.identity);
             ObjectPooler.Instance.DeleteInventoryItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo, invItemLookObject);
@@ -377,23 +391,31 @@ public class PlayerController : MonoBehaviour
         InventoryChangeStatement(isInventoryOpen);
     }
 
-    private void InventoryChangeStatement(bool inventoryStatement) 
+    public void InventoryChangeStatement(bool inventoryStatement) 
     {
         if (inventoryStatement) 
         {
             Layouts.Instance.OpenLayout(LayoutType.Inventory);
             inputActions.Player.Disable();
             inputActions.UI.Enable();
+            SetCursorActivity(inventoryStatement);
         }
 
         else 
         {
-            Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
-            inputActions.Player.Enable();
-            inputActions.UI.Disable();
-        }
+            if (InventoryControll.Instance.AllItemsHavePlace()) 
+            {
+                Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
+                inputActions.Player.Enable();
+                inputActions.UI.Disable();
+                SetCursorActivity(inventoryStatement);
+            }
 
-        SetCursorActivity(inventoryStatement);
+            else if (!InventoryControll.Instance.WarningPanelActivity()) 
+            {
+                InventoryControll.Instance.WarningPanelSetActivity(true);
+            }
+        }
     }
 
     void FixedUpdate()

@@ -1,5 +1,4 @@
 using UnityEngine;
-using System.Collections.Generic;
 
 public class Item : MonoBehaviour
 {
@@ -17,6 +16,7 @@ public class Item : MonoBehaviour
         targetObj = null;
         itemRigidbody = GetComponent<Rigidbody>();
         itemCollider = GetComponent<Collider>();
+        itemInfo.SetItemActivity();
     }
 
     public void SetTarget(GameObject target) 
