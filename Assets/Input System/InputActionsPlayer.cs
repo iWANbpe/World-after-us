@@ -82,7 +82,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Take"",
+                    ""name"": ""Interact"",
                     ""type"": ""Button"",
                     ""id"": ""344f3470-0199-4075-8b6d-297de306b2dd"",
                     ""expectedControlType"": ""Button"",
@@ -227,7 +227,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Take"",
+                    ""action"": ""Interact"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -334,7 +334,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         m_Player_Crouch = m_Player.FindAction("Crouch", throwIfNotFound: true);
         m_Player_MouseRotation = m_Player.FindAction("MouseRotation", throwIfNotFound: true);
         m_Player_InventoryOpen = m_Player.FindAction("InventoryOpen", throwIfNotFound: true);
-        m_Player_Take = m_Player.FindAction("Take", throwIfNotFound: true);
+        m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_Grab = m_Player.FindAction("Grab", throwIfNotFound: true);
         m_Player_Throw = m_Player.FindAction("Throw", throwIfNotFound: true);
         // UI
@@ -409,7 +409,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Crouch;
     private readonly InputAction m_Player_MouseRotation;
     private readonly InputAction m_Player_InventoryOpen;
-    private readonly InputAction m_Player_Take;
+    private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_Grab;
     private readonly InputAction m_Player_Throw;
     public struct PlayerActions
@@ -422,7 +422,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         public InputAction @Crouch => m_Wrapper.m_Player_Crouch;
         public InputAction @MouseRotation => m_Wrapper.m_Player_MouseRotation;
         public InputAction @InventoryOpen => m_Wrapper.m_Player_InventoryOpen;
-        public InputAction @Take => m_Wrapper.m_Player_Take;
+        public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @Grab => m_Wrapper.m_Player_Grab;
         public InputAction @Throw => m_Wrapper.m_Player_Throw;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
@@ -452,9 +452,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @InventoryOpen.started += instance.OnInventoryOpen;
             @InventoryOpen.performed += instance.OnInventoryOpen;
             @InventoryOpen.canceled += instance.OnInventoryOpen;
-            @Take.started += instance.OnTake;
-            @Take.performed += instance.OnTake;
-            @Take.canceled += instance.OnTake;
+            @Interact.started += instance.OnInteract;
+            @Interact.performed += instance.OnInteract;
+            @Interact.canceled += instance.OnInteract;
             @Grab.started += instance.OnGrab;
             @Grab.performed += instance.OnGrab;
             @Grab.canceled += instance.OnGrab;
@@ -483,9 +483,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @InventoryOpen.started -= instance.OnInventoryOpen;
             @InventoryOpen.performed -= instance.OnInventoryOpen;
             @InventoryOpen.canceled -= instance.OnInventoryOpen;
-            @Take.started -= instance.OnTake;
-            @Take.performed -= instance.OnTake;
-            @Take.canceled -= instance.OnTake;
+            @Interact.started -= instance.OnInteract;
+            @Interact.performed -= instance.OnInteract;
+            @Interact.canceled -= instance.OnInteract;
             @Grab.started -= instance.OnGrab;
             @Grab.performed -= instance.OnGrab;
             @Grab.canceled -= instance.OnGrab;
@@ -579,7 +579,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         void OnCrouch(InputAction.CallbackContext context);
         void OnMouseRotation(InputAction.CallbackContext context);
         void OnInventoryOpen(InputAction.CallbackContext context);
-        void OnTake(InputAction.CallbackContext context);
+        void OnInteract(InputAction.CallbackContext context);
         void OnGrab(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
     }

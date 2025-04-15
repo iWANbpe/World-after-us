@@ -121,7 +121,7 @@ public class PlayerController : MonoBehaviour
         inputActions.Player.Throw.performed += Throw;
         inputActions.Player.Throw.canceled += Throw;
 
-        inputActions.Player.Take.started += TakeItem;
+        inputActions.Player.Interact.started += Interact;
 
         //input actions UI
         inputActions.UI.InventoryClose.started += InventoryInteraction;
@@ -231,14 +231,19 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private void TakeItem(InputAction.CallbackContext contex) 
+    private void Interact(InputAction.CallbackContext contex) 
     { 
-        if(lookObject != null && lookObject.isIntractable) 
+        if(lookObject != null && lookObject.itemInfo.CanInteract()) 
         {
-            StartCoroutine(AddItemToInventory());
+            lookObject.itemInfo.ItemInteraction();
         }
     }
-    private IEnumerator AddItemToInventory()
+
+    public void AddItemToInventory() 
+    {
+        StartCoroutine(AddItemToInventoryCoroutine());
+    }
+    private IEnumerator AddItemToInventoryCoroutine()
     {
         GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(lookObject.itemInfo.GetInventoryItemInfo());
 
@@ -345,7 +350,7 @@ public class PlayerController : MonoBehaviour
             {
                 lookObject = hit.collider.gameObject.GetComponent<Item>();
 
-                if (lookObject.isIntractable) 
+                if (lookObject.itemInfo.CanInteract()) 
                     playerUI.EnableInfoItemText(lookObject.itemInfo.GetLocalizedItemName());
                 
                 else if (playerUI.isActiveAndEnabled) 

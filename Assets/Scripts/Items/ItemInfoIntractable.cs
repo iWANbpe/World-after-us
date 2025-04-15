@@ -10,9 +10,14 @@ public class ItemInfoIntractable : ItemInfo
     
     [SerializeField] private InventoryItemInfo inventoryItemInfo;
 
-    public override void SetItemActivity()
+    public override bool CanInteract()
     {
-        gameObject.GetComponent<Item>().isIntractable = true;
+        return true;
+    }
+
+    public override void ItemInteraction()
+    {
+        GameObject.Find("Player").GetComponent<PlayerController>().AddItemToInventory();
     }
     public override InventoryItemInfo GetInventoryItemInfo()
     {

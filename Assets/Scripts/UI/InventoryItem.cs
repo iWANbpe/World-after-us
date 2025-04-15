@@ -10,8 +10,11 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     [HideInInspector] public string sizeCode;
     public InventoryItemInfo invItemInfo;
 
+    private GameObject canvas;
     public void Initialization() 
     {
+        canvas = GameObject.Find("Canvas");
+
         for (int i = 0; i < transform.childCount; i++)
         {
             transform.GetChild(i).GetComponent<InventoryItemCage>().Initialization();
@@ -21,6 +24,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
     public void OnBeginDrag(PointerEventData eventData) 
     {
         hasPlace = false;
+        transform.SetAsLastSibling();
         GetComponent<Image>().raycastTarget = false;
         SetChildrenRaycastTarget(false);
         ClearSlots();

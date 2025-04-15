@@ -8699,7 +8699,7 @@ GameObject:
   m_Layer: 0
   m_Name: ItemSpawner
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: 1206586993520771344, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
@@ -8712,7 +8712,7 @@ Transform:
   m_GameObject: {fileID: 1320612620}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -50.11972, y: 197.945, z: -34.561913}
+  m_LocalPosition: {x: -50.11972, y: 198.42, z: -34.561913}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -8733,6 +8733,16 @@ MonoBehaviour:
   itemInfo:
   - {fileID: 11400000, guid: 07a61466feaa55546b80a6b3fa44f60f, type: 2}
   - {fileID: 11400000, guid: 3cc09f065255fe3479432f8ab375be8f, type: 2}
+  itemsCount: 40
+  xRange:
+    minCoord: -5
+    maxCoord: 5
+  yRange:
+    minCoord: -1
+    maxCoord: 4
+  zRange:
+    minCoord: -5
+    maxCoord: 5
 --- !u!1 &1337726803
 GameObject:
   m_ObjectHideFlags: 0

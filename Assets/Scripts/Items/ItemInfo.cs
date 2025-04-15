@@ -12,11 +12,12 @@ public class ItemInfo : ScriptableObject
         return Instantiate(gameObject, pos, rotation);
     }
 
-    public virtual void SetItemActivity() 
+    public virtual bool CanInteract() 
     {
-        gameObject.GetComponent<Item>().isIntractable = false;
+        return false;
     }
 
+    public virtual void ItemInteraction() { }
     public virtual InventoryItemInfo GetInventoryItemInfo() { return null; }
     public virtual string GetLocalizedItemName() { return null; }
     public virtual string GetLocalizedItemDescription() { return null; }

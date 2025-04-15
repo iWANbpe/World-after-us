@@ -149,6 +149,7 @@ public class InventoryControll : MonoBehaviour
 
     public void WarningPanelSetActivity(bool activity) 
     {
+        inventoryWarningPanel.transform.SetAsLastSibling();
         inventoryWarningPanel.SetActive(activity);
     }
 

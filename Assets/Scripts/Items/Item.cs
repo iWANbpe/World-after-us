@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    [HideInInspector] public bool isIntractable;
     [HideInInspector] public Rigidbody itemRigidbody;
 
     public ItemInfo itemInfo;
@@ -16,7 +15,6 @@ public class Item : MonoBehaviour
         targetObj = null;
         itemRigidbody = GetComponent<Rigidbody>();
         itemCollider = GetComponent<Collider>();
-        itemInfo.SetItemActivity();
     }
 
     public void SetTarget(GameObject target) 
