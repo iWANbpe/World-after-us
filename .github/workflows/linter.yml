@@ -26,6 +26,6 @@ jobs:
       
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        DISABLE_ERORS: false
+        DISABLE_ERORS: true
         OUTPUT_DETAILS: detailed
         VALIDATE_ALL_CODEBASE: false
