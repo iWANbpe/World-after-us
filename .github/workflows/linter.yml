@@ -8,7 +8,7 @@ on:
 
 jobs:
 
-  build:
+  lint:
 
     strategy:
       matrix:
@@ -26,6 +26,6 @@ jobs:
       
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        DISABLE_ERORS: true
+        DISABLE_ERORS: false
         OUTPUT_DETAILS: detailed
         VALIDATE_ALL_CODEBASE: false
