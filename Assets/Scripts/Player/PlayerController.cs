@@ -1,436 +1,436 @@
-using UnityEngine;
 using System.Collections;
-using UnityEngine.InputSystem;
 using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 public class PlayerController : MonoBehaviour
 {
-    [Header("Physics")]
-    [SerializeField] private float speed = 1f;
-    [SerializeField] private float speedUpKoef = 1f;
-    [SerializeField] private float speedAcceleration = 20f;
-    [SerializeField] private float crouchSpeedKoef = 0.5f;
-    [SerializeField] private float gravityKoef = 3f;
-    [SerializeField] private float mouseSensitivity = 0.5f;
-    [SerializeField] private float jumpForce = 1f;
-    [Header("Rotation")]
-    [SerializeField] private float minRotationAngle = 0f;
-    [SerializeField] private float maxRotationAngle = 90f;
-    [Header("Crouch")]
-    [SerializeField] private float characterNormalHeight = 2f;
-    [SerializeField] private float characterCrouchHeight = 1.25f;
-    [SerializeField] private float characterNormalCenterY = 0f;
-    [SerializeField] private float characterCrouchCenterY = -0.4f;
-    [SerializeField] private float camNormalY = 0.68f;
-    [SerializeField] private float camCrouchY = 0.131f;
-    [Header("Interaction")]
-    [SerializeField] private float distanceOfInteraction = 1f;
-    [SerializeField] private float throwingStrength = 1f;
-    [SerializeField] private LayerMask interectionMask;
-    [Header("Objects")]
-    [SerializeField] private GameObject cam;
-    [Header("FWF")]
-    [SerializeField] private int maxFWFValue;
-    [SerializeField] private int minFWFValue;
-    [SerializeField] private int maxStartFood;
-    [SerializeField] private int minStartFood;
-    [SerializeField] private int maxStartWater;
-    [SerializeField] private int minStartWater;
-    [SerializeField] private int maxStartFilter;
-    [SerializeField] private int minStartFilter;
+	[Header("Physics")]
+	[SerializeField] private float speed = 1f;
+	[SerializeField] private float speedUpKoef = 1f;
+	[SerializeField] private float speedAcceleration = 20f;
+	[SerializeField] private float crouchSpeedKoef = 0.5f;
+	[SerializeField] private float gravityKoef = 3f;
+	[SerializeField] private float mouseSensitivity = 0.5f;
+	[SerializeField] private float jumpForce = 1f;
+	[Header("Rotation")]
+	[SerializeField] private float minRotationAngle = 0f;
+	[SerializeField] private float maxRotationAngle = 90f;
+	[Header("Crouch")]
+	[SerializeField] private float characterNormalHeight = 2f;
+	[SerializeField] private float characterCrouchHeight = 1.25f;
+	[SerializeField] private float characterNormalCenterY = 0f;
+	[SerializeField] private float characterCrouchCenterY = -0.4f;
+	[SerializeField] private float camNormalY = 0.68f;
+	[SerializeField] private float camCrouchY = 0.131f;
+	[Header("Interaction")]
+	[SerializeField] private float distanceOfInteraction = 1f;
+	[SerializeField] private float throwingStrength = 1f;
+	[SerializeField] private LayerMask interectionMask;
+	[Header("Objects")]
+	[SerializeField] private GameObject cam;
+	[Header("FWF")]
+	[SerializeField] private int maxFWFValue;
+	[SerializeField] private int minFWFValue;
+	[SerializeField] private int maxStartFood;
+	[SerializeField] private int minStartFood;
+	[SerializeField] private int maxStartWater;
+	[SerializeField] private int minStartWater;
+	[SerializeField] private int maxStartFilter;
+	[SerializeField] private int minStartFilter;
 
-    private InputActionsPlayer inputActions;
-    private CharacterController characterController;
+	private InputActionsPlayer inputActions;
+	private CharacterController characterController;
 
-    private FWF fwfPlayer;
+	private FWF fwfPlayer;
 
-    private Vector3 curPosition;
-    private Vector2 moveInputHorizontal;
-    private Vector2 mouseRotation;
-    private Vector2 invItemPosition;
+	private Vector3 curPosition;
+	private Vector2 moveInputHorizontal;
+	private Vector2 mouseRotation;
+	private Vector2 invItemPosition;
 
-    private float currentSpeed;
-    private const float gravity = -9.81f;
-    private float grav_Velocity;
-    private bool isSprinting;
-    private bool isCrouch;
+	private float currentSpeed;
+	private const float gravity = -9.81f;
+	private float grav_Velocity;
+	private bool isSprinting;
+	private bool isCrouch;
 
-    private GameObject canvas;
-    private PlayerUI playerUI;
-    private bool isInventoryOpen;
-    private float lastClickTime;
+	private GameObject canvas;
+	private PlayerUI playerUI;
+	private bool isInventoryOpen;
+	private float lastClickTime;
 
-    private RaycastHit hit;
-    private Item lookObject;
-    private bool isGrabbing;
-    private GameObject grabPoint;
-    public GameObject playerGrabPoint { get { return grabPoint; } }
+	private RaycastHit hit;
+	private Item lookObject;
+	private bool isGrabbing;
+	private GameObject grabPoint;
+	public GameObject playerGrabPoint { get { return grabPoint; } }
 
-    [HideInInspector] public EventSystem eventSystem;
-    private GraphicRaycaster raycaster;
-    private PointerEventData pointerEventData;
-    private GameObject invItemLookObject;
+	[HideInInspector] public EventSystem eventSystem;
+	private GraphicRaycaster raycaster;
+	private PointerEventData pointerEventData;
+	private GameObject invItemLookObject;
 
-    void Awake()
-    {
-        canvas = GameObject.Find("Canvas");
-        eventSystem = GameObject.Find("/EventSystem").GetComponent<EventSystem>();
+	void Awake()
+	{
+		canvas = GameObject.Find("Canvas");
+		eventSystem = GameObject.Find("/EventSystem").GetComponent<EventSystem>();
 
-        characterController = GetComponent<CharacterController>();
-        raycaster = canvas.GetComponent<GraphicRaycaster>();
-        playerUI = GetComponent<PlayerUI>();
+		characterController = GetComponent<CharacterController>();
+		raycaster = canvas.GetComponent<GraphicRaycaster>();
+		playerUI = GetComponent<PlayerUI>();
 
-        inputActions = new InputActionsPlayer();
-        pointerEventData = new PointerEventData(eventSystem);
+		inputActions = new InputActionsPlayer();
+		pointerEventData = new PointerEventData(eventSystem);
 
-        isInventoryOpen = false;
-        isGrabbing = false;
-        grabPoint = cam.transform.Find("GrabPoint").gameObject;
+		isInventoryOpen = false;
+		isGrabbing = false;
+		grabPoint = cam.transform.Find("GrabPoint").gameObject;
 
-        fwfPlayer = new FWF(Random.Range(minStartFood, maxStartFood), Random.Range(minStartWater, maxStartWater), Random.Range(minStartFilter, maxStartFilter));
-        ChangeMaxAndMinFWFValues(maxFWFValue, minFWFValue);
-        
-        //input actions Player
-        inputActions.Player.Moving.started += HorizontalMoving;
-        inputActions.Player.Moving.performed += HorizontalMoving;
-        inputActions.Player.Moving.canceled += HorizontalMoving;
+		fwfPlayer = new FWF(Random.Range(minStartFood, maxStartFood), Random.Range(minStartWater, maxStartWater), Random.Range(minStartFilter, maxStartFilter));
+		ChangeMaxAndMinFWFValues(maxFWFValue, minFWFValue);
 
-        inputActions.Player.MouseRotation.started += InputMouseRotation;
-        inputActions.Player.MouseRotation.performed += InputMouseRotation;
-        inputActions.Player.MouseRotation.canceled += InputMouseRotation;
+		//input actions Player
+		inputActions.Player.Moving.started += HorizontalMoving;
+		inputActions.Player.Moving.performed += HorizontalMoving;
+		inputActions.Player.Moving.canceled += HorizontalMoving;
 
-        inputActions.Player.Jump.started += Jump;
-        
-        inputActions.Player.Sprint.started += Sprint;
-        inputActions.Player.Sprint.performed += Sprint;
-        inputActions.Player.Sprint.canceled += Sprint;
+		inputActions.Player.MouseRotation.started += InputMouseRotation;
+		inputActions.Player.MouseRotation.performed += InputMouseRotation;
+		inputActions.Player.MouseRotation.canceled += InputMouseRotation;
 
-        inputActions.Player.Crouch.started += Crouch;
-        inputActions.Player.Crouch.performed += Crouch;
-        inputActions.Player.Crouch.canceled += Crouch;
+		inputActions.Player.Jump.started += Jump;
 
-        inputActions.Player.InventoryOpen.started += InventoryInteraction;
+		inputActions.Player.Sprint.started += Sprint;
+		inputActions.Player.Sprint.performed += Sprint;
+		inputActions.Player.Sprint.canceled += Sprint;
 
-        inputActions.Player.Grab.started += Grab;
-        inputActions.Player.Grab.performed += Grab;
-        inputActions.Player.Grab.canceled += Grab;
+		inputActions.Player.Crouch.started += Crouch;
+		inputActions.Player.Crouch.performed += Crouch;
+		inputActions.Player.Crouch.canceled += Crouch;
 
-        inputActions.Player.Throw.started += Throw;
-        inputActions.Player.Throw.performed += Throw;
-        inputActions.Player.Throw.canceled += Throw;
+		inputActions.Player.InventoryOpen.started += InventoryInteraction;
 
-        inputActions.Player.Interact.started += Interact;
+		inputActions.Player.Grab.started += Grab;
+		inputActions.Player.Grab.performed += Grab;
+		inputActions.Player.Grab.canceled += Grab;
 
-        //input actions UI
-        inputActions.UI.InventoryClose.started += InventoryInteraction;
+		inputActions.Player.Throw.started += Throw;
+		inputActions.Player.Throw.performed += Throw;
+		inputActions.Player.Throw.canceled += Throw;
 
-        inputActions.UI.DropItem.started += DropItem;
+		inputActions.Player.Interact.started += Interact;
 
-        inputActions.UI.Click.started += UseItem;
-    }
+		//input actions UI
+		inputActions.UI.InventoryClose.started += InventoryInteraction;
 
-    private void Start()
-    {
-        SetCursorActivity(false);
-        playerUI.DisableInfoItemText();
-        playerUI.UpdateFWFBars(fwfPlayer);
+		inputActions.UI.DropItem.started += DropItem;
 
-        InventoryChangeStatement(isInventoryOpen);
-        Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
-    }
+		inputActions.UI.Click.started += UseItem;
+	}
 
-    private void SetCursorActivity(bool state) 
-    {
-        Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = state;
-    }
+	private void Start()
+	{
+		SetCursorActivity(false);
+		playerUI.DisableInfoItemText();
+		playerUI.UpdateFWFBars(fwfPlayer);
 
-    private void ChangeMaxAndMinFWFValues(int maxValue, int minValue) 
-    { 
-        foreach(UtilityPoint uPoint in fwfPlayer.utilityPoints) 
-        {
-            uPoint.ChangeMaxValue(maxValue);
-            uPoint.ChangeMinValue(minValue);
-        }
-    }
+		InventoryChangeStatement(isInventoryOpen);
+		Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
+	}
 
-    private void HorizontalMoving(InputAction.CallbackContext context)
-    {
-        moveInputHorizontal = context.ReadValue<Vector2>();
-        curPosition.x = moveInputHorizontal.x;
-        curPosition.z = moveInputHorizontal.y;
-        curPosition = transform.TransformDirection(curPosition);
-    }
+	private void SetCursorActivity(bool state)
+	{
+		Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
+		Cursor.visible = state;
+	}
 
-    private void InputMouseRotation(InputAction.CallbackContext context)
-    {
-        mouseRotation += context.ReadValue<Vector2>() * mouseSensitivity;
-    }
+	private void ChangeMaxAndMinFWFValues(int maxValue, int minValue)
+	{
+		foreach (UtilityPoint uPoint in fwfPlayer.utilityPoints)
+		{
+			uPoint.ChangeMaxValue(maxValue);
+			uPoint.ChangeMinValue(minValue);
+		}
+	}
 
-    private void Jump(InputAction.CallbackContext context)
-    {
-        if (characterController.isGrounded && !isCrouch)
-        {
-            grav_Velocity += jumpForce;
-        }
-    }
+	private void HorizontalMoving(InputAction.CallbackContext context)
+	{
+		moveInputHorizontal = context.ReadValue<Vector2>();
+		curPosition.x = moveInputHorizontal.x;
+		curPosition.z = moveInputHorizontal.y;
+		curPosition = transform.TransformDirection(curPosition);
+	}
 
-    private void Sprint(InputAction.CallbackContext context)
-    {
-        isSprinting = context.started || context.performed;
-    }
+	private void InputMouseRotation(InputAction.CallbackContext context)
+	{
+		mouseRotation += context.ReadValue<Vector2>() * mouseSensitivity;
+	}
 
-    private void Crouch(InputAction.CallbackContext context)
-    {
-        isCrouch = context.started || context.performed;
-        Crouching();
-    }
+	private void Jump(InputAction.CallbackContext context)
+	{
+		if (characterController.isGrounded && !isCrouch)
+		{
+			grav_Velocity += jumpForce;
+		}
+	}
 
-    private void Grab(InputAction.CallbackContext context) 
-    {
-        if (lookObject != null) 
-        {
-            if (context.started) 
-            {
-                isGrabbing = true;
-                lookObject.itemRigidbody.useGravity = false;
-                lookObject.DisableCollisionLayer(LayerMask.GetMask("Player"));
-            }
+	private void Sprint(InputAction.CallbackContext context)
+	{
+		isSprinting = context.started || context.performed;
+	}
 
-            else if (context.performed) 
-            {
-                lookObject.SetTarget(grabPoint);
-            }
+	private void Crouch(InputAction.CallbackContext context)
+	{
+		isCrouch = context.started || context.performed;
+		Crouching();
+	}
 
-            else
-            {
-                isGrabbing = false;
-                lookObject.SetTarget(null);
-                lookObject.itemRigidbody.useGravity = true;
+	private void Grab(InputAction.CallbackContext context)
+	{
+		if (lookObject != null)
+		{
+			if (context.started)
+			{
+				isGrabbing = true;
+				lookObject.itemRigidbody.useGravity = false;
+				lookObject.DisableCollisionLayer(LayerMask.GetMask("Player"));
+			}
 
-                lookObject.itemRigidbody.velocity = Vector3.zero;
-                lookObject.itemRigidbody.angularVelocity = Vector3.zero;
-                lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
-            }
-           
-        }
-    }
+			else if (context.performed)
+			{
+				lookObject.SetTarget(grabPoint);
+			}
 
-    private void Throw(InputAction.CallbackContext contex) 
-    {
-        if (isGrabbing) 
-        {
-            isGrabbing = false;
-            lookObject.itemRigidbody.useGravity = true;
-            lookObject.SetTarget(null);
-            lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
+			else
+			{
+				isGrabbing = false;
+				lookObject.SetTarget(null);
+				lookObject.itemRigidbody.useGravity = true;
 
-            lookObject.itemRigidbody.AddForce( (grabPoint.transform.position - cam.transform.position).normalized * 10f * throwingStrength);
-        }
-    }
+				lookObject.itemRigidbody.velocity = Vector3.zero;
+				lookObject.itemRigidbody.angularVelocity = Vector3.zero;
+				lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
+			}
 
-    private void Interact(InputAction.CallbackContext contex) 
-    { 
-        if(lookObject != null && lookObject.itemInfo.CanInteract()) 
-        {
-            lookObject.itemInfo.ItemInteraction();
-        }
-    }
+		}
+	}
 
-    public void AddItemToInventory() 
-    {
-        StartCoroutine(AddItemToInventoryCoroutine());
-    }
-    private IEnumerator AddItemToInventoryCoroutine()
-    {
-        GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(lookObject.itemInfo.GetInventoryItemInfo());
+	private void Throw(InputAction.CallbackContext contex)
+	{
+		if (isGrabbing)
+		{
+			isGrabbing = false;
+			lookObject.itemRigidbody.useGravity = true;
+			lookObject.SetTarget(null);
+			lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
 
-        yield return new WaitForEndOfFrame();
-        
-        if(InventoryControll.Instance.IsFreeSpaceForItem(invItem, out invItemPosition)) 
-        {
-            ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
-            ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition);
+			lookObject.itemRigidbody.AddForce((grabPoint.transform.position - cam.transform.position).normalized * 10f * throwingStrength);
+		}
+	}
 
-            invItem.GetComponent<InventoryItem>().hasPlace = true;
-        }
-        else 
-        {
-            playerUI.PlayerPanelMessage(Localization.Instance.GetText("UIStringTable", "notEnoughInventorySpace"));
-        }
+	private void Interact(InputAction.CallbackContext contex)
+	{
+		if (lookObject != null && lookObject.itemInfo.CanInteract())
+		{
+			lookObject.itemInfo.ItemInteraction();
+		}
+	}
 
-    }
-    private void DropItem(InputAction.CallbackContext contex) 
-    {
-        if (invItemLookObject)
-        {
-            ObjectPooler.Instance.SpawnItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo.itemInfo, grabPoint.transform.position, Quaternion.identity);
-            ObjectPooler.Instance.DeleteInventoryItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo, invItemLookObject);
-        }
-    }
+	public void AddItemToInventory()
+	{
+		StartCoroutine(AddItemToInventoryCoroutine());
+	}
+	private IEnumerator AddItemToInventoryCoroutine()
+	{
+		GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(lookObject.itemInfo.GetInventoryItemInfo());
 
-    private GameObject SelectedInventoryItem() 
-    {
-        List<RaycastResult> resultsList = new List<RaycastResult>();
-        pointerEventData.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
-        raycaster.Raycast(pointerEventData, resultsList);
-        
-        foreach (RaycastResult result in resultsList)
-        {
-            if (result.gameObject.GetComponent<InventoryItem>()) 
-            {
-                playerUI.EnableInfoPanel(result.gameObject.GetComponent<InventoryItem>().invItemInfo);
-                return result.gameObject;
-            }  
-        }
+		yield return new WaitForEndOfFrame();
 
-        playerUI.DisableInfoPanel();
-        return null;
-    }
+		if (InventoryControll.Instance.IsFreeSpaceForItem(invItem, out invItemPosition))
+		{
+			ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
+			ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition);
 
-    private void UseItem(InputAction.CallbackContext contex) 
-    {
-        if (invItemLookObject) 
-        {
-            if (Time.time - lastClickTime <= playerUI.doubleClickCoolDown)
-            {
-                fwfPlayer.Add(invItemLookObject.GetComponent<InventoryItem>().invItemInfo.itemInfo.GetItemFWF());
-                playerUI.UpdateFWFBars(fwfPlayer);
-                ObjectPooler.Instance.DeleteInventoryItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo, invItemLookObject);
-            }
-            else
-            {
-                lastClickTime = Time.time;
-            }
-        }
-    }
-    
-    private void Move()
-    {
-        float targetSpeed;
-        if (isCrouch) targetSpeed = speed * crouchSpeedKoef;
-        else if (isSprinting) targetSpeed = speed * speedUpKoef;
-        else targetSpeed = speed;
-        
-        currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedAcceleration * Time.fixedDeltaTime);
-        characterController.Move( new Vector3(curPosition.x * currentSpeed, curPosition.y, curPosition.z * currentSpeed) * Time.fixedDeltaTime);
-    }
+			invItem.GetComponent<InventoryItem>().hasPlace = true;
+		}
+		else
+		{
+			playerUI.PlayerPanelMessage(Localization.Instance.GetText("UIStringTable", "notEnoughInventorySpace"));
+		}
 
-    private void Rotation()
-    {
-        transform.rotation = Quaternion.Euler(0f, mouseRotation.x, 0f);
-        cam.transform.localRotation = Quaternion.Euler( -Mathf.Clamp(mouseRotation.y, minRotationAngle, maxRotationAngle), 0f, 0f);
-    }
+	}
+	private void DropItem(InputAction.CallbackContext contex)
+	{
+		if (invItemLookObject)
+		{
+			ObjectPooler.Instance.SpawnItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo.itemInfo, grabPoint.transform.position, Quaternion.identity);
+			ObjectPooler.Instance.DeleteInventoryItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo, invItemLookObject);
+		}
+	}
 
-    private void ApplyGravity()
-    {
-        if(characterController.isGrounded && grav_Velocity < 0f)
-        {
-            grav_Velocity = -1f;
-        }
+	private GameObject SelectedInventoryItem()
+	{
+		List<RaycastResult> resultsList = new List<RaycastResult>();
+		pointerEventData.position = new Vector2(Input.mousePosition.x, Input.mousePosition.y);
+		raycaster.Raycast(pointerEventData, resultsList);
 
-        else
-        {
-            grav_Velocity += gravity * gravityKoef * Time.fixedDeltaTime;
-        }
+		foreach (RaycastResult result in resultsList)
+		{
+			if (result.gameObject.GetComponent<InventoryItem>())
+			{
+				playerUI.EnableInfoPanel(result.gameObject.GetComponent<InventoryItem>().invItemInfo);
+				return result.gameObject;
+			}
+		}
 
-        curPosition.y = grav_Velocity;
-    }
+		playerUI.DisableInfoPanel();
+		return null;
+	}
 
-    private void Look() 
-    {
-        if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out hit, distanceOfInteraction, interectionMask) && !isGrabbing)
-        {
-            //Debug.DrawRay(cam.transform.position, cam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
-            //print(hit.collider.gameObject.name);
+	private void UseItem(InputAction.CallbackContext contex)
+	{
+		if (invItemLookObject)
+		{
+			if (Time.time - lastClickTime <= playerUI.doubleClickCoolDown)
+			{
+				fwfPlayer.Add(invItemLookObject.GetComponent<InventoryItem>().invItemInfo.itemInfo.GetItemFWF());
+				playerUI.UpdateFWFBars(fwfPlayer);
+				ObjectPooler.Instance.DeleteInventoryItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo, invItemLookObject);
+			}
+			else
+			{
+				lastClickTime = Time.time;
+			}
+		}
+	}
 
-            if (hit.collider.gameObject.GetComponent<Item>())
-            {
-                lookObject = hit.collider.gameObject.GetComponent<Item>();
+	private void Move()
+	{
+		float targetSpeed;
+		if (isCrouch) targetSpeed = speed * crouchSpeedKoef;
+		else if (isSprinting) targetSpeed = speed * speedUpKoef;
+		else targetSpeed = speed;
 
-                if (lookObject.itemInfo.CanInteract()) 
-                    playerUI.EnableInfoItemText(lookObject.itemInfo.GetLocalizedItemName());
-                
-                else if (playerUI.isActiveAndEnabled) 
-                    playerUI.DisableInfoItemText();
-            }
-            
-            else if (!isGrabbing)
-            {
-                lookObject = null;
-                playerUI.DisableInfoItemText();
-            }
-        }
+		currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedAcceleration * Time.fixedDeltaTime);
+		characterController.Move(new Vector3(curPosition.x * currentSpeed, curPosition.y, curPosition.z * currentSpeed) * Time.fixedDeltaTime);
+	}
 
-        else if (lookObject != null && !isGrabbing) 
-        {
-            lookObject = null;
-            isGrabbing = false;
-            playerUI.DisableInfoItemText();
-        } 
+	private void Rotation()
+	{
+		transform.rotation = Quaternion.Euler(0f, mouseRotation.x, 0f);
+		cam.transform.localRotation = Quaternion.Euler(-Mathf.Clamp(mouseRotation.y, minRotationAngle, maxRotationAngle), 0f, 0f);
+	}
 
-    }
+	private void ApplyGravity()
+	{
+		if (characterController.isGrounded && grav_Velocity < 0f)
+		{
+			grav_Velocity = -1f;
+		}
 
-    private void Crouching()
-    {
-        if (isCrouch)
-        {
-            characterController.height = characterCrouchHeight;
-            characterController.center = new Vector3(0f, characterCrouchCenterY, 0f);
-            cam.transform.localPosition = new Vector3(0f, camCrouchY, 0f);
-        }
+		else
+		{
+			grav_Velocity += gravity * gravityKoef * Time.fixedDeltaTime;
+		}
 
-        else
-        {
-            characterController.height = characterNormalHeight;
-            characterController.center = new Vector3(0f, characterNormalCenterY, 0f);
-            cam.transform.localPosition = new Vector3(0f, camNormalY, 0f);
-        }
-    }
-    
-    private void InventoryInteraction(InputAction.CallbackContext context) 
-    {
-        isInventoryOpen = !isInventoryOpen;
-        InventoryChangeStatement(isInventoryOpen);
-    }
+		curPosition.y = grav_Velocity;
+	}
 
-    public void InventoryChangeStatement(bool inventoryStatement) 
-    {
-        if (inventoryStatement) 
-        {
-            Layouts.Instance.OpenLayout(LayoutType.Inventory);
-            inputActions.Player.Disable();
-            inputActions.UI.Enable();
-            SetCursorActivity(inventoryStatement);
-        }
+	private void Look()
+	{
+		if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out hit, distanceOfInteraction, interectionMask) && !isGrabbing)
+		{
+			//Debug.DrawRay(cam.transform.position, cam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
+			//print(hit.collider.gameObject.name);
 
-        else 
-        {
-            if (InventoryControll.Instance.AllItemsHavePlace()) 
-            {
-                Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
-                inputActions.Player.Enable();
-                inputActions.UI.Disable();
-                SetCursorActivity(inventoryStatement);
-            }
+			if (hit.collider.gameObject.GetComponent<Item>())
+			{
+				lookObject = hit.collider.gameObject.GetComponent<Item>();
 
-            else if (!InventoryControll.Instance.WarningPanelActivity()) 
-            {
-                InventoryControll.Instance.WarningPanelSetActivity(true);
-            }
-        }
-    }
+				if (lookObject.itemInfo.CanInteract())
+					playerUI.EnableInfoItemText(lookObject.itemInfo.GetLocalizedItemName());
 
-    void FixedUpdate()
-    {
-        Move();
-        Look();
-        Rotation();
-        ApplyGravity();
+				else if (playerUI.isActiveAndEnabled)
+					playerUI.DisableInfoItemText();
+			}
 
-        if (isInventoryOpen) invItemLookObject = SelectedInventoryItem();
-    }
+			else if (!isGrabbing)
+			{
+				lookObject = null;
+				playerUI.DisableInfoItemText();
+			}
+		}
+
+		else if (lookObject != null && !isGrabbing)
+		{
+			lookObject = null;
+			isGrabbing = false;
+			playerUI.DisableInfoItemText();
+		}
+
+	}
+
+	private void Crouching()
+	{
+		if (isCrouch)
+		{
+			characterController.height = characterCrouchHeight;
+			characterController.center = new Vector3(0f, characterCrouchCenterY, 0f);
+			cam.transform.localPosition = new Vector3(0f, camCrouchY, 0f);
+		}
+
+		else
+		{
+			characterController.height = characterNormalHeight;
+			characterController.center = new Vector3(0f, characterNormalCenterY, 0f);
+			cam.transform.localPosition = new Vector3(0f, camNormalY, 0f);
+		}
+	}
+
+	private void InventoryInteraction(InputAction.CallbackContext context)
+	{
+		isInventoryOpen = !isInventoryOpen;
+		InventoryChangeStatement(isInventoryOpen);
+	}
+
+	public void InventoryChangeStatement(bool inventoryStatement)
+	{
+		if (inventoryStatement)
+		{
+			Layouts.Instance.OpenLayout(LayoutType.Inventory);
+			inputActions.Player.Disable();
+			inputActions.UI.Enable();
+			SetCursorActivity(inventoryStatement);
+		}
+
+		else
+		{
+			if (InventoryControll.Instance.AllItemsHavePlace())
+			{
+				Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
+				inputActions.Player.Enable();
+				inputActions.UI.Disable();
+				SetCursorActivity(inventoryStatement);
+			}
+
+			else if (!InventoryControll.Instance.WarningPanelActivity())
+			{
+				InventoryControll.Instance.WarningPanelSetActivity(true);
+			}
+		}
+	}
+
+	void FixedUpdate()
+	{
+		Move();
+		Look();
+		Rotation();
+		ApplyGravity();
+
+		if (isInventoryOpen) invItemLookObject = SelectedInventoryItem();
+	}
 }
 

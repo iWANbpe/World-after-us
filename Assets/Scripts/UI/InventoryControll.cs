@@ -1,194 +1,194 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using System.Collections.Generic;
 
 public class InventoryControll : MonoBehaviour
 {
-    [SerializeField] private int slotsPanelWidth;
-    [SerializeField] private int slotsPanelHeight;
+	[SerializeField] private int slotsPanelWidth;
+	[SerializeField] private int slotsPanelHeight;
 
-    private GameObject inventory;
-    private GameObject slotsPanel;
-    private GameObject inventoryWarningPanel;
-    private GameObject player;
+	private GameObject inventory;
+	private GameObject slotsPanel;
+	private GameObject inventoryWarningPanel;
+	private GameObject player;
 
-    public List<GameObject> invItemList = new List<GameObject>();
+	public List<GameObject> invItemList = new List<GameObject>();
 
-    private GameObject [] inventorySlots;
-    private List<GameObject> freeInventorySlots = new List<GameObject>();
-    
-    public static InventoryControll Instance;
+	private GameObject[] inventorySlots;
+	private List<GameObject> freeInventorySlots = new List<GameObject>();
 
-    void Awake()
-    {
-        if (Instance == null)
-        {
-            Instance = this;
-        }
-        else if (Instance == this)
-        {
-            Destroy(gameObject);
-        }
+	public static InventoryControll Instance;
 
-        DontDestroyOnLoad(gameObject);
+	void Awake()
+	{
+		if (Instance == null)
+		{
+			Instance = this;
+		}
+		else if (Instance == this)
+		{
+			Destroy(gameObject);
+		}
 
-        inventoryWarningPanel = GameObject.Find("Canvas").transform.Find("Inventory").transform.Find("WarningPanel").gameObject;
+		DontDestroyOnLoad(gameObject);
 
-        inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
-        slotsPanel = inventory.transform.Find("SlotsPanel").gameObject;
-        player = GameObject.Find("Player").gameObject;
+		inventoryWarningPanel = GameObject.Find("Canvas").transform.Find("Inventory").transform.Find("WarningPanel").gameObject;
 
-        inventoryWarningPanel.transform.Find("WarningPanelYesButton").GetComponent<Button>().onClick.AddListener(AproveItemThrowing);
-        inventoryWarningPanel.transform.Find("WarningPanelNoButton").GetComponent<Button>().onClick.AddListener(CancelItemThrowing);
-        AddSlots();
-    }
+		inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
+		slotsPanel = inventory.transform.Find("SlotsPanel").gameObject;
+		player = GameObject.Find("Player").gameObject;
 
-    private void Start()
-    {
-        WarningPanelSetActivity(false);
-    }
+		inventoryWarningPanel.transform.Find("WarningPanelYesButton").GetComponent<Button>().onClick.AddListener(AproveItemThrowing);
+		inventoryWarningPanel.transform.Find("WarningPanelNoButton").GetComponent<Button>().onClick.AddListener(CancelItemThrowing);
+		AddSlots();
+	}
 
-    private void AddSlots() 
-    {
-        List<GameObject> invSlotsList = new List<GameObject>();
+	private void Start()
+	{
+		WarningPanelSetActivity(false);
+	}
 
-        for (int i = 0; i < slotsPanel.transform.childCount; i++)
-        {
-            invSlotsList.Add(slotsPanel.transform.GetChild(i).gameObject); 
-        }
+	private void AddSlots()
+	{
+		List<GameObject> invSlotsList = new List<GameObject>();
 
-        inventorySlots = invSlotsList.ToArray();
-    }
-    private void FindFreeSlots() 
-    {
-        freeInventorySlots.Clear();
+		for (int i = 0; i < slotsPanel.transform.childCount; i++)
+		{
+			invSlotsList.Add(slotsPanel.transform.GetChild(i).gameObject);
+		}
 
-        foreach(GameObject slot in inventorySlots) 
-        {
-            if (!slot.GetComponent<InventorySlot>().isOccupied) freeInventorySlots.Add(slot);
-        }
-    }
+		inventorySlots = invSlotsList.ToArray();
+	}
+	private void FindFreeSlots()
+	{
+		freeInventorySlots.Clear();
 
-    public bool IsFreeSpaceForItem(GameObject invItem, out Vector2 invItemPlace) 
-    {
-        FindFreeSlots();
-        invItemPlace = Vector2.zero;
-        if (freeInventorySlots.Count == 0) return false;
+		foreach (GameObject slot in inventorySlots)
+		{
+			if (!slot.GetComponent<InventorySlot>().isOccupied) freeInventorySlots.Add(slot);
+		}
+	}
 
-        if (invItem.GetComponent<InventoryItem>().sizeCode == "")
-            invItem.GetComponent<InventoryItem>().CreateSizeCode();
+	public bool IsFreeSpaceForItem(GameObject invItem, out Vector2 invItemPlace)
+	{
+		FindFreeSlots();
+		invItemPlace = Vector2.zero;
+		if (freeInventorySlots.Count == 0) return false;
 
-        string sizeCode = invItem.GetComponent<InventoryItem>().sizeCode;
-        int rows = sizeCode.Length;
-        char[] columns = sizeCode.ToCharArray();
-        List<GameObject> placeSlots = new List<GameObject>();
-        for(int slotIndex = 0; slotIndex < freeInventorySlots.Count; slotIndex++) 
-        {
-            int GlobalSlotIndex = System.Array.IndexOf(inventorySlots, freeInventorySlots[slotIndex]);
+		if (invItem.GetComponent<InventoryItem>().sizeCode == "")
+			invItem.GetComponent<InventoryItem>().CreateSizeCode();
 
-            placeSlots = TryPlace(GlobalSlotIndex, rows, columns);
-            
-            if(placeSlots != null) 
-            {
-                OccupySlots(placeSlots);
-                invItem.GetComponent<InventoryItem>().AddOccupationSlots(placeSlots);
+		string sizeCode = invItem.GetComponent<InventoryItem>().sizeCode;
+		int rows = sizeCode.Length;
+		char[] columns = sizeCode.ToCharArray();
+		List<GameObject> placeSlots = new List<GameObject>();
+		for (int slotIndex = 0; slotIndex < freeInventorySlots.Count; slotIndex++)
+		{
+			int GlobalSlotIndex = System.Array.IndexOf(inventorySlots, freeInventorySlots[slotIndex]);
 
-                invItemPlace = FindCenter(placeSlots);
-                return true;
-            }
-        }
+			placeSlots = TryPlace(GlobalSlotIndex, rows, columns);
 
-        return false;
-    }
-    
-    private List<GameObject> TryPlace(int GlobalSlotIndex, int rows, char[] columns) 
-    {
-        List<GameObject> slotList = new List<GameObject>();
+			if (placeSlots != null)
+			{
+				OccupySlots(placeSlots);
+				invItem.GetComponent<InventoryItem>().AddOccupationSlots(placeSlots);
 
-        for (int row = 0; row < rows; row++)
-        {
-            for (int column = 0; column < int.Parse(columns[row].ToString()); column++)
-            {
-                if (GlobalSlotIndex + column + (row * slotsPanelWidth) >= inventorySlots.Length || inventorySlots[GlobalSlotIndex + column + (row * slotsPanelWidth)].GetComponent<InventorySlot>().isOccupied)
-                {
-                    return null;
-                }
+				invItemPlace = FindCenter(placeSlots);
+				return true;
+			}
+		}
 
-                slotList.Add(inventorySlots[GlobalSlotIndex + column + (row * slotsPanelWidth)]);
-            }
-        }
+		return false;
+	}
 
-        return slotList;
-    }
+	private List<GameObject> TryPlace(int GlobalSlotIndex, int rows, char[] columns)
+	{
+		List<GameObject> slotList = new List<GameObject>();
 
-    private void OccupySlots(List<GameObject> slotList) 
-    { 
-        for(int i = 0; i < slotList.Count; i++) 
-        {
-            freeInventorySlots.Remove(slotList[i]);
-        }
-    }
+		for (int row = 0; row < rows; row++)
+		{
+			for (int column = 0; column < int.Parse(columns[row].ToString()); column++)
+			{
+				if (GlobalSlotIndex + column + (row * slotsPanelWidth) >= inventorySlots.Length || inventorySlots[GlobalSlotIndex + column + (row * slotsPanelWidth)].GetComponent<InventorySlot>().isOccupied)
+				{
+					return null;
+				}
 
-    private Vector2 FindCenter(List<GameObject> slotList) 
-    {
-        float medianX = 0, medianY = 0;
-        int slotsCount;
+				slotList.Add(inventorySlots[GlobalSlotIndex + column + (row * slotsPanelWidth)]);
+			}
+		}
 
-        for (slotsCount = 0; slotsCount < slotList.Count; slotsCount++)
-        {
-            medianX += slotList[slotsCount].transform.position.x;
-            medianY += slotList[slotsCount].transform.position.y;
-        }
+		return slotList;
+	}
 
-        medianX /= slotsCount;
-        medianY /= slotsCount;
+	private void OccupySlots(List<GameObject> slotList)
+	{
+		for (int i = 0; i < slotList.Count; i++)
+		{
+			freeInventorySlots.Remove(slotList[i]);
+		}
+	}
+
+	private Vector2 FindCenter(List<GameObject> slotList)
+	{
+		float medianX = 0, medianY = 0;
+		int slotsCount;
+
+		for (slotsCount = 0; slotsCount < slotList.Count; slotsCount++)
+		{
+			medianX += slotList[slotsCount].transform.position.x;
+			medianY += slotList[slotsCount].transform.position.y;
+		}
+
+		medianX /= slotsCount;
+		medianY /= slotsCount;
 
 
-        return new Vector2(medianX, medianY);
-    }
+		return new Vector2(medianX, medianY);
+	}
 
-    public void WarningPanelSetActivity(bool activity) 
-    {
-        inventoryWarningPanel.transform.SetAsLastSibling();
-        inventoryWarningPanel.SetActive(activity);
-    }
+	public void WarningPanelSetActivity(bool activity)
+	{
+		inventoryWarningPanel.transform.SetAsLastSibling();
+		inventoryWarningPanel.SetActive(activity);
+	}
 
-    public bool WarningPanelActivity() 
-    {
-        return inventoryWarningPanel.activeSelf;
-    }
-    private void AproveItemThrowing() 
-    {
-        WarningPanelSetActivity(false);
+	public bool WarningPanelActivity()
+	{
+		return inventoryWarningPanel.activeSelf;
+	}
+	private void AproveItemThrowing()
+	{
+		WarningPanelSetActivity(false);
 
-        List<GameObject> fullInvItemList = new List<GameObject>(invItemList);
+		List<GameObject> fullInvItemList = new List<GameObject>(invItemList);
 
-        foreach (GameObject invItem in fullInvItemList)
-        {
-            if (!invItem.GetComponent<InventoryItem>().hasPlace)
-            {
-                ObjectPooler.Instance.SpawnItem(invItem.GetComponent<InventoryItem>().invItemInfo.itemInfo, player.GetComponent<PlayerController>().playerGrabPoint.transform.position, Quaternion.identity);
-                ObjectPooler.Instance.DeleteInventoryItem(invItem.GetComponent<InventoryItem>().invItemInfo, invItem);
-            }
-        }
+		foreach (GameObject invItem in fullInvItemList)
+		{
+			if (!invItem.GetComponent<InventoryItem>().hasPlace)
+			{
+				ObjectPooler.Instance.SpawnItem(invItem.GetComponent<InventoryItem>().invItemInfo.itemInfo, player.GetComponent<PlayerController>().playerGrabPoint.transform.position, Quaternion.identity);
+				ObjectPooler.Instance.DeleteInventoryItem(invItem.GetComponent<InventoryItem>().invItemInfo, invItem);
+			}
+		}
 
-        player.GetComponent<PlayerController>().InventoryChangeStatement(false);
-    }
+		player.GetComponent<PlayerController>().InventoryChangeStatement(false);
+	}
 
-    private void CancelItemThrowing() 
-    {
-        WarningPanelSetActivity(false);
-    }
+	private void CancelItemThrowing()
+	{
+		WarningPanelSetActivity(false);
+	}
 
-    public bool AllItemsHavePlace() 
-    { 
-        foreach(GameObject invItem in invItemList) 
-        {
-            if (!invItem.GetComponent<InventoryItem>().hasPlace) 
-            {
-                return false;
-            }
-        }
-        return true;
-    }
+	public bool AllItemsHavePlace()
+	{
+		foreach (GameObject invItem in invItemList)
+		{
+			if (!invItem.GetComponent<InventoryItem>().hasPlace)
+			{
+				return false;
+			}
+		}
+		return true;
+	}
 }

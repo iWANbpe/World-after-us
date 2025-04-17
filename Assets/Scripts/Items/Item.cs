@@ -2,36 +2,36 @@ using UnityEngine;
 
 public class Item : MonoBehaviour
 {
-    [HideInInspector] public Rigidbody itemRigidbody;
+	[HideInInspector] public Rigidbody itemRigidbody;
 
-    public ItemInfo itemInfo;
-    
-    protected GameObject targetObj;
-    protected Collider itemCollider;
-    private const float dragSpeed = 5f;
+	public ItemInfo itemInfo;
 
-    private void Awake()
-    {
-        targetObj = null;
-        itemRigidbody = GetComponent<Rigidbody>();
-        itemCollider = GetComponent<Collider>();
-    }
+	protected GameObject targetObj;
+	protected Collider itemCollider;
+	private const float dragSpeed = 5f;
 
-    public void SetTarget(GameObject target) 
-    {
-        targetObj = target;
-    }
+	private void Awake()
+	{
+		targetObj = null;
+		itemRigidbody = GetComponent<Rigidbody>();
+		itemCollider = GetComponent<Collider>();
+	}
 
-    public void DisableCollisionLayer(LayerMask layerMask) 
-    {
-        itemCollider.excludeLayers = layerMask;
-    }
+	public void SetTarget(GameObject target)
+	{
+		targetObj = target;
+	}
 
-    private void FixedUpdate()
-    {
-        if (targetObj)
-        {
-            itemRigidbody.MovePosition(Vector3.Lerp(itemRigidbody.transform.position, targetObj.transform.position, dragSpeed * Time.fixedDeltaTime));
-        }
-    }
+	public void DisableCollisionLayer(LayerMask layerMask)
+	{
+		itemCollider.excludeLayers = layerMask;
+	}
+
+	private void FixedUpdate()
+	{
+		if (targetObj)
+		{
+			itemRigidbody.MovePosition(Vector3.Lerp(itemRigidbody.transform.position, targetObj.transform.position, dragSpeed * Time.fixedDeltaTime));
+		}
+	}
 }

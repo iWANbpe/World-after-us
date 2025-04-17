@@ -1,161 +1,161 @@
-using UnityEngine;
-using UnityEngine.UI;
 using System.Collections.Generic;
 using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
-    public float doubleClickCoolDown;
-    [Header("Objects")]
-    [SerializeField] private GameObject playerPanel;
-    [SerializeField] private GameObject infoItemText;
-    [SerializeField] private GameObject infoPanel;
-    [SerializeField] private GameObject canvas;
-    [Header("MessagePanel settings")] 
-    [SerializeField] private GameObject messagePanel;
-    [SerializeField] private Vector2 messageStartCoordinate;
-    [SerializeField] private float messageOffScreenDistance;
-    [SerializeField] private int maxMessagesCount;
-    [SerializeField] private float messageLifetime;
-    [SerializeField] private float messageMoveSpeed;
-    [SerializeField] private float messageMoveDuration;
+	public float doubleClickCoolDown;
+	[Header("Objects")]
+	[SerializeField] private GameObject playerPanel;
+	[SerializeField] private GameObject infoItemText;
+	[SerializeField] private GameObject infoPanel;
+	[SerializeField] private GameObject canvas;
+	[Header("MessagePanel settings")]
+	[SerializeField] private GameObject messagePanel;
+	[SerializeField] private Vector2 messageStartCoordinate;
+	[SerializeField] private float messageOffScreenDistance;
+	[SerializeField] private int maxMessagesCount;
+	[SerializeField] private float messageLifetime;
+	[SerializeField] private float messageMoveSpeed;
+	[SerializeField] private float messageMoveDuration;
 
-    [Header("FWF bars")]
-    [SerializeField] private List<GameObject> foodBarList = new List<GameObject>();
-    [SerializeField] private List<GameObject> waterBarList = new List<GameObject>();
-    [SerializeField] private List<GameObject> filterBarList = new List<GameObject>();
-    public bool infoItemTextIsActive { get{ return infoItemText.activeSelf; } }
+	[Header("FWF bars")]
+	[SerializeField] private List<GameObject> foodBarList = new List<GameObject>();
+	[SerializeField] private List<GameObject> waterBarList = new List<GameObject>();
+	[SerializeField] private List<GameObject> filterBarList = new List<GameObject>();
+	public bool infoItemTextIsActive { get { return infoItemText.activeSelf; } }
 
-    private Image itemImage;
-    private TMP_Text itemNameText;
-    private TMP_Text itemTypeText;
-    private TMP_Text itemEffectsText;
-    private TMP_Text ItemDescriptionText;
+	private Image itemImage;
+	private TMP_Text itemNameText;
+	private TMP_Text itemTypeText;
+	private TMP_Text itemEffectsText;
+	private TMP_Text ItemDescriptionText;
 
-    private List<MessagePanel> messageList = new List<MessagePanel>();
-    private Queue<MessagePanel> messagePool = new Queue<MessagePanel>();
-    private float screenWidth;
-    private Vector2 messageSpawnStartCoordinate;
+	private List<MessagePanel> messageList = new List<MessagePanel>();
+	private Queue<MessagePanel> messagePool = new Queue<MessagePanel>();
+	private float screenWidth;
+	private Vector2 messageSpawnStartCoordinate;
 
-    private Dictionary<UtilityType, List<GameObject>> fwfBarDictionary = new Dictionary<UtilityType, List<GameObject>>();
-    private void Awake()
-    {
-        itemImage = infoPanel.transform.Find("ItemImage").gameObject.GetComponent<Image>();
-        itemNameText = infoPanel.transform.Find("ItemInfoPanel").Find("ItemNameText").gameObject.GetComponent<TMP_Text>();
-        itemTypeText = infoPanel.transform.Find("ItemInfoPanel").Find("ItemTypeText").gameObject.GetComponent<TMP_Text>();
-        itemEffectsText = infoPanel.transform.Find("ItemInfoPanel").Find("ItemEffectsText").gameObject.GetComponent<TMP_Text>();
-        ItemDescriptionText = infoPanel.transform.Find("ItemDescriptionText").gameObject.GetComponent<TMP_Text>();
-        
-        infoPanel.SetActive(false);
-        
-        screenWidth = canvas.GetComponent<RectTransform>().rect.width;
-        messageSpawnStartCoordinate = new Vector2(screenWidth + messageOffScreenDistance, messageStartCoordinate.y);
+	private Dictionary<UtilityType, List<GameObject>> fwfBarDictionary = new Dictionary<UtilityType, List<GameObject>>();
+	private void Awake()
+	{
+		itemImage = infoPanel.transform.Find("ItemImage").gameObject.GetComponent<Image>();
+		itemNameText = infoPanel.transform.Find("ItemInfoPanel").Find("ItemNameText").gameObject.GetComponent<TMP_Text>();
+		itemTypeText = infoPanel.transform.Find("ItemInfoPanel").Find("ItemTypeText").gameObject.GetComponent<TMP_Text>();
+		itemEffectsText = infoPanel.transform.Find("ItemInfoPanel").Find("ItemEffectsText").gameObject.GetComponent<TMP_Text>();
+		ItemDescriptionText = infoPanel.transform.Find("ItemDescriptionText").gameObject.GetComponent<TMP_Text>();
 
-        fwfBarDictionary.Add(UtilityType.Food, foodBarList);
-        fwfBarDictionary.Add(UtilityType.Water, waterBarList);
-        fwfBarDictionary.Add(UtilityType.Filter, filterBarList);
-    }
+		infoPanel.SetActive(false);
 
-    public void EnableInfoItemText(string itemName) 
-    {
-        infoItemText.SetActive(true);
-        infoItemText.GetComponent<TMP_Text>().text = itemName;
-    }
+		screenWidth = canvas.GetComponent<RectTransform>().rect.width;
+		messageSpawnStartCoordinate = new Vector2(screenWidth + messageOffScreenDistance, messageStartCoordinate.y);
 
-    public void DisableInfoItemText() 
-    { 
-        infoItemText.SetActive(false);
-    }
+		fwfBarDictionary.Add(UtilityType.Food, foodBarList);
+		fwfBarDictionary.Add(UtilityType.Water, waterBarList);
+		fwfBarDictionary.Add(UtilityType.Filter, filterBarList);
+	}
 
-    public void EnableInfoPanel(InventoryItemInfo invItemInfo) 
-    {
-        infoPanel.SetActive(true);
-        itemImage.sprite = invItemInfo.invItemImage.sprite;
-        
-        itemNameText.text = invItemInfo.itemInfo.GetLocalizedItemName();
-        itemTypeText.text = Localization.Instance.GetText("UIStringTable", "typeText") + " " + invItemInfo.itemInfo.type;
-        itemEffectsText.text = invItemInfo.itemInfo.GetItemFWF().GetUtilityText();
-        ItemDescriptionText.text = invItemInfo.itemInfo.GetLocalizedItemDescription();
-    }
+	public void EnableInfoItemText(string itemName)
+	{
+		infoItemText.SetActive(true);
+		infoItemText.GetComponent<TMP_Text>().text = itemName;
+	}
 
-    public void DisableInfoPanel() 
-    {
-        infoPanel.SetActive(false);
-    }
+	public void DisableInfoItemText()
+	{
+		infoItemText.SetActive(false);
+	}
 
-    public void PlayerPanelMessage(string messageText) 
-    {
-        if(messageList.Count > 0 && messageList.Count < maxMessagesCount) 
-        {
-            MoveUpMessagesList();
-        }
-        else if(messageList.Count >= maxMessagesCount) 
-        {
-            MessagePanel oldMessage = messageList[0].GetComponent<MessagePanel>();
-            oldMessage.HideMessage();
-            MoveUpMessagesList();
-        }
+	public void EnableInfoPanel(InventoryItemInfo invItemInfo)
+	{
+		infoPanel.SetActive(true);
+		itemImage.sprite = invItemInfo.invItemImage.sprite;
 
-        MessagePanel newMessage = SpawnMessagePanel();
-        newMessage.SetTextMessage(messageText);
-        newMessage.AddMoving(messageStartCoordinate, messageMoveSpeed, messageMoveDuration);
-        messageList.Add(newMessage);
-    }
+		itemNameText.text = invItemInfo.itemInfo.GetLocalizedItemName();
+		itemTypeText.text = Localization.Instance.GetText("UIStringTable", "typeText") + " " + invItemInfo.itemInfo.type;
+		itemEffectsText.text = invItemInfo.itemInfo.GetItemFWF().GetUtilityText();
+		ItemDescriptionText.text = invItemInfo.itemInfo.GetLocalizedItemDescription();
+	}
 
-    private void MoveUpMessagesList() 
-    {
-        for (int i = 0; i < messageList.Count; i++) 
-        {
-            Vector2 newPos = new Vector2(messageStartCoordinate.x, messageStartCoordinate.y + (messagePanel.GetComponent<RectTransform>().rect.height * (messageList.Count - i)));
-            messageList[i].AddMoving(newPos, messageMoveSpeed, messageMoveDuration);
-        }
-    }
+	public void DisableInfoPanel()
+	{
+		infoPanel.SetActive(false);
+	}
 
-    public void RemoveMessageFromMessageList(MessagePanel messagePanel) 
-    {
-        messageList.Remove(messagePanel);
-    }
+	public void PlayerPanelMessage(string messageText)
+	{
+		if (messageList.Count > 0 && messageList.Count < maxMessagesCount)
+		{
+			MoveUpMessagesList();
+		}
+		else if (messageList.Count >= maxMessagesCount)
+		{
+			MessagePanel oldMessage = messageList[0].GetComponent<MessagePanel>();
+			oldMessage.HideMessage();
+			MoveUpMessagesList();
+		}
 
-    public MessagePanel SpawnMessagePanel() 
-    {
-        MessagePanel newMessage;
+		MessagePanel newMessage = SpawnMessagePanel();
+		newMessage.SetTextMessage(messageText);
+		newMessage.AddMoving(messageStartCoordinate, messageMoveSpeed, messageMoveDuration);
+		messageList.Add(newMessage);
+	}
 
-        if (messagePool.Count > 0) 
-        {
-            newMessage = messagePool.Dequeue();
-            newMessage.gameObject.SetActive(true);
-            newMessage.gameObject.transform.position = messageSpawnStartCoordinate;
-        }
+	private void MoveUpMessagesList()
+	{
+		for (int i = 0; i < messageList.Count; i++)
+		{
+			Vector2 newPos = new Vector2(messageStartCoordinate.x, messageStartCoordinate.y + (messagePanel.GetComponent<RectTransform>().rect.height * (messageList.Count - i)));
+			messageList[i].AddMoving(newPos, messageMoveSpeed, messageMoveDuration);
+		}
+	}
 
-        else 
-        {
-            newMessage = Instantiate(messagePanel, messageSpawnStartCoordinate, Quaternion.identity, playerPanel.transform).GetComponent<MessagePanel>();
-            newMessage.disappearancePos.x = screenWidth + messageOffScreenDistance;
-        }
+	public void RemoveMessageFromMessageList(MessagePanel messagePanel)
+	{
+		messageList.Remove(messagePanel);
+	}
 
-        
-        newMessage.SetMessageLifetime(messageLifetime);
-        return newMessage;
-    }
+	public MessagePanel SpawnMessagePanel()
+	{
+		MessagePanel newMessage;
 
-    public void AddMessageToPool(MessagePanel messagePanel) 
-    {
-        messagePool.Enqueue(messagePanel);
-    }
+		if (messagePool.Count > 0)
+		{
+			newMessage = messagePool.Dequeue();
+			newMessage.gameObject.SetActive(true);
+			newMessage.gameObject.transform.position = messageSpawnStartCoordinate;
+		}
 
-    public void UpdateFWFBars(FWF fwfValue) 
-    { 
-        foreach(UtilityPoint uPoint in fwfValue.utilityPoints) 
-        {
-            if (fwfBarDictionary.ContainsKey(uPoint.utilityType))
-            {
-                for (int i = 0; i < fwfBarDictionary[uPoint.utilityType].Count; i++) 
-                {
-                    GameObject bar = fwfBarDictionary[uPoint.utilityType][i];
-                    bar.GetComponentInChildren<Slider>().value = uPoint.utilityValue / 100f;
-                }
-                
-            }
-        }
-    }
+		else
+		{
+			newMessage = Instantiate(messagePanel, messageSpawnStartCoordinate, Quaternion.identity, playerPanel.transform).GetComponent<MessagePanel>();
+			newMessage.disappearancePos.x = screenWidth + messageOffScreenDistance;
+		}
+
+
+		newMessage.SetMessageLifetime(messageLifetime);
+		return newMessage;
+	}
+
+	public void AddMessageToPool(MessagePanel messagePanel)
+	{
+		messagePool.Enqueue(messagePanel);
+	}
+
+	public void UpdateFWFBars(FWF fwfValue)
+	{
+		foreach (UtilityPoint uPoint in fwfValue.utilityPoints)
+		{
+			if (fwfBarDictionary.ContainsKey(uPoint.utilityType))
+			{
+				for (int i = 0; i < fwfBarDictionary[uPoint.utilityType].Count; i++)
+				{
+					GameObject bar = fwfBarDictionary[uPoint.utilityType][i];
+					bar.GetComponentInChildren<Slider>().value = uPoint.utilityValue / 100f;
+				}
+
+			}
+		}
+	}
 }

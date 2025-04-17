@@ -3,100 +3,100 @@ using UnityEngine;
 
 public class ObjectPooler : MonoBehaviour
 {
-    [HideInInspector]public Dictionary<string, Queue<GameObject>> itemDictionary;
+	[HideInInspector] public Dictionary<string, Queue<GameObject>> itemDictionary;
 
-    public static ObjectPooler Instance;
-    [HideInInspector] public GameObject canvas;
- 
-    private void Awake()
-    {
-        if(Instance == null) 
-        { 
-            Instance = this;
-        }
-        else if(Instance == this) 
-        {
-            Destroy(gameObject);
-        }
+	public static ObjectPooler Instance;
+	[HideInInspector] public GameObject canvas;
 
-        canvas = GameObject.Find("Canvas");
-        itemDictionary = new Dictionary<string, Queue<GameObject>>();
-        DontDestroyOnLoad(gameObject);
-    }
+	private void Awake()
+	{
+		if (Instance == null)
+		{
+			Instance = this;
+		}
+		else if (Instance == this)
+		{
+			Destroy(gameObject);
+		}
 
-    public void SpawnItem(ItemInfo itemInfo, Vector3 position, Quaternion rotation) 
-    {
-        if (itemDictionary.ContainsKey(itemInfo.itemName) && itemDictionary[itemInfo.itemName].Count > 0) 
-        {
-            GameObject itemFromDictionary = itemDictionary[itemInfo.itemName].Dequeue();
+		canvas = GameObject.Find("Canvas");
+		itemDictionary = new Dictionary<string, Queue<GameObject>>();
+		DontDestroyOnLoad(gameObject);
+	}
 
-            itemFromDictionary.SetActive(true);
-            itemFromDictionary.transform.position = position;
-            itemFromDictionary.transform.rotation = rotation;
+	public void SpawnItem(ItemInfo itemInfo, Vector3 position, Quaternion rotation)
+	{
+		if (itemDictionary.ContainsKey(itemInfo.itemName) && itemDictionary[itemInfo.itemName].Count > 0)
+		{
+			GameObject itemFromDictionary = itemDictionary[itemInfo.itemName].Dequeue();
 
-            itemFromDictionary.GetComponent<Rigidbody>().velocity = Vector3.zero;
-            itemFromDictionary.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
-        }
-        else 
-        {
-            itemInfo.InstantiateItem(position, rotation);
-            
-            if (!itemDictionary.ContainsKey(itemInfo.itemName)) 
-                itemDictionary.Add(itemInfo.itemName, new Queue<GameObject>());
-        }
-    }
+			itemFromDictionary.SetActive(true);
+			itemFromDictionary.transform.position = position;
+			itemFromDictionary.transform.rotation = rotation;
 
-    public void DespawnItem(ItemInfo itemInfo, GameObject itemObj) 
-    {
-        itemObj.SetActive(false);
+			itemFromDictionary.GetComponent<Rigidbody>().velocity = Vector3.zero;
+			itemFromDictionary.GetComponent<Rigidbody>().angularVelocity = Vector3.zero;
+		}
+		else
+		{
+			itemInfo.InstantiateItem(position, rotation);
 
-        if (!itemDictionary.ContainsKey(itemInfo.itemName)) 
-            itemDictionary.Add(itemInfo.itemName, new Queue<GameObject>());
+			if (!itemDictionary.ContainsKey(itemInfo.itemName))
+				itemDictionary.Add(itemInfo.itemName, new Queue<GameObject>());
+		}
+	}
 
-        itemDictionary[itemInfo.itemName].Enqueue(itemObj);
-    }
-    public GameObject InitializeInventoryItem(InventoryItemInfo invItemInfo) 
-    {
-        GameObject invItem;
+	public void DespawnItem(ItemInfo itemInfo, GameObject itemObj)
+	{
+		itemObj.SetActive(false);
 
-        if (itemDictionary.ContainsKey(invItemInfo.invItemName) && itemDictionary[invItemInfo.invItemName].Count > 0)
-        {
-            invItem = itemDictionary[invItemInfo.invItemName].Dequeue();
-            invItem.SetActive(true);
-        }
-        else
-        {
-            invItem = invItemInfo.AddItemToInventory(Vector3.zero, canvas.transform);
+		if (!itemDictionary.ContainsKey(itemInfo.itemName))
+			itemDictionary.Add(itemInfo.itemName, new Queue<GameObject>());
 
-            if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
-                itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
-        }
+		itemDictionary[itemInfo.itemName].Enqueue(itemObj);
+	}
+	public GameObject InitializeInventoryItem(InventoryItemInfo invItemInfo)
+	{
+		GameObject invItem;
 
-        invItem.GetComponent<InventoryItem>().SetVisibility(false);
-        return invItem;
-    }
+		if (itemDictionary.ContainsKey(invItemInfo.invItemName) && itemDictionary[invItemInfo.invItemName].Count > 0)
+		{
+			invItem = itemDictionary[invItemInfo.invItemName].Dequeue();
+			invItem.SetActive(true);
+		}
+		else
+		{
+			invItem = invItemInfo.AddItemToInventory(Vector3.zero, canvas.transform);
 
-    public void AddInventoryItem(GameObject invItem, Vector2 position) 
-    {
-        GameObject inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
+			if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
+				itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
+		}
 
-        invItem.transform.SetParent(inventory.transform);
-        invItem.GetComponent<InventoryItem>().SetVisibility(true);
-        invItem.GetComponent<InventoryItem>().SetPosition(position);
+		invItem.GetComponent<InventoryItem>().SetVisibility(false);
+		return invItem;
+	}
 
-        InventoryControll.Instance.invItemList.Add(invItem);
-    }
+	public void AddInventoryItem(GameObject invItem, Vector2 position)
+	{
+		GameObject inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
 
-    public void DeleteInventoryItem(InventoryItemInfo invItemInfo, GameObject invItem) 
-    {
-        invItem.GetComponent<InventoryItem>().ClearSlots();
-        invItem.SetActive(false);
+		invItem.transform.SetParent(inventory.transform);
+		invItem.GetComponent<InventoryItem>().SetVisibility(true);
+		invItem.GetComponent<InventoryItem>().SetPosition(position);
 
-        InventoryControll.Instance.invItemList.Remove(invItem);
+		InventoryControll.Instance.invItemList.Add(invItem);
+	}
 
-        if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
-            itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
+	public void DeleteInventoryItem(InventoryItemInfo invItemInfo, GameObject invItem)
+	{
+		invItem.GetComponent<InventoryItem>().ClearSlots();
+		invItem.SetActive(false);
 
-        itemDictionary[invItemInfo.invItemName].Enqueue(invItem);
-    }
+		InventoryControll.Instance.invItemList.Remove(invItem);
+
+		if (!itemDictionary.ContainsKey(invItemInfo.invItemName))
+			itemDictionary.Add(invItemInfo.invItemName, new Queue<GameObject>());
+
+		itemDictionary[invItemInfo.invItemName].Enqueue(invItem);
+	}
 }
