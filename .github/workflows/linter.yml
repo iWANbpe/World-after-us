@@ -2,9 +2,9 @@ name: Linter
 
 on:
   push:
-    branches: ["main"]
+    branches: ['main']
   pull_request:
-    branches: ["main"]
+    branches: ['main']
 
 permissions:
   contents: read
@@ -14,8 +14,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        configuration: [Debug, Release]
-
+        configuration: ['Debug', 'Release']
     runs-on: ubuntu-latest
 
     steps:
@@ -29,5 +28,4 @@ jobs:
           DISABLE_ERRORS: true
           OUTPUT_DETAILS: detailed
           VALIDATE_ALL_CODEBASE: false
-          FILTER_REGEX_EXCLUDE: (Assets/Input System|Assets/TextMesh Pro|ProjectSettings)
-
+          FILTER_REGEX_EXCLUDE: '(Assets/Input System|Assets/TextMesh Pro|ProjectSettings)'
