@@ -433,4 +433,3 @@ public class PlayerController : MonoBehaviour
 		if (isInventoryOpen) invItemLookObject = SelectedInventoryItem();
 	}
 }
-
