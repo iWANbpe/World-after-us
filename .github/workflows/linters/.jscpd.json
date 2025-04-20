@@ -3,7 +3,7 @@
   "min-lines": 5,
   "min-tokens": 70,
   "format": ["cs"],
-  "ignore": [
+  "exclude": [
     "**/Assets/TextMeshPro/**",
     "**/Assets/Input System/**",
     "**/ProjectSettings/**"
