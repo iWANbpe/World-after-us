@@ -3,9 +3,9 @@ name: Linter
 
 on:
   push:
-    branches: ['main']
+    branches: ["main"]
   pull_request:
-    branches: ['main']
+    branches: ["main"]
 
 permissions:
   contents: read
@@ -15,7 +15,7 @@ jobs:
   lint:
     strategy:
       matrix:
-        configuration: ['Debug', 'Release']
+        configuration: ["Debug", "Release"]
     runs-on: ubuntu-latest
 
     steps:
