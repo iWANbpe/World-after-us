@@ -2,14 +2,13 @@
   "threshold": 0.1,
   "min-lines": 5,
   "min-tokens": 70,
-  "format": ["cs"],
   "ignore": [
     "**/Assets/TextMeshPro/**",
     "**/Assets/Input System/**",
     "**/ProjectSettings/**"
   ],
   "ignoreCase": false,
-  "gitignore": false
+  "gitignore": false,
   "reporters": ["console"],
   "absolute": true
 }
