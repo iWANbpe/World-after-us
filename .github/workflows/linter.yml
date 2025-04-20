@@ -29,4 +29,4 @@ jobs:
           DISABLE_ERRORS: true
           OUTPUT_DETAILS: detailed
           VALIDATE_ALL_CODEBASE: false
-          FILTER_REGEX_EXCLUDE: '.*Assets/Input System/|Assets/TextMeshPro/|ProjectSettings/.*'
+          FILTER_REGEX_EXCLUDE: .*Assets/Input System/|Assets/TextMeshPro/|ProjectSettings/.*
