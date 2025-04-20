@@ -6,7 +6,7 @@
   "ignore": [
     "**/Assets/TextMeshPro/**",
     "**/Assets/Input System/**",
-    "**/ProjectSettings/**",
+    "**/ProjectSettings/**"
   ],
   "reporters": ["console"],
   "absolute": true

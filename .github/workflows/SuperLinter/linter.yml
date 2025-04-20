@@ -29,5 +29,4 @@ jobs:
           DISABLE_ERRORS: true
           OUTPUT_DETAILS: detailed
           VALIDATE_ALL_CODEBASE: false
-	  LINTER_RULES_PATH: .github/workflows/SuperLinter
           FILTER_REGEX_EXCLUDE: .*Assets/Input System/|Assets/TextMeshPro/|ProjectSettings/.*
