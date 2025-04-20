@@ -1,0 +1,15 @@
+{
+  "threshold": 0.1,
+  "min-lines": 5,
+  "min-tokens": 70,
+  "format": ["javascript", "json", "cs"],
+  "ignore": [
+    "**/Assets/TextMeshPro/**",
+    "**/Assets/Input System/**",
+    "**/ProjectSettings/**",
+    "**/Library/**",
+    "**/Temp/**"
+  ],
+  "reporters": ["console", "json"],
+  "absolute": true
+}
