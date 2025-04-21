@@ -29,5 +29,6 @@ jobs:
           DISABLE_ERRORS: true
           OUTPUT_DETAILS: detailed
           VALIDATE_ALL_CODEBASE: false
+	  VALIDATE_GIT_COMMITLINT: false
           LINTER_RULES_PATH: .github/linters/
           FILTER_REGEX_EXCLUDE: .*Assets/Input System/|Assets/TextMeshPro/|ProjectSettings/.*
