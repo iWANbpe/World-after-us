@@ -30,6 +30,5 @@ jobs:
           OUTPUT_DETAILS: detailed
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_GIT_COMMITLINT: false
-          VALIDATE_JSCPD: true
           LINTER_RULES_PATH: .github/workflows/linters
           FILTER_REGEX_EXCLUDE: .*Assets/Input System/|Assets/TextMeshPro/|ProjectSettings/.*
