@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 27211ecc6a04ad04f881ad3ac1948bb4
+guid: 0751f2c2978265b46afbf13f6b710441
 TextureImporter:
   internalIDToNameTable: []
   externalObjects: {}
@@ -34,7 +34,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 2
+    filterMode: 1
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -72,8 +72,8 @@ TextureImporter:
     maxTextureSize: 4096
     resizeAlgorithm: 1
     textureFormat: -1
-    textureCompression: 2
-    compressionQuality: 100
+    textureCompression: 1
+    compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
@@ -123,13 +123,13 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: UI texture map_0
+      name: UI texture map 2_0
       rect:
         serializedVersion: 2
-        x: 36
-        y: 876
-        width: 937
-        height: 164
+        x: 0
+        y: 131
+        width: 436
+        height: 799
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -137,41 +137,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 1fc1729f2ec804c468a624dca708ea67
-      internalID: 172116011
+      spriteID: 096a7474c43ce004da11c6e761b3004e
+      internalID: 207741019
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI texture map_1
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 437
-        width: 408
-        height: 409
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: bf78c9890db23a04fa89025283dffb47
-      internalID: 643721892
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI texture map_2
+      name: UI texture map 2_1
       rect:
         serializedVersion: 2
         x: 454
-        y: 437
-        width: 191
-        height: 267
+        y: 131
+        width: 999
+        height: 799
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -179,20 +158,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: 16ff7131282359e428fbb8c444ce27aa
-      internalID: 671139177
+      spriteID: a3280a771677f08439b00e2b0036252e
+      internalID: 1560536084
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI texture map_4
+      name: UI texture map 2_2
       rect:
         serializedVersion: 2
-        x: 668
-        y: 436
-        width: 278
-        height: 268
+        x: 1466
+        y: 131
+        width: 454
+        height: 799
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -200,20 +179,20 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: dc7a34ca4b8417646a0c8b45d9cb2f23
-      internalID: 1114491406
+      spriteID: f57885e77756d9e4ead66f01dd8fc0be
+      internalID: -1289874193
       vertices: []
       indices: 
       edges: []
       weights: []
     - serializedVersion: 2
-      name: UI texture map_6
+      name: UI texture map 2_3
       rect:
         serializedVersion: 2
-        x: 1018
-        y: 431
-        width: 123
-        height: 269
+        x: 15
+        y: 17
+        width: 102
+        height: 102
       alignment: 0
       pivot: {x: 0, y: 0}
       border: {x: 0, y: 0, z: 0, w: 0}
@@ -221,29 +200,8 @@ TextureImporter:
       physicsShape: []
       tessellationDetail: 0
       bones: []
-      spriteID: a08f7c9cd59ee424e9762e46372e2fc5
-      internalID: 60923162
-      vertices: []
-      indices: 
-      edges: []
-      weights: []
-    - serializedVersion: 2
-      name: UI texture map_7
-      rect:
-        serializedVersion: 2
-        x: 36
-        y: 43
-        width: 909
-        height: 350
-      alignment: 0
-      pivot: {x: 0, y: 0}
-      border: {x: 0, y: 0, z: 0, w: 0}
-      outline: []
-      physicsShape: []
-      tessellationDetail: 0
-      bones: []
-      spriteID: 3f6ff0170a06ecc479ddcdb8283abb5c
-      internalID: -1406893524
+      spriteID: 697926bb66853144782d6cd5461aad1c
+      internalID: 1719961719
       vertices: []
       indices: 
       edges: []
@@ -251,7 +209,7 @@ TextureImporter:
     outline: []
     physicsShape: []
     bones: []
-    spriteID: 3f45f3597b04b1347b391e56b26705f3
+    spriteID: 5e97eb03825dee720800000000000000
     internalID: 0
     vertices: []
     indices: 
@@ -259,14 +217,10 @@ TextureImporter:
     weights: []
     secondaryTextures: []
     nameFileIdTable:
-      UI texture map_0: 172116011
-      UI texture map_1: 643721892
-      UI texture map_2: 671139177
-      UI texture map_3: -1029477042
-      UI texture map_4: 1114491406
-      UI texture map_5: 592286728
-      UI texture map_6: 60923162
-      UI texture map_7: -1406893524
+      UI texture map 2_0: 207741019
+      UI texture map 2_1: 1560536084
+      UI texture map 2_2: -1289874193
+      UI texture map 2_3: 1719961719
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 

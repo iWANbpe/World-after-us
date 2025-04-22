@@ -32,10 +32,10 @@ public class InventoryControll : MonoBehaviour
 
 		DontDestroyOnLoad(gameObject);
 
-		inventoryWarningPanel = GameObject.Find("Canvas").transform.Find("Inventory").transform.Find("WarningPanel").gameObject;
+		inventoryWarningPanel = GameObject.Find("Canvas").transform.Find("Inventory").transform.Find("InventorySubPanel").transform.Find("WarningPanel").gameObject;
 
 		inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
-		slotsPanel = inventory.transform.Find("SlotsPanel").gameObject;
+		slotsPanel = inventory.transform.Find("InventorySubPanel").transform.Find("SlotsPanel").gameObject;
 		player = GameObject.Find("Player").gameObject;
 
 		inventoryWarningPanel.transform.Find("WarningPanelYesButton").GetComponent<Button>().onClick.AddListener(AproveItemThrowing);

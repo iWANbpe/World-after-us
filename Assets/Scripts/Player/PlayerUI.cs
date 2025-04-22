@@ -8,6 +8,7 @@ public class PlayerUI : MonoBehaviour
 	public float doubleClickCoolDown;
 	[Header("Objects")]
 	[SerializeField] private GameObject playerPanel;
+	[SerializeField] private GameObject inventoryPanel;
 	[SerializeField] private GameObject infoItemText;
 	[SerializeField] private GameObject infoPanel;
 	[SerializeField] private GameObject canvas;
@@ -26,10 +27,12 @@ public class PlayerUI : MonoBehaviour
 	[SerializeField] private List<GameObject> filterBarList = new List<GameObject>();
 	public bool infoItemTextIsActive { get { return infoItemText.activeSelf; } }
 
+	private Dictionary<string, GameObject> invSubPanels = new Dictionary<string, GameObject>();
+
 	private Image itemImage;
 	private TMP_Text itemNameText;
 	private TMP_Text itemTypeText;
-	private TMP_Text itemEffectsText;
+	private TMP_Text ItemUtilityText;
 	private TMP_Text ItemDescriptionText;
 
 	private List<MessagePanel> messageList = new List<MessagePanel>();
@@ -40,10 +43,12 @@ public class PlayerUI : MonoBehaviour
 	private Dictionary<UtilityType, List<GameObject>> fwfBarDictionary = new Dictionary<UtilityType, List<GameObject>>();
 	private void Awake()
 	{
+		invSubPanels.Add(inventoryPanel.transform.Find("InventorySubPanel").name, inventoryPanel.transform.Find("InventorySubPanel").gameObject);
+
 		itemImage = infoPanel.transform.Find("ItemImage").gameObject.GetComponent<Image>();
-		itemNameText = infoPanel.transform.Find("ItemInfoPanel").Find("ItemNameText").gameObject.GetComponent<TMP_Text>();
-		itemTypeText = infoPanel.transform.Find("ItemInfoPanel").Find("ItemTypeText").gameObject.GetComponent<TMP_Text>();
-		itemEffectsText = infoPanel.transform.Find("ItemInfoPanel").Find("ItemEffectsText").gameObject.GetComponent<TMP_Text>();
+		itemNameText = infoPanel.transform.Find("ItemBaseInfoPanel").Find("ItemNameText").gameObject.GetComponent<TMP_Text>();
+		itemTypeText = infoPanel.transform.Find("ItemBaseInfoPanel").Find("ItemTypeText").gameObject.GetComponent<TMP_Text>();
+		ItemUtilityText = infoPanel.transform.Find("ItemUtilityText").gameObject.GetComponent<TMP_Text>();
 		ItemDescriptionText = infoPanel.transform.Find("ItemDescriptionText").gameObject.GetComponent<TMP_Text>();
 
 		infoPanel.SetActive(false);
@@ -74,7 +79,7 @@ public class PlayerUI : MonoBehaviour
 
 		itemNameText.text = invItemInfo.itemInfo.GetLocalizedItemName();
 		itemTypeText.text = Localization.Instance.GetText("UIStringTable", "typeText") + " " + invItemInfo.itemInfo.type;
-		itemEffectsText.text = invItemInfo.itemInfo.GetItemFWF().GetUtilityText();
+		ItemUtilityText.text = invItemInfo.itemInfo.GetItemFWF().GetUtilityText();
 		ItemDescriptionText.text = invItemInfo.itemInfo.GetLocalizedItemDescription();
 	}
 
