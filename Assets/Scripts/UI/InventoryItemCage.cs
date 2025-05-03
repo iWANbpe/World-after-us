@@ -11,6 +11,7 @@ public class InventoryItemCage : MonoBehaviour
 	private GameObject occupiedSlot;
 	public Vector3 avaliableInventorySlotPosition { get { return occupiedSlot.transform.position; } }
 
+	private List<RaycastResult> resultsList = new List<RaycastResult>();
 	public void Initialization()
 	{
 		raycaster = GameObject.Find("Canvas").GetComponent<GraphicRaycaster>();
@@ -26,6 +27,9 @@ public class InventoryItemCage : MonoBehaviour
 	{
 		pointerEventData = new PointerEventData(eventSystem);
 		pointerEventData.position = transform.position;
+
+		resultsList = new List<RaycastResult>();
+		raycaster.Raycast(pointerEventData, resultsList);
 	}
 
 	public void ClearSlot()
@@ -43,35 +47,18 @@ public class InventoryItemCage : MonoBehaviour
 		if (occupiedSlot != null)
 		{
 			occupiedSlot.GetComponent<InventorySlot>().isOccupied = true;
-			return;
 		}
-
-		UpdatePointerEventData();
-
-		List<RaycastResult> resultsList = new List<RaycastResult>();
-		raycaster.Raycast(pointerEventData, resultsList);
-
-		foreach (RaycastResult result in resultsList)
-		{
-			if (result.gameObject.GetComponent<InventorySlot>() && result.gameObject.GetComponent<InventorySlot>().isOccupied == false)
-			{
-				occupiedSlot = result.gameObject;
-				occupiedSlot.GetComponent<InventorySlot>().isOccupied = true;
-			}
-		}
-
 	}
+
 	public void OccupySlot(GameObject slot)
 	{
 		occupiedSlot = slot;
 		occupiedSlot.GetComponent<InventorySlot>().isOccupied = true;
 	}
+
 	public bool IsAboveFreeSlot()
 	{
 		UpdatePointerEventData();
-
-		List<RaycastResult> resultsList = new List<RaycastResult>();
-		raycaster.Raycast(pointerEventData, resultsList);
 
 		foreach (RaycastResult result in resultsList)
 		{

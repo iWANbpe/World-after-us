@@ -398,6 +398,8 @@ public class PlayerController : MonoBehaviour
 
 	public void InventoryChangeStatement(bool inventoryStatement)
 	{
+		isInventoryOpen = inventoryStatement;
+
 		if (inventoryStatement)
 		{
 			Layouts.Instance.OpenLayout(LayoutType.Inventory);
@@ -414,12 +416,15 @@ public class PlayerController : MonoBehaviour
 				inputActions.Player.Enable();
 				inputActions.UI.Disable();
 				SetCursorActivity(inventoryStatement);
+				return;
 			}
 
 			else if (!InventoryControll.Instance.WarningPanelActivity())
 			{
 				InventoryControll.Instance.WarningPanelSetActivity(true);
 			}
+
+			isInventoryOpen = !isInventoryOpen;
 		}
 	}
 

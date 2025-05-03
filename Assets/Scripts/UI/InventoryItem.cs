@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -50,14 +51,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	public void ClearSlots()
 	{
-		for (int i = 0; i < transform.childCount; i++)
-		{
-			GameObject child = transform.GetChild(i).gameObject;
-			if (child.GetComponent<InventoryItemCage>())
-			{
-				child.GetComponent<InventoryItemCage>().ClearSlot();
-			}
-		}
+		ChildCagesCallFunction("ClearSlot", null);
 	}
 
 	private void OccupySlots()
@@ -70,14 +64,25 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	private void SetChildrenRaycastTarget(bool statement)
 	{
+		ChildCagesCallFunction("SetRayCastTarget", FuncParams(statement));
+	}
+
+	private void ChildCagesCallFunction(string funcName, object[] funcParams)
+	{
 		for (int i = 0; i < transform.childCount; i++)
 		{
 			GameObject child = transform.GetChild(i).gameObject;
 			if (child.GetComponent<InventoryItemCage>())
 			{
-				child.GetComponent<InventoryItemCage>().SetRayCastTarget(statement);
+				MethodInfo method = child.GetComponent<InventoryItemCage>().GetType().GetMethod(funcName);
+				method.Invoke(child.GetComponent<InventoryItemCage>(), funcParams);
 			}
 		}
+	}
+
+	private object[] FuncParams(params object[] objects) 
+	{
+		return objects;
 	}
 
 	private bool AvailableSpace()
