@@ -80,7 +80,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		}
 	}
 
-	private object[] FuncParams(params object[] objects) 
+	private object[] FuncParams(params object[] objects)
 	{
 		return objects;
 	}
