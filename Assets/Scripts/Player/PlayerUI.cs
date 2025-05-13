@@ -25,6 +25,7 @@ public class PlayerUI : MonoBehaviour
 	[SerializeField] private List<GameObject> foodBarList = new List<GameObject>();
 	[SerializeField] private List<GameObject> waterBarList = new List<GameObject>();
 	[SerializeField] private List<GameObject> filterBarList = new List<GameObject>();
+
 	public bool infoItemTextIsActive { get { return infoItemText.activeSelf; } }
 
 	private Dictionary<string, GameObject> invSubPanels = new Dictionary<string, GameObject>();
@@ -41,8 +42,15 @@ public class PlayerUI : MonoBehaviour
 	private Vector2 messageSpawnStartCoordinate;
 
 	private Dictionary<UtilityType, List<GameObject>> fwfBarDictionary = new Dictionary<UtilityType, List<GameObject>>();
+
+	public static PlayerUI Instance;
 	private void Awake()
 	{
+		if (Instance == null)
+		{
+			Instance = this;
+		}
+
 		invSubPanels.Add(inventoryPanel.transform.Find("InventorySubPanel").name, inventoryPanel.transform.Find("InventorySubPanel").gameObject);
 
 		itemImage = infoPanel.transform.Find("ItemImage").gameObject.GetComponent<Image>();

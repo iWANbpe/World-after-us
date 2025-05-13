@@ -285,6 +285,15 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Scroll"",
+                    ""type"": ""Value"",
+                    ""id"": ""28e2f166-8c3f-46a2-a650-2c9c6d7bf32b"",
+                    ""expectedControlType"": ""Delta"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": true
                 }
             ],
             ""bindings"": [
@@ -320,6 +329,17 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""action"": ""Click"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65328384-c151-4256-81f4-a1aa807cf489"",
+                    ""path"": ""<Mouse>/scroll"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""Scroll"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -342,6 +362,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         m_UI_InventoryClose = m_UI.FindAction("InventoryClose", throwIfNotFound: true);
         m_UI_DropItem = m_UI.FindAction("DropItem", throwIfNotFound: true);
         m_UI_Click = m_UI.FindAction("Click", throwIfNotFound: true);
+        m_UI_Scroll = m_UI.FindAction("Scroll", throwIfNotFound: true);
     }
 
     public void Dispose()
@@ -516,6 +537,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     private readonly InputAction m_UI_InventoryClose;
     private readonly InputAction m_UI_DropItem;
     private readonly InputAction m_UI_Click;
+    private readonly InputAction m_UI_Scroll;
     public struct UIActions
     {
         private @InputActionsPlayer m_Wrapper;
@@ -523,6 +545,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         public InputAction @InventoryClose => m_Wrapper.m_UI_InventoryClose;
         public InputAction @DropItem => m_Wrapper.m_UI_DropItem;
         public InputAction @Click => m_Wrapper.m_UI_Click;
+        public InputAction @Scroll => m_Wrapper.m_UI_Scroll;
         public InputActionMap Get() { return m_Wrapper.m_UI; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -541,6 +564,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Click.started += instance.OnClick;
             @Click.performed += instance.OnClick;
             @Click.canceled += instance.OnClick;
+            @Scroll.started += instance.OnScroll;
+            @Scroll.performed += instance.OnScroll;
+            @Scroll.canceled += instance.OnScroll;
         }
 
         private void UnregisterCallbacks(IUIActions instance)
@@ -554,6 +580,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Click.started -= instance.OnClick;
             @Click.performed -= instance.OnClick;
             @Click.canceled -= instance.OnClick;
+            @Scroll.started -= instance.OnScroll;
+            @Scroll.performed -= instance.OnScroll;
+            @Scroll.canceled -= instance.OnScroll;
         }
 
         public void RemoveCallbacks(IUIActions instance)
@@ -588,5 +617,6 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         void OnInventoryClose(InputAction.CallbackContext context);
         void OnDropItem(InputAction.CallbackContext context);
         void OnClick(InputAction.CallbackContext context);
+        void OnScroll(InputAction.CallbackContext context);
     }
 }

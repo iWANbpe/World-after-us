@@ -82,6 +82,7 @@ public class ObjectPooler : MonoBehaviour
 
 		invItem.transform.SetParent(inventory.transform);
 		invItem.GetComponent<InventoryItem>().SetVisibility(true);
+		invItem.GetComponent<InventoryItem>().SetRotation(0f);
 		invItem.GetComponent<InventoryItem>().SetPosition(position);
 
 		InventoryControll.Instance.invItemList.Add(invItem);

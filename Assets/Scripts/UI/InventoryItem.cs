@@ -29,6 +29,8 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		GetComponent<Image>().raycastTarget = false;
 		SetChildrenRaycastTarget(false);
 		ClearSlots();
+
+		PlayerController.Instance.invItemHoldObject = gameObject;
 	}
 
 	public void OnDrag(PointerEventData eventData)
@@ -47,6 +49,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 		GetComponent<Image>().raycastTarget = true;
 		SetChildrenRaycastTarget(true);
+		PlayerController.Instance.invItemHoldObject = null;
 	}
 
 	public void ClearSlots()
@@ -125,6 +128,16 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 		GetComponent<Image>().raycastTarget = true;
 		SetChildrenRaycastTarget(true);
 		OccupySlots();
+	}
+
+	public void SetRotation(float angle)
+	{
+		transform.localEulerAngles = new Vector3(0f, 0f, angle);
+	}
+
+	public void Rotate(float angle)
+	{
+		transform.localEulerAngles += new Vector3(0f, 0f, angle);
 	}
 
 	public void CreateSizeCode()

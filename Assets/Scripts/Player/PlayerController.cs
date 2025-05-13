@@ -15,9 +15,11 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float gravityKoef = 3f;
 	[SerializeField] private float mouseSensitivity = 0.5f;
 	[SerializeField] private float jumpForce = 1f;
+
 	[Header("Rotation")]
 	[SerializeField] private float minRotationAngle = 0f;
 	[SerializeField] private float maxRotationAngle = 90f;
+
 	[Header("Crouch")]
 	[SerializeField] private float characterNormalHeight = 2f;
 	[SerializeField] private float characterCrouchHeight = 1.25f;
@@ -25,12 +27,15 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float characterCrouchCenterY = -0.4f;
 	[SerializeField] private float camNormalY = 0.68f;
 	[SerializeField] private float camCrouchY = 0.131f;
+
 	[Header("Interaction")]
 	[SerializeField] private float distanceOfInteraction = 1f;
 	[SerializeField] private float throwingStrength = 1f;
 	[SerializeField] private LayerMask interectionMask;
+
 	[Header("Objects")]
 	[SerializeField] private GameObject cam;
+
 	[Header("FWF")]
 	[SerializeField] private int maxFWFValue;
 	[SerializeField] private int minFWFValue;
@@ -58,7 +63,6 @@ public class PlayerController : MonoBehaviour
 	private bool isCrouch;
 
 	private GameObject canvas;
-	private PlayerUI playerUI;
 	private bool isInventoryOpen;
 	private float lastClickTime;
 
@@ -72,15 +76,25 @@ public class PlayerController : MonoBehaviour
 	private GraphicRaycaster raycaster;
 	private PointerEventData pointerEventData;
 	private GameObject invItemLookObject;
+	public GameObject invItemHoldObject;
 
+	public static PlayerController Instance;
 	void Awake()
 	{
+		if (Instance == null)
+		{
+			Instance = this;
+		}
+		else if (Instance == this)
+		{
+			Destroy(gameObject);
+		}
+
 		canvas = GameObject.Find("Canvas");
 		eventSystem = GameObject.Find("/EventSystem").GetComponent<EventSystem>();
 
 		characterController = GetComponent<CharacterController>();
 		raycaster = canvas.GetComponent<GraphicRaycaster>();
-		playerUI = GetComponent<PlayerUI>();
 
 		inputActions = new InputActionsPlayer();
 		pointerEventData = new PointerEventData(eventSystem);
@@ -129,13 +143,15 @@ public class PlayerController : MonoBehaviour
 		inputActions.UI.DropItem.started += DropItem;
 
 		inputActions.UI.Click.started += UseItem;
+
+		inputActions.UI.Scroll.started += RotateInvItem;
 	}
 
 	private void Start()
 	{
 		SetCursorActivity(false);
-		playerUI.DisableInfoItemText();
-		playerUI.UpdateFWFBars(fwfPlayer);
+		PlayerUI.Instance.DisableInfoItemText();
+		PlayerUI.Instance.UpdateFWFBars(fwfPlayer);
 
 		InventoryChangeStatement(isInventoryOpen);
 		Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
@@ -258,7 +274,7 @@ public class PlayerController : MonoBehaviour
 		}
 		else
 		{
-			playerUI.PlayerPanelMessage(Localization.Instance.GetText("UIStringTable", "notEnoughInventorySpace"));
+			PlayerUI.Instance.PlayerPanelMessage(Localization.Instance.GetText("UIStringTable", "notEnoughInventorySpace"));
 		}
 
 	}
@@ -281,12 +297,12 @@ public class PlayerController : MonoBehaviour
 		{
 			if (result.gameObject.GetComponent<InventoryItem>())
 			{
-				playerUI.EnableInfoPanel(result.gameObject.GetComponent<InventoryItem>().invItemInfo);
+				PlayerUI.Instance.EnableInfoPanel(result.gameObject.GetComponent<InventoryItem>().invItemInfo);
 				return result.gameObject;
 			}
 		}
 
-		playerUI.DisableInfoPanel();
+		PlayerUI.Instance.DisableInfoPanel();
 		return null;
 	}
 
@@ -294,16 +310,26 @@ public class PlayerController : MonoBehaviour
 	{
 		if (invItemLookObject)
 		{
-			if (Time.time - lastClickTime <= playerUI.doubleClickCoolDown)
+			if (Time.time - lastClickTime <= PlayerUI.Instance.doubleClickCoolDown)
 			{
 				fwfPlayer.Add(invItemLookObject.GetComponent<InventoryItem>().invItemInfo.itemInfo.GetItemFWF());
-				playerUI.UpdateFWFBars(fwfPlayer);
+				PlayerUI.Instance.UpdateFWFBars(fwfPlayer);
 				ObjectPooler.Instance.DeleteInventoryItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo, invItemLookObject);
 			}
 			else
 			{
 				lastClickTime = Time.time;
 			}
+		}
+	}
+
+	private void RotateInvItem(InputAction.CallbackContext context)
+	{
+		float mouseDelta = context.ReadValue<Vector2>().normalized.y;
+
+		if (invItemHoldObject)
+		{
+			invItemHoldObject.GetComponent<InventoryItem>().Rotate(90f * mouseDelta);
 		}
 	}
 
@@ -351,16 +377,16 @@ public class PlayerController : MonoBehaviour
 				lookObject = hit.collider.gameObject.GetComponent<Item>();
 
 				if (lookObject.itemInfo.CanInteract())
-					playerUI.EnableInfoItemText(lookObject.itemInfo.GetLocalizedItemName());
+					PlayerUI.Instance.EnableInfoItemText(lookObject.itemInfo.GetLocalizedItemName());
 
-				else if (playerUI.isActiveAndEnabled)
-					playerUI.DisableInfoItemText();
+				else if (PlayerUI.Instance.isActiveAndEnabled)
+					PlayerUI.Instance.DisableInfoItemText();
 			}
 
 			else if (!isGrabbing)
 			{
 				lookObject = null;
-				playerUI.DisableInfoItemText();
+				PlayerUI.Instance.DisableInfoItemText();
 			}
 		}
 
@@ -368,7 +394,7 @@ public class PlayerController : MonoBehaviour
 		{
 			lookObject = null;
 			isGrabbing = false;
-			playerUI.DisableInfoItemText();
+			PlayerUI.Instance.DisableInfoItemText();
 		}
 
 	}
