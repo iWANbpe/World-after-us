@@ -6839,6 +6839,7 @@ MonoBehaviour:
   maxStartFilter: 70
   minStartFilter: 55
   eventSystem: {fileID: 0}
+  invItemHoldObject: {fileID: 0}
 --- !u!114 &894059213
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9475,7 +9476,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   itemInfo:
   - {fileID: 11400000, guid: 07a61466feaa55546b80a6b3fa44f60f, type: 2}
-  - {fileID: 11400000, guid: 3cc09f065255fe3479432f8ab375be8f, type: 2}
+  - {fileID: 11400000, guid: 7f7d113cb0e44b14e8c355b2a9a265ba, type: 2}
   itemsCount: 40
   xRange:
     minCoord: -5

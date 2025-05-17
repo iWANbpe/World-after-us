@@ -67,7 +67,7 @@ public class PlayerController : MonoBehaviour
 	private float lastClickTime;
 
 	private RaycastHit hit;
-	private Item lookObject;
+	private GameObject lookObject;
 	private bool isGrabbing;
 	private GameObject grabPoint;
 	public GameObject playerGrabPoint { get { return grabPoint; } }
@@ -172,6 +172,11 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
+	private bool IsLookObjectItem()
+	{
+		if (lookObject.GetComponent<Item>()) return true;
+		else return false;
+	}
 	private void HorizontalMoving(InputAction.CallbackContext context)
 	{
 		moveInputHorizontal = context.ReadValue<Vector2>();
@@ -206,29 +211,29 @@ public class PlayerController : MonoBehaviour
 
 	private void Grab(InputAction.CallbackContext context)
 	{
-		if (lookObject != null)
+		if (lookObject != null && IsLookObjectItem())
 		{
 			if (context.started)
 			{
 				isGrabbing = true;
-				lookObject.itemRigidbody.useGravity = false;
-				lookObject.DisableCollisionLayer(LayerMask.GetMask("Player"));
+				lookObject.GetComponent<Item>().itemRigidbody.useGravity = false;
+				lookObject.GetComponent<Item>().DisableCollisionLayer(LayerMask.GetMask("Player"));
 			}
 
 			else if (context.performed)
 			{
-				lookObject.SetTarget(grabPoint);
+				lookObject.GetComponent<Item>().SetTarget(grabPoint);
 			}
 
 			else
 			{
 				isGrabbing = false;
-				lookObject.SetTarget(null);
-				lookObject.itemRigidbody.useGravity = true;
+				lookObject.GetComponent<Item>().SetTarget(null);
+				lookObject.GetComponent<Item>().itemRigidbody.useGravity = true;
 
-				lookObject.itemRigidbody.velocity = Vector3.zero;
-				lookObject.itemRigidbody.angularVelocity = Vector3.zero;
-				lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
+				lookObject.GetComponent<Item>().itemRigidbody.velocity = Vector3.zero;
+				lookObject.GetComponent<Item>().itemRigidbody.angularVelocity = Vector3.zero;
+				lookObject.GetComponent<Item>().DisableCollisionLayer(LayerMask.GetMask("Nothing"));
 			}
 
 		}
@@ -239,19 +244,19 @@ public class PlayerController : MonoBehaviour
 		if (isGrabbing)
 		{
 			isGrabbing = false;
-			lookObject.itemRigidbody.useGravity = true;
-			lookObject.SetTarget(null);
-			lookObject.DisableCollisionLayer(LayerMask.GetMask("Nothing"));
+			lookObject.GetComponent<Item>().itemRigidbody.useGravity = true;
+			lookObject.GetComponent<Item>().SetTarget(null);
+			lookObject.GetComponent<Item>().DisableCollisionLayer(LayerMask.GetMask("Nothing"));
 
-			lookObject.itemRigidbody.AddForce((grabPoint.transform.position - cam.transform.position).normalized * 10f * throwingStrength);
+			lookObject.GetComponent<Item>().itemRigidbody.AddForce((grabPoint.transform.position - cam.transform.position).normalized * 10f * throwingStrength);
 		}
 	}
 
 	private void Interact(InputAction.CallbackContext contex)
 	{
-		if (lookObject != null && lookObject.itemInfo.CanInteract())
+		if (lookObject != null && utils.IsGameObjectUsesInterface(lookObject, typeof(IInteract)) && (bool)utils.CallFunctionFromInterface(lookObject, "CanInteract", null))
 		{
-			lookObject.itemInfo.ItemInteraction();
+			utils.CallFunctionFromInterface(lookObject, "Interact", null);
 		}
 	}
 
@@ -261,13 +266,13 @@ public class PlayerController : MonoBehaviour
 	}
 	private IEnumerator AddItemToInventoryCoroutine()
 	{
-		GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(lookObject.itemInfo.GetInventoryItemInfo());
+		GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(lookObject.GetComponent<Item>().itemInfo.GetInventoryItemInfo());
 
 		yield return new WaitForEndOfFrame();
 
 		if (InventoryControll.Instance.IsFreeSpaceForItem(invItem, out invItemPosition))
 		{
-			ObjectPooler.Instance.DespawnItem(lookObject.itemInfo, lookObject.gameObject);
+			ObjectPooler.Instance.DespawnItem(lookObject.GetComponent<Item>().itemInfo, lookObject.gameObject);
 			ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition);
 
 			invItem.GetComponent<InventoryItem>().hasPlace = true;
@@ -372,14 +377,14 @@ public class PlayerController : MonoBehaviour
 			//Debug.DrawRay(cam.transform.position, cam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
 			//print(hit.collider.gameObject.name);
 
-			if (hit.collider.gameObject.GetComponent<Item>())
+			if (hit.collider.gameObject)
 			{
-				lookObject = hit.collider.gameObject.GetComponent<Item>();
+				lookObject = hit.collider.gameObject;
 
-				if (lookObject.itemInfo.CanInteract())
-					PlayerUI.Instance.EnableInfoItemText(lookObject.itemInfo.GetLocalizedItemName());
+				if (lookObject.GetComponent<Item>() && utils.IsGameObjectUsesInterface(lookObject, typeof(IInteract)))
+					PlayerUI.Instance.EnableInfoItemText(lookObject.GetComponent<Item>().itemInfo.GetLocalizedItemName());
 
-				else if (PlayerUI.Instance.isActiveAndEnabled)
+				else if (PlayerUI.Instance.infoItemTextIsActive)
 					PlayerUI.Instance.DisableInfoItemText();
 			}
 

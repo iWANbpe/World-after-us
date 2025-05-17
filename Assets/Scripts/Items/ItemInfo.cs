@@ -12,14 +12,12 @@ public class ItemInfo : ScriptableObject
 		return Instantiate(gameObject, pos, rotation);
 	}
 
-	public virtual bool CanInteract()
+	public virtual string GetLocalizedItemName()
 	{
-		return false;
+		return Localization.Instance.GetText("ItemStringTable", itemName + "Name");
 	}
 
-	public virtual void ItemInteraction() { }
 	public virtual InventoryItemInfo GetInventoryItemInfo() { return null; }
-	public virtual string GetLocalizedItemName() { return null; }
 	public virtual string GetLocalizedItemDescription() { return null; }
 	public virtual FWF GetItemFWF() { return null; }
 }

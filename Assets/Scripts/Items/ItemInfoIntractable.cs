@@ -1,7 +1,7 @@
 using UnityEngine;
 
 [CreateAssetMenu(menuName = "ScriptableObjects/ItemInfoIntractable")]
-public class ItemInfoIntractable : ItemInfo
+public class ItemInfoIntractable : ItemInfo, IInteract
 {
 	public ItemType type;
 	[SerializeField] private FWF itemUtility;
@@ -10,23 +10,19 @@ public class ItemInfoIntractable : ItemInfo
 
 	[SerializeField] private InventoryItemInfo inventoryItemInfo;
 
-	public override bool CanInteract()
+	public bool CanInteract()
 	{
 		return true;
 	}
 
-	public override void ItemInteraction()
+	public void Interact()
 	{
 		GameObject.Find("Player").GetComponent<PlayerController>().AddItemToInventory();
 	}
+
 	public override InventoryItemInfo GetInventoryItemInfo()
 	{
 		return inventoryItemInfo;
-	}
-
-	public override string GetLocalizedItemName()
-	{
-		return Localization.Instance.GetText("ItemStringTable", itemName + "Name");
 	}
 
 	public override string GetLocalizedItemDescription()
