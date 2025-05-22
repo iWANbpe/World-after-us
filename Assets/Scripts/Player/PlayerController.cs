@@ -254,9 +254,9 @@ public class PlayerController : MonoBehaviour
 
 	private void Interact(InputAction.CallbackContext contex)
 	{
-		if (lookObject != null && utils.IsGameObjectUsesInterface(lookObject, typeof(IInteract)) && (bool)utils.CallFunctionFromInterface(lookObject, "CanInteract", null))
+		if (lookObject != null && utils.GameObjectUsesInterface(lookObject, typeof(IInteract)) && (bool)utils.CallFunctionFromInterface(lookObject, typeof(IInteract), "CanInteract", null))
 		{
-			utils.CallFunctionFromInterface(lookObject, "Interact", null);
+			utils.CallFunctionFromInterface(lookObject, typeof(IInteract), "Interact", null);
 		}
 	}
 
@@ -381,7 +381,7 @@ public class PlayerController : MonoBehaviour
 			{
 				lookObject = hit.collider.gameObject;
 
-				if (lookObject.GetComponent<Item>() && utils.IsGameObjectUsesInterface(lookObject, typeof(IInteract)))
+				if (lookObject.GetComponent<Item>() && utils.GameObjectUsesInterface(lookObject, typeof(IInteract)))
 					PlayerUI.Instance.EnableInfoItemText(lookObject.GetComponent<Item>().itemInfo.GetLocalizedItemName());
 
 				else if (PlayerUI.Instance.infoItemTextIsActive)

@@ -67,7 +67,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 
 	private void SetChildrenRaycastTarget(bool statement)
 	{
-		ChildCagesCallFunction("SetRayCastTarget", FuncParams(statement));
+		ChildCagesCallFunction("SetRayCastTarget", new object[] { statement });
 	}
 
 	private void ChildCagesCallFunction(string funcName, object[] funcParams)
@@ -81,11 +81,6 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 				method.Invoke(child.GetComponent<InventoryItemCage>(), funcParams);
 			}
 		}
-	}
-
-	private object[] FuncParams(params object[] objects)
-	{
-		return objects;
 	}
 
 	private bool AvailableSpace()
