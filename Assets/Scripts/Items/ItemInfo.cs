@@ -5,11 +5,16 @@ public class ItemInfo : ScriptableObject
 {
 	[Header("Base info")]
 	public string itemName;
-	public GameObject gameObject;
+	public Item item;
 
 	public virtual GameObject InstantiateItem(Vector3 pos, Quaternion rotation)
 	{
-		return Instantiate(gameObject, pos, rotation);
+		GameObject itemObj = Instantiate(item.gameObject, pos, rotation);
+
+		if (itemObj.GetComponent<Item>().itemInfo != this)
+			itemObj.GetComponent<Item>().itemInfo = this;
+
+		return itemObj;
 	}
 
 	public virtual string GetLocalizedItemName()

@@ -9,7 +9,7 @@ public class InventoryItem : MonoBehaviour, IBeginDragHandler, IDragHandler, IEn
 	[HideInInspector] public Image invItemImage { get { return GetComponent<Image>(); } }
 	[HideInInspector] public bool hasPlace = true;
 	[HideInInspector] public string sizeCode;
-	public InventoryItemInfo invItemInfo;
+	[HideInInspector] public InventoryItemInfo invItemInfo;
 
 	private GameObject canvas;
 	public void Initialization()

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: TestItem
   m_EditorClassIdentifier: 
   itemName: /filename
-  gameObject: {fileID: 1651189897193929992, guid: ed59e11d8af109a4083da6f7de8d1096, type: 3}
+  item: {fileID: -2702045973970536912, guid: ed59e11d8af109a4083da6f7de8d1096, type: 3}
   type: 0
   itemUtility:
     utilityPoints:

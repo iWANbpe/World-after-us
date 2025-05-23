@@ -3,8 +3,7 @@ using UnityEngine;
 public class Item : MonoBehaviour
 {
 	[HideInInspector] public Rigidbody itemRigidbody;
-
-	public ItemInfo itemInfo;
+	[HideInInspector] public ItemInfo itemInfo;
 
 	protected GameObject targetObj;
 	protected Collider itemCollider;

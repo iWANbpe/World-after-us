@@ -20,6 +20,17 @@ public class ItemInfoIntractable : ItemInfo, IInteract
 		GameObject.Find("Player").GetComponent<PlayerController>().AddItemToInventory();
 	}
 
+	public override GameObject InstantiateItem(Vector3 pos, Quaternion rotation)
+	{
+		if (inventoryItemInfo.itemInfo != this)
+			inventoryItemInfo.itemInfo = this;
+
+		if (inventoryItemInfo.inventoryItem.invItemInfo != inventoryItemInfo)
+			inventoryItemInfo.inventoryItem.invItemInfo = inventoryItemInfo;
+
+		return base.InstantiateItem(pos, rotation);
+	}
+
 	public override InventoryItemInfo GetInventoryItemInfo()
 	{
 		return inventoryItemInfo;

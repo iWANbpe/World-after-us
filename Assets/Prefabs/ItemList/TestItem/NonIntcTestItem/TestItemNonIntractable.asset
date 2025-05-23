@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: TestItemNonIntractable
   m_EditorClassIdentifier: 
   itemName: TestItemNonInterectable
-  gameObject: {fileID: 3750732217494290770, guid: f5f01fe94313471448919b72596ef578, type: 3}
+  item: {fileID: 5475942182983094844, guid: f5f01fe94313471448919b72596ef578, type: 3}

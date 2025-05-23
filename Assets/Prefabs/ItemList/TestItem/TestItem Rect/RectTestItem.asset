@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: RectTestItem
   m_EditorClassIdentifier: 
   itemName: RectTestItem
-  gameObject: {fileID: 1651189897193929992, guid: 99938824a5efce94193d8475f2300c3e, type: 3}
+  item: {fileID: -2702045973970536912, guid: 99938824a5efce94193d8475f2300c3e, type: 3}
   type: 2
   itemUtility:
     utilityPoints:
