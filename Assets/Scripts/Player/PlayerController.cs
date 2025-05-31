@@ -270,10 +270,10 @@ public class PlayerController : MonoBehaviour
 
 		yield return new WaitForEndOfFrame();
 
-		if (InventoryControll.Instance.IsFreeSpaceForItem(invItem, out invItemPosition))
+		if (InventoryControll.Instance.IsFreeSpaceForItem(invItem, out invItemPosition, out float rotation))
 		{
 			ObjectPooler.Instance.DespawnItem(lookObject.GetComponent<Item>().itemInfo, lookObject.gameObject);
-			ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition);
+			ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition, rotation);
 
 			invItem.GetComponent<InventoryItem>().hasPlace = true;
 		}
@@ -330,7 +330,8 @@ public class PlayerController : MonoBehaviour
 
 	private void RotateInvItem(InputAction.CallbackContext context)
 	{
-		float mouseDelta = context.ReadValue<Vector2>().normalized.y;
+		float mouseDelta = context.ReadValue<Vector2>().y;
+		mouseDelta = Mathf.Clamp(mouseDelta, -1f, 1f);
 
 		if (invItemHoldObject)
 		{

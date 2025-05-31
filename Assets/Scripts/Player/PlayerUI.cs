@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class PlayerUI : MonoBehaviour
 {
+	[Header("UIMouse")]
 	public float doubleClickCoolDown;
 	[Header("Objects")]
 	[SerializeField] private GameObject playerPanel;

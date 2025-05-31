@@ -76,13 +76,13 @@ public class ObjectPooler : MonoBehaviour
 		return invItem;
 	}
 
-	public void AddInventoryItem(GameObject invItem, Vector2 position)
+	public void AddInventoryItem(GameObject invItem, Vector2 position, float rotation)
 	{
 		GameObject inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
 
-		invItem.transform.SetParent(inventory.transform);
+		invItem.transform.SetParent(InventoryControll.Instance.invItemPanels.transform);
 		invItem.GetComponent<InventoryItem>().SetVisibility(true);
-		invItem.GetComponent<InventoryItem>().SetRotation(0f);
+		invItem.GetComponent<InventoryItem>().SetRotation(rotation);
 		invItem.GetComponent<InventoryItem>().SetPosition(position);
 
 		InventoryControll.Instance.invItemList.Add(invItem);

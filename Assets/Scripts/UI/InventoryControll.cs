@@ -6,10 +6,12 @@ public class InventoryControll : MonoBehaviour
 {
 	[SerializeField] private int slotsPanelWidth;
 	[SerializeField] private int slotsPanelHeight;
+	public GameObject invItemPanels { get { return inventoryItemsPanel; } }
 
 	private GameObject inventory;
 	private GameObject slotsPanel;
 	private GameObject inventoryWarningPanel;
+	private GameObject inventoryItemsPanel;
 	private GameObject player;
 
 	public List<GameObject> invItemList = new List<GameObject>();
@@ -32,9 +34,9 @@ public class InventoryControll : MonoBehaviour
 
 		DontDestroyOnLoad(gameObject);
 
-		inventoryWarningPanel = GameObject.Find("Canvas").transform.Find("Inventory").transform.Find("InventorySubPanel").transform.Find("WarningPanel").gameObject;
-
 		inventory = GameObject.Find("Canvas").transform.Find("Inventory").gameObject;
+		inventoryWarningPanel = inventory.transform.Find("WarningPanel").gameObject;
+		inventoryItemsPanel = inventory.transform.Find("InventoryItems").gameObject;
 		slotsPanel = inventory.transform.Find("InventorySubPanel").transform.Find("SlotsPanel").gameObject;
 		player = GameObject.Find("Player").gameObject;
 
@@ -69,35 +71,42 @@ public class InventoryControll : MonoBehaviour
 		}
 	}
 
-	public bool IsFreeSpaceForItem(GameObject invItem, out Vector2 invItemPlace)
+	public bool IsFreeSpaceForItem(GameObject invItem, out Vector2 invItemPlace, out float rotation)
 	{
 		FindFreeSlots();
 		invItemPlace = Vector2.zero;
+		rotation = 0f;
+
 		if (freeInventorySlots.Count == 0) return false;
 
 		if (invItem.GetComponent<InventoryItem>().sizeCode == "")
 			invItem.GetComponent<InventoryItem>().CreateSizeCode();
 
 		string sizeCode = invItem.GetComponent<InventoryItem>().sizeCode;
-		int rows = sizeCode.Length;
-		char[] columns = sizeCode.ToCharArray();
-		List<GameObject> placeSlots = new List<GameObject>();
-		for (int slotIndex = 0; slotIndex < freeInventorySlots.Count; slotIndex++)
+		for (int i = 0; i <= HowManyTimesCanBeRotated(sizeCode); i++)
 		{
-			int GlobalSlotIndex = System.Array.IndexOf(inventorySlots, freeInventorySlots[slotIndex]);
+			int rows = sizeCode.Length;
+			char[] columns = sizeCode.ToCharArray();
+			List<GameObject> placeSlots = new List<GameObject>();
 
-			placeSlots = TryPlace(GlobalSlotIndex, rows, columns);
-
-			if (placeSlots != null)
+			for (int slotIndex = 0; slotIndex < freeInventorySlots.Count; slotIndex++)
 			{
-				OccupySlots(placeSlots);
-				invItem.GetComponent<InventoryItem>().AddOccupationSlots(placeSlots);
+				int GlobalSlotIndex = System.Array.IndexOf(inventorySlots, freeInventorySlots[slotIndex]);
+				placeSlots = TryPlace(GlobalSlotIndex, rows, columns);
 
-				invItemPlace = FindCenter(placeSlots);
-				return true;
+				if (placeSlots != null)
+				{
+					OccupySlots(placeSlots);
+					invItem.GetComponent<InventoryItem>().AddOccupationSlots(placeSlots);
+
+					invItemPlace = FindCenter(placeSlots);
+					return true;
+				}
 			}
-		}
 
+			sizeCode = RotateSizeCode(sizeCode);
+			rotation += 90f;
+		}
 		return false;
 	}
 
@@ -119,6 +128,37 @@ public class InventoryControll : MonoBehaviour
 		}
 
 		return slotList;
+	}
+
+	private string RotateSizeCode(string sizeCode)
+	{
+		int lenght = sizeCode.Length;
+		int width = int.Parse(sizeCode.ToCharArray()[0].ToString());
+		string rotatedSizeCode = "";
+
+		for (int i = 0; i < width; i++)
+		{
+			rotatedSizeCode += lenght.ToString();
+		}
+		return rotatedSizeCode;
+	}
+
+	private int HowManyTimesCanBeRotated(string sizeCode)
+	{
+		int rotationCount = 0;
+		List<string> sizeCodeStates = new();
+		sizeCodeStates.Add(sizeCode);
+
+		for (int i = 0; i < 3; i++)
+		{
+			sizeCode = RotateSizeCode(sizeCode);
+			if (!sizeCodeStates.Contains(sizeCode))
+			{
+				sizeCodeStates.Add(sizeCode);
+				rotationCount++;
+			}
+		}
+		return rotationCount;
 	}
 
 	private void OccupySlots(List<GameObject> slotList)
