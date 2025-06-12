@@ -69,7 +69,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Grab",
+                    "name": "LeftClick",
                     "type": "Button",
                     "id": "83a8fccd-33a5-4718-915c-0231d3ff76d6",
                     "expectedControlType": "Button",
@@ -81,6 +81,15 @@
                     "name": "Throw",
                     "type": "Button",
                     "id": "308cf1cd-af84-4bca-8e80-86d1f2ed3f8a",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "RaisePistol",
+                    "type": "Button",
+                    "id": "3621711e-609e-4842-90e3-94c88f4a723c",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -227,7 +236,18 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "Grab",
+                    "action": "LeftClick",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "75b0df3e-b90d-4123-889b-ea9767917483",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "RaisePistol",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

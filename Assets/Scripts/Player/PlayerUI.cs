@@ -36,6 +36,7 @@ public class PlayerUI : MonoBehaviour
 	private TMP_Text itemTypeText;
 	private TMP_Text ItemUtilityText;
 	private TMP_Text ItemDescriptionText;
+	private GameObject shootPointer;
 
 	private List<MessagePanel> messageList = new List<MessagePanel>();
 	private Queue<MessagePanel> messagePool = new Queue<MessagePanel>();
@@ -68,6 +69,8 @@ public class PlayerUI : MonoBehaviour
 		fwfBarDictionary.Add(UtilityType.Food, foodBarList);
 		fwfBarDictionary.Add(UtilityType.Water, waterBarList);
 		fwfBarDictionary.Add(UtilityType.Filter, filterBarList);
+
+		shootPointer = playerPanel.transform.Find("Pointer").Find("ShootPointer").gameObject;
 	}
 
 	public void EnableInfoItemText(string itemName)
@@ -97,6 +100,10 @@ public class PlayerUI : MonoBehaviour
 		infoPanel.SetActive(false);
 	}
 
+	public void SetShootPointer(bool state)
+	{
+		shootPointer.SetActive(state);
+	}
 	public void PlayerPanelMessage(string messageText)
 	{
 		if (messageList.Count > 0 && messageList.Count < maxMessagesCount)

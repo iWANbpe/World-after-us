@@ -30,6 +30,7 @@ public class PlayerController : MonoBehaviour
 
 	[Header("Interaction")]
 	[SerializeField] private float distanceOfInteraction = 1f;
+	[SerializeField] private float distanceOfShoot = 1f;
 	[SerializeField] private float throwingStrength = 1f;
 	[SerializeField] private LayerMask interectionMask;
 
@@ -65,6 +66,7 @@ public class PlayerController : MonoBehaviour
 	private GameObject canvas;
 	private bool isInventoryOpen;
 	private float lastClickTime;
+	private bool shooting;
 
 	private RaycastHit hit;
 	private GameObject lookObject;
@@ -76,7 +78,7 @@ public class PlayerController : MonoBehaviour
 	private GraphicRaycaster raycaster;
 	private PointerEventData pointerEventData;
 	private GameObject invItemLookObject;
-	public GameObject invItemHoldObject;
+	[HideInInspector] public GameObject invItemHoldObject;
 
 	public static PlayerController Instance;
 	void Awake()
@@ -98,6 +100,7 @@ public class PlayerController : MonoBehaviour
 
 		inputActions = new InputActionsPlayer();
 		pointerEventData = new PointerEventData(eventSystem);
+		shooting = false;
 
 		isInventoryOpen = false;
 		isGrabbing = false;
@@ -127,15 +130,15 @@ public class PlayerController : MonoBehaviour
 
 		inputActions.Player.InventoryOpen.started += InventoryInteraction;
 
-		inputActions.Player.Grab.started += Grab;
-		inputActions.Player.Grab.performed += Grab;
-		inputActions.Player.Grab.canceled += Grab;
+		SetLeftClickBinding(shooting);
 
 		inputActions.Player.Throw.started += Throw;
 		inputActions.Player.Throw.performed += Throw;
 		inputActions.Player.Throw.canceled += Throw;
 
 		inputActions.Player.Interact.started += Interact;
+
+		inputActions.Player.RaisePistol.started += ChangeShootingRegime;
 
 		//input actions UI
 		inputActions.UI.InventoryClose.started += InventoryInteraction;
@@ -152,6 +155,7 @@ public class PlayerController : MonoBehaviour
 		SetCursorActivity(false);
 		PlayerUI.Instance.DisableInfoItemText();
 		PlayerUI.Instance.UpdateFWFBars(fwfPlayer);
+		PlayerUI.Instance.SetShootPointer(shooting);
 
 		InventoryChangeStatement(isInventoryOpen);
 		Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
@@ -236,6 +240,17 @@ public class PlayerController : MonoBehaviour
 				lookObject.GetComponent<Item>().DisableCollisionLayer(LayerMask.GetMask("Nothing"));
 			}
 
+		}
+	}
+
+	private void Shoot(InputAction.CallbackContext context)
+	{
+		if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out RaycastHit shootHit, distanceOfShoot, interectionMask))
+		{
+			GameObject shootObject = shootHit.collider.gameObject;
+
+			if (utils.GameObjectUsesInterface(shootObject, typeof(IOnShoot)))
+				utils.CallFunctionFromInterface(shootObject, typeof(IOnShoot), "OnShoot", null);
 		}
 	}
 
@@ -336,6 +351,34 @@ public class PlayerController : MonoBehaviour
 		if (invItemHoldObject)
 		{
 			invItemHoldObject.GetComponent<InventoryItem>().Rotate(90f * mouseDelta);
+		}
+	}
+
+	private void ChangeShootingRegime(InputAction.CallbackContext context)
+	{
+		shooting = !shooting;
+		SetLeftClickBinding(shooting);
+		PlayerUI.Instance.SetShootPointer(shooting);
+	}
+
+	private void SetLeftClickBinding(bool shooting)
+	{
+		if (shooting)
+		{
+			inputActions.Player.LeftClick.started -= Grab;
+			inputActions.Player.LeftClick.performed -= Grab;
+			inputActions.Player.LeftClick.canceled -= Grab;
+
+			inputActions.Player.LeftClick.started += Shoot;
+		}
+
+		else
+		{
+			inputActions.Player.LeftClick.started -= Shoot;
+
+			inputActions.Player.LeftClick.started += Grab;
+			inputActions.Player.LeftClick.performed += Grab;
+			inputActions.Player.LeftClick.canceled += Grab;
 		}
 	}
 

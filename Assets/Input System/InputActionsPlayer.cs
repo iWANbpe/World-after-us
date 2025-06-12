@@ -91,7 +91,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""Grab"",
+                    ""name"": ""LeftClick"",
                     ""type"": ""Button"",
                     ""id"": ""83a8fccd-33a5-4718-915c-0231d3ff76d6"",
                     ""expectedControlType"": ""Button"",
@@ -103,6 +103,15 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""name"": ""Throw"",
                     ""type"": ""Button"",
                     ""id"": ""308cf1cd-af84-4bca-8e80-86d1f2ed3f8a"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""RaisePistol"",
+                    ""type"": ""Button"",
+                    ""id"": ""3621711e-609e-4842-90e3-94c88f4a723c"",
                     ""expectedControlType"": ""Button"",
                     ""processors"": """",
                     ""interactions"": """",
@@ -249,7 +258,18 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""Grab"",
+                    ""action"": ""LeftClick"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""75b0df3e-b90d-4123-889b-ea9767917483"",
+                    ""path"": ""<Keyboard>/1"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""RaisePistol"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -355,8 +375,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         m_Player_MouseRotation = m_Player.FindAction("MouseRotation", throwIfNotFound: true);
         m_Player_InventoryOpen = m_Player.FindAction("InventoryOpen", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
-        m_Player_Grab = m_Player.FindAction("Grab", throwIfNotFound: true);
+        m_Player_LeftClick = m_Player.FindAction("LeftClick", throwIfNotFound: true);
         m_Player_Throw = m_Player.FindAction("Throw", throwIfNotFound: true);
+        m_Player_RaisePistol = m_Player.FindAction("RaisePistol", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_InventoryClose = m_UI.FindAction("InventoryClose", throwIfNotFound: true);
@@ -431,8 +452,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_MouseRotation;
     private readonly InputAction m_Player_InventoryOpen;
     private readonly InputAction m_Player_Interact;
-    private readonly InputAction m_Player_Grab;
+    private readonly InputAction m_Player_LeftClick;
     private readonly InputAction m_Player_Throw;
+    private readonly InputAction m_Player_RaisePistol;
     public struct PlayerActions
     {
         private @InputActionsPlayer m_Wrapper;
@@ -444,8 +466,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         public InputAction @MouseRotation => m_Wrapper.m_Player_MouseRotation;
         public InputAction @InventoryOpen => m_Wrapper.m_Player_InventoryOpen;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
-        public InputAction @Grab => m_Wrapper.m_Player_Grab;
+        public InputAction @LeftClick => m_Wrapper.m_Player_LeftClick;
         public InputAction @Throw => m_Wrapper.m_Player_Throw;
+        public InputAction @RaisePistol => m_Wrapper.m_Player_RaisePistol;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -476,12 +499,15 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
-            @Grab.started += instance.OnGrab;
-            @Grab.performed += instance.OnGrab;
-            @Grab.canceled += instance.OnGrab;
+            @LeftClick.started += instance.OnLeftClick;
+            @LeftClick.performed += instance.OnLeftClick;
+            @LeftClick.canceled += instance.OnLeftClick;
             @Throw.started += instance.OnThrow;
             @Throw.performed += instance.OnThrow;
             @Throw.canceled += instance.OnThrow;
+            @RaisePistol.started += instance.OnRaisePistol;
+            @RaisePistol.performed += instance.OnRaisePistol;
+            @RaisePistol.canceled += instance.OnRaisePistol;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -507,12 +533,15 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
-            @Grab.started -= instance.OnGrab;
-            @Grab.performed -= instance.OnGrab;
-            @Grab.canceled -= instance.OnGrab;
+            @LeftClick.started -= instance.OnLeftClick;
+            @LeftClick.performed -= instance.OnLeftClick;
+            @LeftClick.canceled -= instance.OnLeftClick;
             @Throw.started -= instance.OnThrow;
             @Throw.performed -= instance.OnThrow;
             @Throw.canceled -= instance.OnThrow;
+            @RaisePistol.started -= instance.OnRaisePistol;
+            @RaisePistol.performed -= instance.OnRaisePistol;
+            @RaisePistol.canceled -= instance.OnRaisePistol;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -609,8 +638,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         void OnMouseRotation(InputAction.CallbackContext context);
         void OnInventoryOpen(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
-        void OnGrab(InputAction.CallbackContext context);
+        void OnLeftClick(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
+        void OnRaisePistol(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {
