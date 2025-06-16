@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
@@ -7,6 +8,10 @@ public class PlayerUI : MonoBehaviour
 {
 	[Header("UIMouse")]
 	public float doubleClickCoolDown;
+	[Header("Pointer")]
+	[SerializeField] private float shootPointerPartSpawnPos;
+	[SerializeField] private float shootPointerPartNormalPos;
+	[SerializeField] private float shootPointerPartMoveSpeed;
 	[Header("Objects")]
 	[SerializeField] private GameObject playerPanel;
 	[SerializeField] private GameObject inventoryPanel;
@@ -37,6 +42,8 @@ public class PlayerUI : MonoBehaviour
 	private TMP_Text ItemUtilityText;
 	private TMP_Text ItemDescriptionText;
 	private GameObject shootPointer;
+
+	private List<ShootPointerPart> shootPointerParts = new List<ShootPointerPart>();
 
 	private List<MessagePanel> messageList = new List<MessagePanel>();
 	private Queue<MessagePanel> messagePool = new Queue<MessagePanel>();
@@ -71,6 +78,7 @@ public class PlayerUI : MonoBehaviour
 		fwfBarDictionary.Add(UtilityType.Filter, filterBarList);
 
 		shootPointer = playerPanel.transform.Find("Pointer").Find("ShootPointer").gameObject;
+		InitializeShootPointer(shootPointer);
 	}
 
 	public void EnableInfoItemText(string itemName)
@@ -100,10 +108,60 @@ public class PlayerUI : MonoBehaviour
 		infoPanel.SetActive(false);
 	}
 
+	private void InitializeShootPointer(GameObject shootPointer)
+	{
+		for (int i = 1; i < shootPointer.transform.childCount + 1; i++)
+		{
+			Transform sPointPart = shootPointer.transform.GetChild(i - 1).gameObject.GetComponent<Transform>();
+
+			float curPointPos = i % 2 == 0 ? -shootPointerPartSpawnPos : shootPointerPartSpawnPos;
+			float targetPointPos = i % 2 == 0 ? -shootPointerPartNormalPos : shootPointerPartNormalPos;
+
+			if (i <= 2)
+			{
+				ShootPointerPart sPointerPart = new ShootPointerPart(sPointPart, new Vector2(sPointPart.localPosition.x, curPointPos), new Vector2(sPointPart.localPosition.x, targetPointPos));
+				shootPointerParts.Add(sPointerPart);
+			}
+			else
+			{
+				ShootPointerPart sPointerPart = new ShootPointerPart(sPointPart, new Vector2(curPointPos, sPointPart.localPosition.y), new Vector2(targetPointPos, sPointPart.localPosition.y));
+				shootPointerParts.Add(sPointerPart);
+			}
+
+			shootPointerParts[i - 1].ChangePosition(shootPointerParts[i - 1].curPosition);
+		}
+	}
+
+	private IEnumerator ShootPointerAnimation()
+	{
+		float time = 0f;
+
+		while (time < 1)
+		{
+			foreach (ShootPointerPart shootPointerPart in shootPointerParts)
+			{
+				shootPointerPart.ChangePosition(Vector2.Lerp(shootPointerPart.curPosition, shootPointerPart.targetPosition, time));
+			}
+			yield return null;
+			time += Time.deltaTime * shootPointerPartMoveSpeed;
+		}
+	}
+
+	private void ResetShootPointer()
+	{
+		foreach (ShootPointerPart shootPointerPart in shootPointerParts)
+		{
+			shootPointerPart.ChangePosition(shootPointerPart.curPosition);
+		}
+	}
+
 	public void SetShootPointer(bool state)
 	{
 		shootPointer.SetActive(state);
+		if (state) StartCoroutine(ShootPointerAnimation());
+		else ResetShootPointer();
 	}
+
 	public void PlayerPanelMessage(string messageText)
 	{
 		if (messageList.Count > 0 && messageList.Count < maxMessagesCount)
@@ -154,7 +212,6 @@ public class PlayerUI : MonoBehaviour
 			newMessage.disappearancePos.x = screenWidth + messageOffScreenDistance;
 		}
 
-
 		newMessage.SetMessageLifetime(messageLifetime);
 		return newMessage;
 	}
@@ -178,5 +235,24 @@ public class PlayerUI : MonoBehaviour
 
 			}
 		}
+	}
+}
+
+public class ShootPointerPart
+{
+	public Transform shootPointerPartTransform;
+	public Vector2 curPosition;
+	public Vector2 targetPosition;
+
+	public ShootPointerPart(Transform transform, Vector2 curPosition, Vector2 targetPosition)
+	{
+		shootPointerPartTransform = transform;
+		this.curPosition = curPosition;
+		this.targetPosition = targetPosition;
+	}
+
+	public void ChangePosition(Vector2 newPos)
+	{
+		shootPointerPartTransform.localPosition = newPos;
 	}
 }
