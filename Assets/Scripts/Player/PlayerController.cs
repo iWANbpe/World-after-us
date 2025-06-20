@@ -28,14 +28,8 @@ public class PlayerController : MonoBehaviour
 	[SerializeField] private float camNormalY = 0.68f;
 	[SerializeField] private float camCrouchY = 0.131f;
 
-	[Header("Interaction")]
-	[SerializeField] private float distanceOfInteraction = 1f;
-	[SerializeField] private float distanceOfShoot = 1f;
-	[SerializeField] private float throwingStrength = 1f;
-	[SerializeField] private LayerMask interectionMask;
-
 	[Header("Objects")]
-	[SerializeField] private GameObject cam;
+	[SerializeField] private GameObject _cam;
 
 	[Header("FWF")]
 	[SerializeField] private int maxFWFValue;
@@ -66,13 +60,12 @@ public class PlayerController : MonoBehaviour
 	private GameObject canvas;
 	private bool isInventoryOpen;
 	private float lastClickTime;
-	private bool shooting;
+	[HideInInspector] public bool shooting;
 
 	private RaycastHit hit;
-	private GameObject lookObject;
-	private bool isGrabbing;
+	private GameObject _lookObject;
+	[HideInInspector] public bool isGrabbing;
 	private GameObject grabPoint;
-	public GameObject playerGrabPoint { get { return grabPoint; } }
 
 	[HideInInspector] public EventSystem eventSystem;
 	private GraphicRaycaster raycaster;
@@ -80,7 +73,17 @@ public class PlayerController : MonoBehaviour
 	private GameObject invItemLookObject;
 	[HideInInspector] public GameObject invItemHoldObject;
 
+	private PlayerInteraction interaction;
 	public static PlayerController Instance;
+
+	#region Getters and Setters
+	public GameObject playerGrabPoint { get { return grabPoint; } }
+	public GameObject lookObject { get { return _lookObject; } }
+	public GameObject cam { get { return _cam; } }
+
+	public InputActionsPlayer actionsPlayer { get { return inputActions; } }
+	#endregion
+
 	void Awake()
 	{
 		if (Instance == null)
@@ -104,12 +107,26 @@ public class PlayerController : MonoBehaviour
 
 		isInventoryOpen = false;
 		isGrabbing = false;
-		grabPoint = cam.transform.Find("GrabPoint").gameObject;
+		grabPoint = _cam.transform.Find("GrabPoint").gameObject;
 
 		fwfPlayer = new FWF(Random.Range(minStartFood, maxStartFood), Random.Range(minStartWater, maxStartWater), Random.Range(minStartFilter, maxStartFilter));
 		ChangeMaxAndMinFWFValues(maxFWFValue, minFWFValue);
+	}
 
-		//input actions Player
+	private void Start()
+	{
+		interaction = PlayerInteraction.Instance;
+
+		SetCursorActivity(false);
+		PlayerUI.Instance.DisableInfoItemText();
+		PlayerUI.Instance.UpdateFWFBars(fwfPlayer);
+		PlayerUI.Instance.SetShootPointer(shooting);
+
+		InventoryChangeStatement(isInventoryOpen);
+		Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
+
+		#region Input Actions Player
+
 		inputActions.Player.Moving.started += HorizontalMoving;
 		inputActions.Player.Moving.performed += HorizontalMoving;
 		inputActions.Player.Moving.canceled += HorizontalMoving;
@@ -130,17 +147,18 @@ public class PlayerController : MonoBehaviour
 
 		inputActions.Player.InventoryOpen.started += InventoryInteraction;
 
-		SetLeftClickBinding(shooting);
+		interaction.SetLeftClickBinding(shooting);
 
-		inputActions.Player.Throw.started += Throw;
-		inputActions.Player.Throw.performed += Throw;
-		inputActions.Player.Throw.canceled += Throw;
+		inputActions.Player.Throw.started += interaction.Throw;
+		inputActions.Player.Throw.performed += interaction.Throw;
+		inputActions.Player.Throw.canceled += interaction.Throw;
 
-		inputActions.Player.Interact.started += Interact;
+		inputActions.Player.Interact.started += interaction.Interact;
 
-		inputActions.Player.RaisePistol.started += ChangeShootingRegime;
+		inputActions.Player.UseSpecialItems.started += interaction.UseSpecialItems;
 
-		//input actions UI
+		#endregion
+		#region Input Actions UI
 		inputActions.UI.InventoryClose.started += InventoryInteraction;
 
 		inputActions.UI.DropItem.started += DropItem;
@@ -148,17 +166,7 @@ public class PlayerController : MonoBehaviour
 		inputActions.UI.Click.started += UseItem;
 
 		inputActions.UI.Scroll.started += RotateInvItem;
-	}
-
-	private void Start()
-	{
-		SetCursorActivity(false);
-		PlayerUI.Instance.DisableInfoItemText();
-		PlayerUI.Instance.UpdateFWFBars(fwfPlayer);
-		PlayerUI.Instance.SetShootPointer(shooting);
-
-		InventoryChangeStatement(isInventoryOpen);
-		Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
+		#endregion
 	}
 
 	private void SetCursorActivity(bool state)
@@ -176,9 +184,9 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private bool IsLookObjectItem()
+	public bool IsLookObjectItem()
 	{
-		if (lookObject.GetComponent<Item>()) return true;
+		if (_lookObject.GetComponent<Item>()) return true;
 		else return false;
 	}
 	private void HorizontalMoving(InputAction.CallbackContext context)
@@ -213,67 +221,6 @@ public class PlayerController : MonoBehaviour
 		Crouching();
 	}
 
-	private void Grab(InputAction.CallbackContext context)
-	{
-		if (lookObject != null && IsLookObjectItem())
-		{
-			if (context.started)
-			{
-				isGrabbing = true;
-				lookObject.GetComponent<Item>().itemRigidbody.useGravity = false;
-				lookObject.GetComponent<Item>().DisableCollisionLayer(LayerMask.GetMask("Player"));
-			}
-
-			else if (context.performed)
-			{
-				lookObject.GetComponent<Item>().SetTarget(grabPoint);
-			}
-
-			else
-			{
-				isGrabbing = false;
-				lookObject.GetComponent<Item>().SetTarget(null);
-				lookObject.GetComponent<Item>().itemRigidbody.useGravity = true;
-
-				lookObject.GetComponent<Item>().itemRigidbody.velocity = Vector3.zero;
-				lookObject.GetComponent<Item>().itemRigidbody.angularVelocity = Vector3.zero;
-				lookObject.GetComponent<Item>().DisableCollisionLayer(LayerMask.GetMask("Nothing"));
-			}
-
-		}
-	}
-
-	private void Shoot(InputAction.CallbackContext context)
-	{
-		if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out RaycastHit shootHit, distanceOfShoot, interectionMask))
-		{
-			GameObject shootObject = shootHit.collider.gameObject;
-
-			if (utils.GameObjectUsesInterface(shootObject, typeof(IOnShoot)))
-				utils.CallFunctionFromInterface(shootObject, typeof(IOnShoot), "OnShoot", null);
-		}
-	}
-
-	private void Throw(InputAction.CallbackContext contex)
-	{
-		if (isGrabbing)
-		{
-			isGrabbing = false;
-			lookObject.GetComponent<Item>().itemRigidbody.useGravity = true;
-			lookObject.GetComponent<Item>().SetTarget(null);
-			lookObject.GetComponent<Item>().DisableCollisionLayer(LayerMask.GetMask("Nothing"));
-
-			lookObject.GetComponent<Item>().itemRigidbody.AddForce((grabPoint.transform.position - cam.transform.position).normalized * 10f * throwingStrength);
-		}
-	}
-
-	private void Interact(InputAction.CallbackContext contex)
-	{
-		if (lookObject != null && utils.GameObjectUsesInterface(lookObject, typeof(IInteract)) && (bool)utils.CallFunctionFromInterface(lookObject, typeof(IInteract), "CanInteract", null))
-		{
-			utils.CallFunctionFromInterface(lookObject, typeof(IInteract), "Interact", null);
-		}
-	}
 
 	public void AddItemToInventory()
 	{
@@ -281,13 +228,13 @@ public class PlayerController : MonoBehaviour
 	}
 	private IEnumerator AddItemToInventoryCoroutine()
 	{
-		GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(lookObject.GetComponent<Item>().itemInfo.GetInventoryItemInfo());
+		GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(_lookObject.GetComponent<Item>().itemInfo.GetInventoryItemInfo());
 
 		yield return new WaitForEndOfFrame();
 
 		if (InventoryControll.Instance.IsFreeSpaceForItem(invItem, out invItemPosition, out float rotation))
 		{
-			ObjectPooler.Instance.DespawnItem(lookObject.GetComponent<Item>().itemInfo, lookObject.gameObject);
+			ObjectPooler.Instance.DespawnItem(_lookObject.GetComponent<Item>().itemInfo, _lookObject.gameObject);
 			ObjectPooler.Instance.AddInventoryItem(invItem, invItemPosition, rotation);
 
 			invItem.GetComponent<InventoryItem>().hasPlace = true;
@@ -354,34 +301,6 @@ public class PlayerController : MonoBehaviour
 		}
 	}
 
-	private void ChangeShootingRegime(InputAction.CallbackContext context)
-	{
-		shooting = !shooting;
-		SetLeftClickBinding(shooting);
-		PlayerUI.Instance.SetShootPointer(shooting);
-	}
-
-	private void SetLeftClickBinding(bool shooting)
-	{
-		if (shooting)
-		{
-			inputActions.Player.LeftClick.started -= Grab;
-			inputActions.Player.LeftClick.performed -= Grab;
-			inputActions.Player.LeftClick.canceled -= Grab;
-
-			inputActions.Player.LeftClick.started += Shoot;
-		}
-
-		else
-		{
-			inputActions.Player.LeftClick.started -= Shoot;
-
-			inputActions.Player.LeftClick.started += Grab;
-			inputActions.Player.LeftClick.performed += Grab;
-			inputActions.Player.LeftClick.canceled += Grab;
-		}
-	}
-
 	private void Move()
 	{
 		float targetSpeed;
@@ -396,7 +315,7 @@ public class PlayerController : MonoBehaviour
 	private void Rotation()
 	{
 		transform.rotation = Quaternion.Euler(0f, mouseRotation.x, 0f);
-		cam.transform.localRotation = Quaternion.Euler(-Mathf.Clamp(mouseRotation.y, minRotationAngle, maxRotationAngle), 0f, 0f);
+		_cam.transform.localRotation = Quaternion.Euler(-Mathf.Clamp(mouseRotation.y, minRotationAngle, maxRotationAngle), 0f, 0f);
 	}
 
 	private void ApplyGravity()
@@ -416,17 +335,17 @@ public class PlayerController : MonoBehaviour
 
 	private void Look()
 	{
-		if (Physics.Raycast(cam.transform.position, cam.transform.TransformDirection(Vector3.forward), out hit, distanceOfInteraction, interectionMask) && !isGrabbing)
+		if (Physics.Raycast(_cam.transform.position, _cam.transform.TransformDirection(Vector3.forward), out hit, interaction.distance, interaction.mask) && !isGrabbing)
 		{
 			//Debug.DrawRay(cam.transform.position, cam.transform.TransformDirection(Vector3.forward) * hit.distance, Color.red);
 			//print(hit.collider.gameObject.name);
 
 			if (hit.collider.gameObject)
 			{
-				lookObject = hit.collider.gameObject;
+				_lookObject = hit.collider.gameObject;
 
-				if (lookObject.GetComponent<Item>() && utils.GameObjectUsesInterface(lookObject, typeof(IInteract)))
-					PlayerUI.Instance.EnableInfoItemText(lookObject.GetComponent<Item>().itemInfo.GetLocalizedItemName());
+				if (_lookObject.GetComponent<Item>() && utils.GameObjectUsesInterface(_lookObject, typeof(IInteract)))
+					PlayerUI.Instance.EnableInfoItemText(_lookObject.GetComponent<Item>().itemInfo.GetLocalizedItemName());
 
 				else if (PlayerUI.Instance.infoItemTextIsActive)
 					PlayerUI.Instance.DisableInfoItemText();
@@ -434,14 +353,14 @@ public class PlayerController : MonoBehaviour
 
 			else if (!isGrabbing)
 			{
-				lookObject = null;
+				_lookObject = null;
 				PlayerUI.Instance.DisableInfoItemText();
 			}
 		}
 
-		else if (lookObject != null && !isGrabbing)
+		else if (_lookObject != null && !isGrabbing)
 		{
-			lookObject = null;
+			_lookObject = null;
 			isGrabbing = false;
 			PlayerUI.Instance.DisableInfoItemText();
 		}
@@ -454,14 +373,14 @@ public class PlayerController : MonoBehaviour
 		{
 			characterController.height = characterCrouchHeight;
 			characterController.center = new Vector3(0f, characterCrouchCenterY, 0f);
-			cam.transform.localPosition = new Vector3(0f, camCrouchY, 0f);
+			_cam.transform.localPosition = new Vector3(0f, camCrouchY, 0f);
 		}
 
 		else
 		{
 			characterController.height = characterNormalHeight;
 			characterController.center = new Vector3(0f, characterNormalCenterY, 0f);
-			cam.transform.localPosition = new Vector3(0f, camNormalY, 0f);
+			_cam.transform.localPosition = new Vector3(0f, camNormalY, 0f);
 		}
 	}
 

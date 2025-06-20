@@ -109,7 +109,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""RaisePistol"",
+                    ""name"": ""UseSpecialItems"",
                     ""type"": ""Button"",
                     ""id"": ""3621711e-609e-4842-90e3-94c88f4a723c"",
                     ""expectedControlType"": ""Button"",
@@ -269,7 +269,95 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""RaisePistol"",
+                    ""action"": ""UseSpecialItems"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""f27b306c-904e-4173-bc51-05e557d4cf92"",
+                    ""path"": ""<Keyboard>/2"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSpecialItems"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d56a4df1-1d18-4271-a7bf-856f086886c1"",
+                    ""path"": ""<Keyboard>/3"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSpecialItems"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d40921b8-889b-4608-bb34-ece44b21e82f"",
+                    ""path"": ""<Keyboard>/4"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSpecialItems"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""8c993da3-0315-49ba-a728-3d888a60af22"",
+                    ""path"": ""<Keyboard>/5"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSpecialItems"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""0afc4192-9783-40e7-875d-28e243fe9820"",
+                    ""path"": ""<Keyboard>/6"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSpecialItems"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""65f677dd-0c1e-41d1-a6df-e1060fac841b"",
+                    ""path"": ""<Keyboard>/7"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSpecialItems"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""a1da3e10-a48d-48aa-b603-cbced5e1b10f"",
+                    ""path"": ""<Keyboard>/8"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSpecialItems"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""856c967f-d7a5-4b5e-8ca0-e41b80c6d259"",
+                    ""path"": ""<Keyboard>/9"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": """",
+                    ""action"": ""UseSpecialItems"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -377,7 +465,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_LeftClick = m_Player.FindAction("LeftClick", throwIfNotFound: true);
         m_Player_Throw = m_Player.FindAction("Throw", throwIfNotFound: true);
-        m_Player_RaisePistol = m_Player.FindAction("RaisePistol", throwIfNotFound: true);
+        m_Player_UseSpecialItems = m_Player.FindAction("UseSpecialItems", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_InventoryClose = m_UI.FindAction("InventoryClose", throwIfNotFound: true);
@@ -454,7 +542,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_LeftClick;
     private readonly InputAction m_Player_Throw;
-    private readonly InputAction m_Player_RaisePistol;
+    private readonly InputAction m_Player_UseSpecialItems;
     public struct PlayerActions
     {
         private @InputActionsPlayer m_Wrapper;
@@ -468,7 +556,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @LeftClick => m_Wrapper.m_Player_LeftClick;
         public InputAction @Throw => m_Wrapper.m_Player_Throw;
-        public InputAction @RaisePistol => m_Wrapper.m_Player_RaisePistol;
+        public InputAction @UseSpecialItems => m_Wrapper.m_Player_UseSpecialItems;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -505,9 +593,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Throw.started += instance.OnThrow;
             @Throw.performed += instance.OnThrow;
             @Throw.canceled += instance.OnThrow;
-            @RaisePistol.started += instance.OnRaisePistol;
-            @RaisePistol.performed += instance.OnRaisePistol;
-            @RaisePistol.canceled += instance.OnRaisePistol;
+            @UseSpecialItems.started += instance.OnUseSpecialItems;
+            @UseSpecialItems.performed += instance.OnUseSpecialItems;
+            @UseSpecialItems.canceled += instance.OnUseSpecialItems;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -539,9 +627,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Throw.started -= instance.OnThrow;
             @Throw.performed -= instance.OnThrow;
             @Throw.canceled -= instance.OnThrow;
-            @RaisePistol.started -= instance.OnRaisePistol;
-            @RaisePistol.performed -= instance.OnRaisePistol;
-            @RaisePistol.canceled -= instance.OnRaisePistol;
+            @UseSpecialItems.started -= instance.OnUseSpecialItems;
+            @UseSpecialItems.performed -= instance.OnUseSpecialItems;
+            @UseSpecialItems.canceled -= instance.OnUseSpecialItems;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -640,7 +728,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnLeftClick(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
-        void OnRaisePistol(InputAction.CallbackContext context);
+        void OnUseSpecialItems(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

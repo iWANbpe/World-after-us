@@ -6825,6 +6825,7 @@ GameObject:
   - component: {fileID: 894059210}
   - component: {fileID: 894059212}
   - component: {fileID: 894059213}
+  - component: {fileID: 894059214}
   m_Layer: 3
   m_Name: Player
   m_TagString: Untagged
@@ -6901,13 +6902,7 @@ MonoBehaviour:
   characterCrouchCenterY: -0.4
   camNormalY: 0.68
   camCrouchY: 0.131
-  distanceOfInteraction: 8
-  distanceOfShoot: 8
-  throwingStrength: 15
-  interectionMask:
-    serializedVersion: 2
-    m_Bits: 115
-  cam: {fileID: 963194225}
+  _cam: {fileID: 963194225}
   maxFWFValue: 100
   minFWFValue: 0
   maxStartFood: 78
@@ -6916,6 +6911,8 @@ MonoBehaviour:
   minStartWater: 45
   maxStartFilter: 70
   minStartFilter: 55
+  shooting: 0
+  isGrabbing: 0
   eventSystem: {fileID: 0}
   invItemHoldObject: {fileID: 0}
 --- !u!114 &894059213
@@ -6955,6 +6952,24 @@ MonoBehaviour:
   filterBarList:
   - {fileID: 2015572194}
   - {fileID: 582465696}
+--- !u!114 &894059214
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 894059209}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3a5cbb78c473c9b47bf777f6d33be6c7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactionDistance: 8
+  interectionMask:
+    serializedVersion: 2
+    m_Bits: 115
+  distanceOfShoot: 8
+  throwingStrength: 15
 --- !u!1001 &904356067
 PrefabInstance:
   m_ObjectHideFlags: 0
