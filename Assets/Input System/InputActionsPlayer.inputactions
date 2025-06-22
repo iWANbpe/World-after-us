@@ -87,7 +87,7 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "UseSpecialItems",
+                    "name": "NumericKeys",
                     "type": "Button",
                     "id": "3621711e-609e-4842-90e3-94c88f4a723c",
                     "expectedControlType": "Button",
@@ -247,7 +247,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSpecialItems",
+                    "action": "NumericKeys",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -258,7 +258,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSpecialItems",
+                    "action": "NumericKeys",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -269,7 +269,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSpecialItems",
+                    "action": "NumericKeys",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -280,7 +280,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSpecialItems",
+                    "action": "NumericKeys",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -291,7 +291,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSpecialItems",
+                    "action": "NumericKeys",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -302,7 +302,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSpecialItems",
+                    "action": "NumericKeys",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -313,7 +313,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSpecialItems",
+                    "action": "NumericKeys",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -324,7 +324,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSpecialItems",
+                    "action": "NumericKeys",
                     "isComposite": false,
                     "isPartOfComposite": false
                 },
@@ -335,7 +335,7 @@
                     "interactions": "",
                     "processors": "",
                     "groups": "",
-                    "action": "UseSpecialItems",
+                    "action": "NumericKeys",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

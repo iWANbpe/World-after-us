@@ -6915,6 +6915,7 @@ MonoBehaviour:
   isGrabbing: 0
   eventSystem: {fileID: 0}
   invItemHoldObject: {fileID: 0}
+  interaction: {fileID: 0}
 --- !u!114 &894059213
 MonoBehaviour:
   m_ObjectHideFlags: 0

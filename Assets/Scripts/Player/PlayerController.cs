@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -73,7 +74,7 @@ public class PlayerController : MonoBehaviour
 	private GameObject invItemLookObject;
 	[HideInInspector] public GameObject invItemHoldObject;
 
-	private PlayerInteraction interaction;
+	[HideInInspector] public PlayerInteraction interaction;
 	public static PlayerController Instance;
 
 	#region Getters and Setters
@@ -109,7 +110,7 @@ public class PlayerController : MonoBehaviour
 		isGrabbing = false;
 		grabPoint = _cam.transform.Find("GrabPoint").gameObject;
 
-		fwfPlayer = new FWF(Random.Range(minStartFood, maxStartFood), Random.Range(minStartWater, maxStartWater), Random.Range(minStartFilter, maxStartFilter));
+		fwfPlayer = new FWF(UnityEngine.Random.Range(minStartFood, maxStartFood), UnityEngine.Random.Range(minStartWater, maxStartWater), UnityEngine.Random.Range(minStartFilter, maxStartFilter));
 		ChangeMaxAndMinFWFValues(maxFWFValue, minFWFValue);
 	}
 
@@ -147,7 +148,9 @@ public class PlayerController : MonoBehaviour
 
 		inputActions.Player.InventoryOpen.started += InventoryInteraction;
 
-		interaction.SetLeftClickBinding(shooting);
+		inputActions.Player.LeftClick.started += interaction.Grab;
+		inputActions.Player.LeftClick.performed += interaction.Grab;
+		inputActions.Player.LeftClick.canceled += interaction.Grab;
 
 		inputActions.Player.Throw.started += interaction.Throw;
 		inputActions.Player.Throw.performed += interaction.Throw;
@@ -155,8 +158,7 @@ public class PlayerController : MonoBehaviour
 
 		inputActions.Player.Interact.started += interaction.Interact;
 
-		inputActions.Player.UseSpecialItems.started += interaction.UseSpecialItems;
-
+		inputActions.Player.NumericKeys.started += interaction.NumericKeysPress;
 		#endregion
 		#region Input Actions UI
 		inputActions.UI.InventoryClose.started += InventoryInteraction;
@@ -167,12 +169,44 @@ public class PlayerController : MonoBehaviour
 
 		inputActions.UI.Scroll.started += RotateInvItem;
 		#endregion
+
+		interaction.AddNumericKeyBinding(1, interaction.Shoot, FunctionSubscriptionType.FirstClick);
 	}
 
 	private void SetCursorActivity(bool state)
 	{
 		Cursor.lockState = state ? CursorLockMode.None : CursorLockMode.Locked;
 		Cursor.visible = state;
+	}
+
+	public void SubscribeFunctionToInputAction(Action<InputAction.CallbackContext> function, FunctionSubscriptionType subscriptionType)
+	{
+		if (subscriptionType == FunctionSubscriptionType.FirstClick)
+		{
+			inputActions.Player.LeftClick.started += function;
+		}
+
+		else
+		{
+			inputActions.Player.LeftClick.started += function;
+			inputActions.Player.LeftClick.performed += function;
+			inputActions.Player.LeftClick.canceled += function;
+		}
+	}
+
+	public void UnsubscribeFunctionFromInputAction(Action<InputAction.CallbackContext> function, FunctionSubscriptionType subscriptionType)
+	{
+		if (subscriptionType == FunctionSubscriptionType.FirstClick)
+		{
+			inputActions.Player.LeftClick.started -= function;
+		}
+
+		else
+		{
+			inputActions.Player.LeftClick.started -= function;
+			inputActions.Player.LeftClick.performed -= function;
+			inputActions.Player.LeftClick.canceled -= function;
+		}
 	}
 
 	private void ChangeMaxAndMinFWFValues(int maxValue, int minValue)

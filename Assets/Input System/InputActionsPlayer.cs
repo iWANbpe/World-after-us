@@ -109,7 +109,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""initialStateCheck"": false
                 },
                 {
-                    ""name"": ""UseSpecialItems"",
+                    ""name"": ""NumericKeys"",
                     ""type"": ""Button"",
                     ""id"": ""3621711e-609e-4842-90e3-94c88f4a723c"",
                     ""expectedControlType"": ""Button"",
@@ -269,7 +269,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UseSpecialItems"",
+                    ""action"": ""NumericKeys"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -280,7 +280,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UseSpecialItems"",
+                    ""action"": ""NumericKeys"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -291,7 +291,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UseSpecialItems"",
+                    ""action"": ""NumericKeys"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -302,7 +302,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UseSpecialItems"",
+                    ""action"": ""NumericKeys"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -313,7 +313,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UseSpecialItems"",
+                    ""action"": ""NumericKeys"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -324,7 +324,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UseSpecialItems"",
+                    ""action"": ""NumericKeys"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -335,7 +335,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UseSpecialItems"",
+                    ""action"": ""NumericKeys"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -346,7 +346,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UseSpecialItems"",
+                    ""action"": ""NumericKeys"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 },
@@ -357,7 +357,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
                     ""interactions"": """",
                     ""processors"": """",
                     ""groups"": """",
-                    ""action"": ""UseSpecialItems"",
+                    ""action"": ""NumericKeys"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -465,7 +465,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
         m_Player_LeftClick = m_Player.FindAction("LeftClick", throwIfNotFound: true);
         m_Player_Throw = m_Player.FindAction("Throw", throwIfNotFound: true);
-        m_Player_UseSpecialItems = m_Player.FindAction("UseSpecialItems", throwIfNotFound: true);
+        m_Player_NumericKeys = m_Player.FindAction("NumericKeys", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_InventoryClose = m_UI.FindAction("InventoryClose", throwIfNotFound: true);
@@ -542,7 +542,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Interact;
     private readonly InputAction m_Player_LeftClick;
     private readonly InputAction m_Player_Throw;
-    private readonly InputAction m_Player_UseSpecialItems;
+    private readonly InputAction m_Player_NumericKeys;
     public struct PlayerActions
     {
         private @InputActionsPlayer m_Wrapper;
@@ -556,7 +556,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
         public InputAction @LeftClick => m_Wrapper.m_Player_LeftClick;
         public InputAction @Throw => m_Wrapper.m_Player_Throw;
-        public InputAction @UseSpecialItems => m_Wrapper.m_Player_UseSpecialItems;
+        public InputAction @NumericKeys => m_Wrapper.m_Player_NumericKeys;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -593,9 +593,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Throw.started += instance.OnThrow;
             @Throw.performed += instance.OnThrow;
             @Throw.canceled += instance.OnThrow;
-            @UseSpecialItems.started += instance.OnUseSpecialItems;
-            @UseSpecialItems.performed += instance.OnUseSpecialItems;
-            @UseSpecialItems.canceled += instance.OnUseSpecialItems;
+            @NumericKeys.started += instance.OnNumericKeys;
+            @NumericKeys.performed += instance.OnNumericKeys;
+            @NumericKeys.canceled += instance.OnNumericKeys;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -627,9 +627,9 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
             @Throw.started -= instance.OnThrow;
             @Throw.performed -= instance.OnThrow;
             @Throw.canceled -= instance.OnThrow;
-            @UseSpecialItems.started -= instance.OnUseSpecialItems;
-            @UseSpecialItems.performed -= instance.OnUseSpecialItems;
-            @UseSpecialItems.canceled -= instance.OnUseSpecialItems;
+            @NumericKeys.started -= instance.OnNumericKeys;
+            @NumericKeys.performed -= instance.OnNumericKeys;
+            @NumericKeys.canceled -= instance.OnNumericKeys;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -728,7 +728,7 @@ public partial class @InputActionsPlayer: IInputActionCollection2, IDisposable
         void OnInteract(InputAction.CallbackContext context);
         void OnLeftClick(InputAction.CallbackContext context);
         void OnThrow(InputAction.CallbackContext context);
-        void OnUseSpecialItems(InputAction.CallbackContext context);
+        void OnNumericKeys(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

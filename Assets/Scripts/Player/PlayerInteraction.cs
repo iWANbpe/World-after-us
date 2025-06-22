@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -16,6 +17,7 @@ public class PlayerInteraction : MonoBehaviour
 	public LayerMask mask { get { return interectionMask; } }
 	#endregion
 
+	private NumericKeysBinding numericKeysBinding = new NumericKeysBinding();
 	private PlayerController controller;
 	public static PlayerInteraction Instance;
 
@@ -92,32 +94,35 @@ public class PlayerInteraction : MonoBehaviour
 		}
 	}
 
-	public void UseSpecialItems(InputAction.CallbackContext context)
+	public void NumericKeysPress(InputAction.CallbackContext contex)
 	{
-		controller.shooting = !controller.shooting;
-		SetLeftClickBinding(controller.shooting);
-		PlayerUI.Instance.SetShootPointer(controller.shooting);
+		int keyNumber = int.Parse(contex.control.name);
+
+		if (numericKeysBinding.ContainsKeyBinding(keyNumber))
+		{
+			controller.UnsubscribeFunctionFromInputAction(numericKeysBinding.KeyGetCurrentFunction(keyNumber), numericKeysBinding.KeyFunctionSubscriptionType(keyNumber));
+			numericKeysBinding.KeySwitchFunction(keyNumber);
+			controller.SubscribeFunctionToInputAction(numericKeysBinding.KeyGetCurrentFunction(keyNumber), numericKeysBinding.KeyFunctionSubscriptionType(keyNumber));
+		}
 	}
 
-	public void SetLeftClickBinding(bool shooting)
+	public void AddNumericKeyBinding(int keyNumber, Action<InputAction.CallbackContext> switchFunction, FunctionSubscriptionType switchFunctionSubscriptionType)
 	{
+		numericKeysBinding.AddKeyBinding(keyNumber, Grab, FunctionSubscriptionType.AllClicks, switchFunction, switchFunctionSubscriptionType);
+	}
 
-		if (shooting)
-		{
-			controller.actionsPlayer.Player.LeftClick.started -= Grab;
-			controller.actionsPlayer.Player.LeftClick.performed -= Grab;
-			controller.actionsPlayer.Player.LeftClick.canceled -= Grab;
+	public bool NumericKeyContainsBinding(int keyNumber)
+	{
+		return numericKeysBinding.ContainsKeyBinding(keyNumber);
+	}
 
-			controller.actionsPlayer.Player.LeftClick.started += Shoot;
-		}
+	public Action<InputAction.CallbackContext> NumericKeyGetCurrentFunction(int keyNumber)
+	{
+		return numericKeysBinding.KeyGetCurrentFunction(keyNumber);
+	}
 
-		else
-		{
-			controller.actionsPlayer.Player.LeftClick.started -= Shoot;
-
-			controller.actionsPlayer.Player.LeftClick.started += Grab;
-			controller.actionsPlayer.Player.LeftClick.performed += Grab;
-			controller.actionsPlayer.Player.LeftClick.canceled += Grab;
-		}
+	public void NumericKeySwitchFunction(int keyNumber)
+	{
+		numericKeysBinding.KeySwitchFunction(keyNumber);
 	}
 }
