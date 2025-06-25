@@ -5,10 +5,23 @@ using UnityEngine.InputSystem;
 public class NumericKeysBinding
 {
 	private Dictionary<int, SwitchableFunction> keySwitchableFunctionsDictionary = new();
+	private Dictionary<int, ActionParams> keyActivationFunctionsDictionary = new();
+	private Dictionary<int, ActionParams> keyDeactivationFunctionsDictionary = new();
 
 	public void AddKeyBinding(int keyNumber, Action<InputAction.CallbackContext> basicFunction, FunctionSubscriptionType basicFunctionSubscriptionType, Action<InputAction.CallbackContext> switchFunction, FunctionSubscriptionType switchFunctionSubscriptionType)
 	{
 		keySwitchableFunctionsDictionary.Add(keyNumber, new SwitchableFunction(basicFunction, basicFunctionSubscriptionType, switchFunction, switchFunctionSubscriptionType));
+	}
+	public void AddKeyBinding(int keyNumber, Action<InputAction.CallbackContext> basicFunction, FunctionSubscriptionType basicFunctionSubscriptionType, Action<InputAction.CallbackContext> switchFunction, FunctionSubscriptionType switchFunctionSubscriptionType, ActionParams activationFunc)
+	{
+		keySwitchableFunctionsDictionary.Add(keyNumber, new SwitchableFunction(basicFunction, basicFunctionSubscriptionType, switchFunction, switchFunctionSubscriptionType));
+		keyActivationFunctionsDictionary.Add(keyNumber, activationFunc);
+	}
+	public void AddKeyBinding(int keyNumber, Action<InputAction.CallbackContext> basicFunction, FunctionSubscriptionType basicFunctionSubscriptionType, Action<InputAction.CallbackContext> switchFunction, FunctionSubscriptionType switchFunctionSubscriptionType, ActionParams activationFunc, ActionParams deactivationFunc)
+	{
+		keySwitchableFunctionsDictionary.Add(keyNumber, new SwitchableFunction(basicFunction, basicFunctionSubscriptionType, switchFunction, switchFunctionSubscriptionType));
+		keyActivationFunctionsDictionary.Add(keyNumber, activationFunc);
+		keyDeactivationFunctionsDictionary.Add(keyNumber, deactivationFunc);
 	}
 
 	public void KeySwitchFunction(int keyNumber)
@@ -42,5 +55,20 @@ public class NumericKeysBinding
 		if (keySwitchableFunctionsDictionary.ContainsKey(keyNumber))
 			return true;
 		return false;
+	}
+
+	public void RunActivationFunction(int keyNumber)
+	{
+		keyActivationFunctionsDictionary[keyNumber]?.Run();
+	}
+
+	public void RunDeactivationFunction(int keyNumber)
+	{
+		keyDeactivationFunctionsDictionary[keyNumber]?.Run();
+	}
+
+	public bool IsBasicFunction(int keyNumber)
+	{
+		return keySwitchableFunctionsDictionary[keyNumber].IsBasicFunction();
 	}
 }

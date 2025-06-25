@@ -170,7 +170,10 @@ public class PlayerController : MonoBehaviour
 		inputActions.UI.Scroll.started += RotateInvItem;
 		#endregion
 
-		interaction.AddNumericKeyBinding(1, interaction.Shoot, FunctionSubscriptionType.FirstClick);
+		interaction.AddNumericKeyBinding(1, interaction.Shoot,
+										FunctionSubscriptionType.FirstClick,
+										new ActionParams(utils.Wrap<bool>(PlayerUI.Instance.SetShootPointer), true),
+										new ActionParams(utils.Wrap<bool>(PlayerUI.Instance.SetShootPointer), false));
 	}
 
 	private void SetCursorActivity(bool state)

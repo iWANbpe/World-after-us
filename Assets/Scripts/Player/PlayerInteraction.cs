@@ -94,21 +94,38 @@ public class PlayerInteraction : MonoBehaviour
 		}
 	}
 
+	#region Numeric Key Binding
 	public void NumericKeysPress(InputAction.CallbackContext contex)
 	{
 		int keyNumber = int.Parse(contex.control.name);
 
 		if (numericKeysBinding.ContainsKeyBinding(keyNumber))
 		{
+			if (!numericKeysBinding.IsBasicFunction(keyNumber))
+				numericKeysBinding.RunDeactivationFunction(keyNumber);
+
 			controller.UnsubscribeFunctionFromInputAction(numericKeysBinding.KeyGetCurrentFunction(keyNumber), numericKeysBinding.KeyFunctionSubscriptionType(keyNumber));
 			numericKeysBinding.KeySwitchFunction(keyNumber);
 			controller.SubscribeFunctionToInputAction(numericKeysBinding.KeyGetCurrentFunction(keyNumber), numericKeysBinding.KeyFunctionSubscriptionType(keyNumber));
+
+			if (!numericKeysBinding.IsBasicFunction(keyNumber))
+				numericKeysBinding.RunActivationFunction(keyNumber);
 		}
 	}
 
 	public void AddNumericKeyBinding(int keyNumber, Action<InputAction.CallbackContext> switchFunction, FunctionSubscriptionType switchFunctionSubscriptionType)
 	{
 		numericKeysBinding.AddKeyBinding(keyNumber, Grab, FunctionSubscriptionType.AllClicks, switchFunction, switchFunctionSubscriptionType);
+	}
+
+	public void AddNumericKeyBinding(int keyNumber, Action<InputAction.CallbackContext> switchFunction, FunctionSubscriptionType switchFunctionSubscriptionType, ActionParams activationFunction)
+	{
+		numericKeysBinding.AddKeyBinding(keyNumber, Grab, FunctionSubscriptionType.AllClicks, switchFunction, switchFunctionSubscriptionType, activationFunction);
+	}
+
+	public void AddNumericKeyBinding(int keyNumber, Action<InputAction.CallbackContext> switchFunction, FunctionSubscriptionType switchFunctionSubscriptionType, ActionParams activationFunction, ActionParams deactivationFunction)
+	{
+		numericKeysBinding.AddKeyBinding(keyNumber, Grab, FunctionSubscriptionType.AllClicks, switchFunction, switchFunctionSubscriptionType, activationFunction, deactivationFunction);
 	}
 
 	public bool NumericKeyContainsBinding(int keyNumber)
@@ -125,4 +142,5 @@ public class PlayerInteraction : MonoBehaviour
 	{
 		numericKeysBinding.KeySwitchFunction(keyNumber);
 	}
+	#endregion
 }

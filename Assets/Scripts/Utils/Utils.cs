@@ -134,4 +134,21 @@ public static class utils
 	{
 		globalCache.Clear();
 	}
+
+	#region Wrapper
+	public static Action<object[]> Wrap<T1>(Action<T1> func)
+	{
+		
+		return (args) => func((T1)args[0]);
+	}
+	public static Action<object[]> Wrap<T1, T2>(Action<T1, T2> func)
+	{
+		return (args) => func((T1)args[0], (T2)args[1]);
+	}
+
+	public static Action<object[]> Wrap<T1, T2, T3>(Action<T1, T2, T3> func)
+	{
+		return (args) => func((T1)args[0], (T2)args[1], (T3)args[2]);
+	}
+	#endregion
 }
