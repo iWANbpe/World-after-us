@@ -75,6 +75,7 @@ public class PlayerController : MonoBehaviour
 	[HideInInspector] public GameObject invItemHoldObject;
 
 	[HideInInspector] public PlayerInteraction interaction;
+	[HideInInspector] public PlayerUI playerUI;
 	public static PlayerController Instance;
 
 	#region Getters and Setters
@@ -117,11 +118,12 @@ public class PlayerController : MonoBehaviour
 	private void Start()
 	{
 		interaction = PlayerInteraction.Instance;
+		playerUI = PlayerUI.Instance;
 
 		SetCursorActivity(false);
-		PlayerUI.Instance.DisableInfoItemText();
-		PlayerUI.Instance.UpdateFWFBars(fwfPlayer);
-		PlayerUI.Instance.SetShootPointer(shooting);
+		playerUI.DisableInfoItemText();
+		playerUI.UpdateFWFBars(fwfPlayer);
+		playerUI.SetShootPointer(shooting);
 
 		InventoryChangeStatement(isInventoryOpen);
 		Layouts.Instance.OpenLayout(LayoutType.PlayerPanel);
@@ -139,8 +141,6 @@ public class PlayerController : MonoBehaviour
 		inputActions.Player.Jump.started += Jump;
 
 		inputActions.Player.Sprint.started += Sprint;
-		inputActions.Player.Sprint.performed += Sprint;
-		inputActions.Player.Sprint.canceled += Sprint;
 
 		inputActions.Player.Crouch.started += Crouch;
 		inputActions.Player.Crouch.performed += Crouch;
@@ -172,8 +172,8 @@ public class PlayerController : MonoBehaviour
 
 		interaction.AddNumericKeyBinding(1, interaction.Shoot,
 										FunctionSubscriptionType.FirstClick,
-										new ActionParams(utils.Wrap<bool>(PlayerUI.Instance.SetShootPointer), true),
-										new ActionParams(utils.Wrap<bool>(PlayerUI.Instance.SetShootPointer), false));
+										new ActionParams(utils.Wrap<bool>(playerUI.SetShootPointer), true),
+										new ActionParams(utils.Wrap<bool>(playerUI.SetShootPointer), false));
 	}
 
 	private void SetCursorActivity(bool state)
@@ -231,7 +231,7 @@ public class PlayerController : MonoBehaviour
 		moveInputHorizontal = context.ReadValue<Vector2>();
 		curPosition.x = moveInputHorizontal.x;
 		curPosition.z = moveInputHorizontal.y;
-		curPosition = transform.TransformDirection(curPosition);
+		isSprinting = context.canceled ? false : isSprinting;
 	}
 
 	private void InputMouseRotation(InputAction.CallbackContext context)
@@ -249,7 +249,7 @@ public class PlayerController : MonoBehaviour
 
 	private void Sprint(InputAction.CallbackContext context)
 	{
-		isSprinting = context.started || context.performed;
+		isSprinting = true;
 	}
 
 	private void Crouch(InputAction.CallbackContext context)
@@ -278,7 +278,7 @@ public class PlayerController : MonoBehaviour
 		}
 		else
 		{
-			PlayerUI.Instance.PlayerPanelMessage(Localization.Instance.GetText("UIStringTable", "notEnoughInventorySpace"));
+			playerUI.PlayerPanelMessage(Localization.Instance.GetText("UIStringTable", "notEnoughInventorySpace"));
 		}
 
 	}
@@ -301,12 +301,12 @@ public class PlayerController : MonoBehaviour
 		{
 			if (result.gameObject.GetComponent<InventoryItem>())
 			{
-				PlayerUI.Instance.EnableInfoPanel(result.gameObject.GetComponent<InventoryItem>().invItemInfo);
+				playerUI.EnableInfoPanel(result.gameObject.GetComponent<InventoryItem>().invItemInfo);
 				return result.gameObject;
 			}
 		}
 
-		PlayerUI.Instance.DisableInfoPanel();
+		playerUI.DisableInfoPanel();
 		return null;
 	}
 
@@ -314,10 +314,10 @@ public class PlayerController : MonoBehaviour
 	{
 		if (invItemLookObject)
 		{
-			if (Time.time - lastClickTime <= PlayerUI.Instance.doubleClickCoolDown)
+			if (Time.time - lastClickTime <= playerUI.doubleClickCoolDown)
 			{
 				fwfPlayer.Add(invItemLookObject.GetComponent<InventoryItem>().invItemInfo.itemInfo.GetItemFWF());
-				PlayerUI.Instance.UpdateFWFBars(fwfPlayer);
+				playerUI.UpdateFWFBars(fwfPlayer);
 				ObjectPooler.Instance.DeleteInventoryItem(invItemLookObject.GetComponent<InventoryItem>().invItemInfo, invItemLookObject);
 			}
 			else
@@ -346,7 +346,7 @@ public class PlayerController : MonoBehaviour
 		else targetSpeed = speed;
 
 		currentSpeed = Mathf.MoveTowards(currentSpeed, targetSpeed, speedAcceleration * Time.fixedDeltaTime);
-		characterController.Move(new Vector3(curPosition.x * currentSpeed, curPosition.y, curPosition.z * currentSpeed) * Time.fixedDeltaTime);
+		characterController.Move(transform.TransformDirection(new Vector3(curPosition.x * currentSpeed, curPosition.y, curPosition.z * currentSpeed)) * Time.fixedDeltaTime);
 	}
 
 	private void Rotation()
@@ -382,16 +382,16 @@ public class PlayerController : MonoBehaviour
 				_lookObject = hit.collider.gameObject;
 
 				if (_lookObject.GetComponent<Item>() && utils.GameObjectUsesInterface(_lookObject, typeof(IInteract)))
-					PlayerUI.Instance.EnableInfoItemText(_lookObject.GetComponent<Item>().itemInfo.GetLocalizedItemName());
+					playerUI.EnableInfoItemText(_lookObject.GetComponent<Item>().itemInfo.GetLocalizedItemName());
 
-				else if (PlayerUI.Instance.infoItemTextIsActive)
-					PlayerUI.Instance.DisableInfoItemText();
+				else if (playerUI.infoItemTextIsActive)
+					playerUI.DisableInfoItemText();
 			}
 
 			else if (!isGrabbing)
 			{
 				_lookObject = null;
-				PlayerUI.Instance.DisableInfoItemText();
+				playerUI.DisableInfoItemText();
 			}
 		}
 
@@ -399,7 +399,7 @@ public class PlayerController : MonoBehaviour
 		{
 			_lookObject = null;
 			isGrabbing = false;
-			PlayerUI.Instance.DisableInfoItemText();
+			playerUI.DisableInfoItemText();
 		}
 
 	}
