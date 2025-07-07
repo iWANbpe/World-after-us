@@ -4,19 +4,38 @@ using UnityEngine;
 
 public class ItemSpawner : MonoBehaviour
 {
-	[SerializeField] private List<ItemInfo> itemInfo = new List<ItemInfo>();
+	[SerializeField] private Vector3 itemsSpawnRange;
+	[SerializeField] private List<SpawnItem> items = new List<SpawnItem>();
 	[SerializeField] private int itemsCount;
-	[Header("Item coordinates spawn range")]
-	[SerializeField] private CoordRange xRange = new CoordRange();
-	[SerializeField] private CoordRange yRange = new CoordRange();
-	[SerializeField] private CoordRange zRange = new CoordRange();
 
 	void Start()
 	{
-		StartCoroutine(SpawnItem(itemInfo, GetNewRandomPosition(xRange, yRange, zRange), itemsCount));
+		StartCoroutine(SpawnItemCoroutine(items, GetNewRandomPosition(itemsSpawnRange), itemsCount));
 	}
 
-	private IEnumerator SpawnItem(List<ItemInfo> itemInfo, Vector3 postion, int numOfItems)
+	private void SpawnItem(List<SpawnItem> items, Vector3 postion)
+	{
+		ItemInfo spawnedItemInfo = null;
+
+		while (!spawnedItemInfo)
+		{
+			SpawnItem possibleSpawnItem = items[Random.Range(0, items.Count)];
+			if (RandomChance(possibleSpawnItem.spawnProbability))
+				spawnedItemInfo = possibleSpawnItem.itemInfo;
+		}
+
+		ObjectPooler.Instance.SpawnItem(spawnedItemInfo, GetNewRandomPosition(itemsSpawnRange), Quaternion.identity);
+	}
+
+	private void SpawnItem(List<SpawnItem> items, Vector3 postion, int numOfItems)
+	{
+		for (int i = 0; i < numOfItems; i++)
+		{
+			SpawnItem(items, postion);
+		}
+	}
+
+	private IEnumerator SpawnItemCoroutine(List<SpawnItem> items, Vector3 postion, int numOfItems)
 	{
 		if (numOfItems == 0)
 		{
@@ -24,20 +43,38 @@ public class ItemSpawner : MonoBehaviour
 		}
 
 		yield return new WaitForSeconds(1f);
-		ObjectPooler.Instance.SpawnItem(itemInfo[numOfItems % 2], postion, Quaternion.identity);
-		StartCoroutine(SpawnItem(itemInfo, GetNewRandomPosition(xRange, yRange, zRange), numOfItems - 1));
+
+		SpawnItem(items, postion);
+		numOfItems--;
+		StartCoroutine(SpawnItemCoroutine(items, postion, numOfItems));
 	}
 
-	private Vector3 GetNewRandomPosition(CoordRange x, CoordRange y, CoordRange z)
+	private Vector3 GetNewRandomPosition(Vector3 position)
 	{
-		Vector3 newPosDelta = new Vector3(Random.Range(x.minCoord, x.maxCoord), Random.Range(y.minCoord, y.maxCoord), Random.Range(z.minCoord, z.maxCoord));
+		Vector3 newPosDelta = new Vector3(Random.Range(-position.x / 2, position.x / 2), Random.Range(-position.y / 2, position.y / 2), Random.Range(-position.z / 2, position.z / 2));
 		return transform.position + newPosDelta;
+	}
+
+	private bool RandomChance(float chance)
+	{
+		if (Random.Range(0, 100) <= chance) return true;
+		return false;
+	}
+
+	void OnDrawGizmos()
+	{
+		Gizmos.color = Color.yellow;
+		Gizmos.DrawCube(transform.position, itemsSpawnRange);
 	}
 }
 
 [System.Serializable]
-public class CoordRange
+public class SpawnItem
 {
-	public float minCoord;
-	public float maxCoord;
+	[SerializeField] private ItemInfo _itemInfo;
+	[SerializeField] private float _spawnProbability;
+	#region Getters
+	public ItemInfo itemInfo { get { return _itemInfo; } }
+	public float spawnProbability { get { return _spawnProbability; } }
+	#endregion
 }
