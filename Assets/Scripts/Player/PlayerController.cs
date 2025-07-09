@@ -265,7 +265,8 @@ public class PlayerController : MonoBehaviour
 	}
 	private IEnumerator AddItemToInventoryCoroutine()
 	{
-		GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(_lookObject.GetComponent<Item>().itemInfo.GetInventoryItemInfo());
+		ItemInfoIntractable itemInfoInter = _lookObject.GetComponent<Item>().itemInfo as ItemInfoIntractable;
+		GameObject invItem = ObjectPooler.Instance.InitializeInventoryItem(itemInfoInter.GetInventoryItemInfo());
 
 		yield return new WaitForEndOfFrame();
 
@@ -381,8 +382,10 @@ public class PlayerController : MonoBehaviour
 			{
 				_lookObject = hit.collider.gameObject;
 
-				if (_lookObject.GetComponent<Item>() && utils.GameObjectUsesInterface(_lookObject, typeof(IInteract)))
-					playerUI.EnableInfoItemText(_lookObject.GetComponent<Item>().itemInfo.GetLocalizedItemName());
+				if (_lookObject.GetComponent<Item>() && utils.GameObjectUsesInterface(_lookObject, typeof(ILocalizationItem)))
+				{
+					playerUI.EnableInfoItemText((string)utils.CallFunctionFromInterface(_lookObject, typeof(ILocalizationItem), "GetLocalizedItemName", null)); ;
+				}
 
 				else if (playerUI.infoItemTextIsActive)
 					playerUI.DisableInfoItemText();
