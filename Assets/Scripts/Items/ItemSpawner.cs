@@ -10,32 +10,24 @@ public class ItemSpawner : MonoBehaviour
 
 	void Start()
 	{
-		StartCoroutine(SpawnItemCoroutine(items, GetNewRandomPosition(itemsSpawnRange), itemsCount));
+		SpawnItem(items, itemsCount);
 	}
 
-	private void SpawnItem(List<SpawnItem> items, Vector3 postion)
+	private void SpawnItem(List<SpawnItem> items)
 	{
-		ItemInfo spawnedItemInfo = null;
-
-		while (!spawnedItemInfo)
-		{
-			SpawnItem possibleSpawnItem = items[Random.Range(0, items.Count)];
-			if (RandomChance(possibleSpawnItem.spawnProbability))
-				spawnedItemInfo = possibleSpawnItem.itemInfo;
-		}
-
+		ItemInfo spawnedItemInfo = PickRandomItem(items).itemInfo;
 		ObjectPooler.Instance.SpawnItem(spawnedItemInfo, GetNewRandomPosition(itemsSpawnRange), Quaternion.identity);
 	}
 
-	private void SpawnItem(List<SpawnItem> items, Vector3 postion, int numOfItems)
+	private void SpawnItem(List<SpawnItem> items, int numOfItems)
 	{
 		for (int i = 0; i < numOfItems; i++)
 		{
-			SpawnItem(items, postion);
+			SpawnItem(items);
 		}
 	}
 
-	private IEnumerator SpawnItemCoroutine(List<SpawnItem> items, Vector3 postion, int numOfItems)
+	private IEnumerator SpawnItemCoroutine(List<SpawnItem> items, int numOfItems)
 	{
 		if (numOfItems == 0)
 		{
@@ -43,10 +35,9 @@ public class ItemSpawner : MonoBehaviour
 		}
 
 		yield return new WaitForSeconds(1f);
-
-		SpawnItem(items, postion);
+		SpawnItem(items);
 		numOfItems--;
-		StartCoroutine(SpawnItemCoroutine(items, postion, numOfItems));
+		StartCoroutine(SpawnItemCoroutine(items, numOfItems));
 	}
 
 	private Vector3 GetNewRandomPosition(Vector3 position)
@@ -55,10 +46,21 @@ public class ItemSpawner : MonoBehaviour
 		return transform.position + newPosDelta;
 	}
 
-	private bool RandomChance(float chance)
+	private SpawnItem PickRandomItem(List<SpawnItem> spawnItems)
 	{
-		if (Random.Range(0, 100) <= chance) return true;
-		return false;
+		int chance = Random.Range(0, 100);
+		int itemProbability = 0;
+
+		foreach (SpawnItem spawnItem in spawnItems)
+		{
+			itemProbability += spawnItem.spawnProbability;
+			if (chance <= itemProbability)
+			{
+				return spawnItem;
+			}
+		}
+
+		return (spawnItems[spawnItems.Count]);
 	}
 
 	void OnDrawGizmos()
@@ -72,9 +74,9 @@ public class ItemSpawner : MonoBehaviour
 public class SpawnItem
 {
 	[SerializeField] private ItemInfo _itemInfo;
-	[SerializeField] private float _spawnProbability;
+	[SerializeField] [Range(1, 100)] private int _spawnProbability;
 	#region Getters
 	public ItemInfo itemInfo { get { return _itemInfo; } }
-	public float spawnProbability { get { return _spawnProbability; } }
+	public int spawnProbability { get { return _spawnProbability; } }
 	#endregion
 }
